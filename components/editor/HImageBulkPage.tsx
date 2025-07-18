@@ -1,0 +1,1 @@
+// This should be for BULK Image, but I don't know is it different page or not

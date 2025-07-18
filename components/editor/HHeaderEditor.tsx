@@ -1,0 +1,134 @@
+import React from "react";
+import { Stack, IconButton, CardMedia, MenuItem, ListItemText , ListItemIcon, Menu, Button } from "@mui/material";
+import useHonchoTypography from "@/honchoTheme";
+import useColors from "@/colors";
+import useIsMobile from "@/utils/isMobile";
+
+interface Props {
+    anchorEl: null | HTMLElement;
+    valueSelect: string;
+    onBack: () => void;
+    onUndo: () => void;
+    onRedo: () => void;
+    onRevert: () => void;
+    onCopyEdit: () => void;
+    onPasteEdit: () => void;
+    onMenuClick: (event: React.MouseEvent<HTMLElement>) => void;
+    onMenuClose: () => void;
+    onSelectButton: () => void;
+}
+
+export default function HHeaderEditor(props: Props) {
+    const typography = useHonchoTypography();
+    const colors = useColors();
+    const open = Boolean(props.anchorEl);
+    const isMobile = useIsMobile();
+
+    return (
+    <>
+        <Stack direction="row" justifyContent="space-between" width="100%" sx={{ pr: !isMobile ? "35px" : "6px" }}> 
+            <Stack direction="row" justifyContent="flex-start" sx={{ pl: !isMobile ? "0px" : "14px" }}>
+                <IconButton aria-label="back" onClick={props.onBack}>
+                    <CardMedia title="back" src="svg/Back.svg" component="img" />
+                </IconButton>
+            </Stack>
+            <Stack direction="row" justifyContent="flex-end" alignItems="center" sx={{ pt: "20px", pb: "12px"}} spacing={0.1}>
+                <Button variant="text" onClick={props.onSelectButton} sx={{ color: colors.outlineVariant }}>
+                    {props.valueSelect}
+                </Button>
+                <IconButton aria-label="undo" onClick={props.onUndo} sx={{ color: colors.outlineVariant }}>
+                    <CardMedia component="img" image="/v1/svg/undo-editor.svg" />
+                </IconButton>
+                <IconButton aria-label="redo" onClick={props.onRedo} sx={{ color: colors.outlineVariant }}>
+                    <CardMedia component="img" image="/v1/svg/redo-editor.svg" />
+                </IconButton>
+                <IconButton 
+                    aria-label="option" 
+                    onClick={props.onMenuClick}
+                    aria-controls={open ? 'options-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                >
+                    <CardMedia component="img" image="/v1/svg/dots-editor.svg" />
+                </IconButton>
+                <Menu
+                    id="options-menu"
+                    anchorEl={props.anchorEl}
+                    open={open}
+                    onClose={props.onMenuClose}
+                    MenuListProps={{
+                        'aria-labelledby': 'options-button',
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    slotProps={{
+                        paper: {
+                            sx: {
+                                backgroundColor: colors.onBackground,
+                                color: colors.surface,
+                                border: `1px solid ${colors.outlineVariant}`,
+                            },
+                        },
+                    }}
+                >
+                    <MenuItem onClick={props.onRevert}>
+                        <ListItemIcon>
+                            <CardMedia component="img" image="/v1/svg/revert-editor.svg" sx={{ width: "20px", height: "20px" }} />
+                        </ListItemIcon>
+                        <ListItemText 
+                            primaryTypographyProps={{ 
+                                sx: {
+                                    fontSize: '14px', 
+                                    color: colors.surface 
+                                } 
+                            }}
+                        >
+                            Revert to original
+                        </ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={props.onCopyEdit}>
+                        {/* Should be align left and more closer with ListItemText*/}
+                        <ListItemIcon>
+                            <CardMedia component="img" image="/v1/svg/copy-editor.svg" sx={{ width: "20px", height: "20px" }} />
+                        </ListItemIcon>
+                        <ListItemText
+                            primaryTypographyProps={{ 
+                                sx: { 
+                                    fontSize: '14px', 
+                                    color: colors.surface 
+                                } 
+                            }}
+                        >
+                            Copy edits
+                        </ListItemText>
+                        {/* Should be align right */}
+                        <ListItemIcon>
+                            <CardMedia component="img" image="/v1/svg/shortcut-copy-editor.svg" sx={{ width: "25px", height: "20px" }} />
+                        </ListItemIcon>
+                    </MenuItem>
+                    <MenuItem onClick={props.onPasteEdit} disabled>
+                        {/* Should be align left and more closer with ListItemText*/}
+                        <ListItemIcon>
+                            <CardMedia component="img" image="/v1/svg/paste-editor.svg" sx={{ width: "20px", height: "20px" }} />
+                        </ListItemIcon>
+                        <ListItemText 
+                            primaryTypographyProps={{ 
+                                sx: { 
+                                    fontSize: '14px', 
+                                    color: colors.surface 
+                                } 
+                            }}
+                        >
+                            Paste edits
+                        </ListItemText>
+                        {/* Should be align right */}
+                        <ListItemIcon>
+                            <CardMedia component="img" image="/v1/svg/shortcut-paste-editor.svg" sx={{ width: "25px", height: "20px" }} />
+                        </ListItemIcon>
+                    </MenuItem>
+                </Menu>
+            </Stack>
+        </Stack>
+    </>
+    );
+}
