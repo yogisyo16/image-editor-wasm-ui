@@ -21,7 +21,7 @@ export default function HFooter(props: Props) {
             <Stack direction="row" alignItems="center" spacing={0.5}>
                 <Button 
                     id="zoom-button"
-                    variant="outlined"
+                    // variant="outlined"
                     onClick={props.onScale}
                     aria-controls={isZoomMenuOpen ? 'zoom-options-menu' : undefined}
                     aria-haspopup="true"

@@ -20,7 +20,7 @@ interface Props {
 }
 
 const presets = [
-    { id: 'preset1', name: 'this is a lowercase test' },
+    { id: 'preset1', name: 'My Preset 1' },
     { id: 'preset2', name: 'My Preset 2' },
     { id: 'preset3', name: 'My Preset 3' },
 ];
