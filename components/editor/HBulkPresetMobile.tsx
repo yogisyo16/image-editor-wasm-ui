@@ -125,7 +125,7 @@ export default function HBulkPresetMobile (props: Props){
                             <Button 
                                 fullWidth
                                 variant="outlined" 
-                                sx={{ ...typography.labelMedium, height: '40px', pt: '5px', color: colors.onBackground, backgroundColor: colors.surface, borderRadius: '100px', borderColor: colors.surface, '&:hover': { backgroundColor: '#e0e0e0', borderColor: colors.surface } }}
+                                sx={{ ...typography.labelMedium, height: '40px', pt: '5px', color: colors.onBackground, backgroundColor: colors.surface, borderRadius: '100px', borderColor: colors.surface, textTransform: 'none', '&:hover': { backgroundColor: '#e0e0e0', borderColor: colors.surface } }}
                                 onClick={props.onOpenPresetModalBulk}
                             >
                                 Create Preset

@@ -26,7 +26,7 @@ export default function HTabPresetMobile (props: Props){
                 {presets.map((preset) => (
                     <Stack key={preset.id} direction="row" alignItems="center" justifyContent="space-between">
                         <Button
-                            sx={{ ...typography.bodyMedium, color: colors.surface, justifyContent: 'flex-start', flexGrow: 1 }}
+                            sx={{ ...typography.bodyMedium, color: colors.surface, justifyContent: 'flex-start', flexGrow: 1, textTransform: 'none' }}
                             onClick={() => props.onSelectPreset(preset.id)}
                         >
                             {preset.name}
@@ -51,7 +51,7 @@ export default function HTabPresetMobile (props: Props){
                 ))}
                 <Button 
                     variant="text" 
-                    sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px", mt: "12px" }}
+                    sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px", mt: "12px", textTransform: 'none' }}
                     onClick={props.onOpenPresetModal}
                 >
                     Create Preset

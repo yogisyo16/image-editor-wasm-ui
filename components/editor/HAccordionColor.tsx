@@ -12,7 +12,7 @@ interface Props {
     onSaturationChange: (value: number) => void;
 }
 
-export default function HAccordionWhiteBalance(props: Props) {
+export default function HAccordionColor(props: Props) {
     const typography = useHonchoTypography();
     const colors = useColors();
     

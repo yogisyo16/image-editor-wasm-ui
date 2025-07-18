@@ -1,7 +1,7 @@
 import React from "react";
 import { Accordion, AccordionDetails , AccordionSummary, CardMedia, Stack, Typography } from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
-import HAccordionWhiteBalance from "./HAccordionWhiteBalance";
+import HAccordionColor from "./HAccordionColor";
 import HAccordionLight from "./HAccordionLight";
 import HAccordionPresence from "./HAccordionPresence";
 import HAccordionDetails from "./HAccordionDetails";
@@ -81,7 +81,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                         </Stack>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <HAccordionWhiteBalance
+                        <HAccordionColor
                             TempScore = {props.tempScore}
                             TintScore = {props.tintScore}
                             onTempChange={props.setTempScore}

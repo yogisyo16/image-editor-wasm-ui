@@ -20,7 +20,7 @@ interface Props {
 }
 
 const presets = [
-    { id: 'preset1', name: 'My Preset 1' },
+    { id: 'preset1', name: 'this is a lowercase test' },
     { id: 'preset2', name: 'My Preset 2' },
     { id: 'preset3', name: 'My Preset 3' },
 ];
@@ -84,6 +84,7 @@ export default function HAccordionPreset(props: Props) {
                                                 overflow: 'hidden',
                                                 textOverflow: 'ellipsis',
                                                 display: 'block',
+                                                textTransform: 'none',
                                                 color: colors.surface,
                                                 pr: "120px",
                                                 pl: "0px",
@@ -141,7 +142,11 @@ export default function HAccordionPreset(props: Props) {
                             ))}
                         <Button 
                             variant="text" 
-                            sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px" }}
+                            sx={{ color: colors.surface, border: "1px solid", 
+                                borderColor: colors.surface, 
+                                borderRadius: "40px",
+                                textTransform: 'none',
+                            }}
                             onClick={props.onOpenPresetModal}
                         >
                             Create Preset
@@ -205,7 +210,7 @@ export default function HAccordionPreset(props: Props) {
                             </Stack>
                             <Button 
                                 variant="text" 
-                                sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px" }}
+                                sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px", textTransform: 'none', }}
                                 onClick={props.onOpenWatermarkView}
                             >
                                 Create Watermark

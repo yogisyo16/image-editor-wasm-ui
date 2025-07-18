@@ -1,11 +1,7 @@
 import type { Metadata } from "next";
-import { Roboto } from 'next/font/google';
 import "./globals.css";
-
-const roboto = Roboto({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-});
+import { roboto } from "@/theme/fonts"; // Import from your new fonts file
+import ThemeRegistry from "@/theme/themeRegistry"; // Import the registry
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.className}>
-        {children}
+        {/* <ThemeRegistry> */}
+          {children}
+        {/* </ThemeRegistry> */}
       </body>
     </html>
   );
