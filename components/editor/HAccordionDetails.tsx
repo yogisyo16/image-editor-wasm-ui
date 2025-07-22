@@ -93,6 +93,9 @@ export default function HAccordionDetails(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.ClarityScore}
@@ -165,6 +168,9 @@ export default function HAccordionDetails(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.SharpnessScore}

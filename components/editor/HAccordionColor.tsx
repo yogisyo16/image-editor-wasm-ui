@@ -117,6 +117,9 @@ export default function HAccordionColor(props: Props) {
                             '& .MuiSlider-track': {
                                 background: 'transparent',
                                 border: 'none',
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
                             }
                         }}
                         size="small"
@@ -189,6 +192,9 @@ export default function HAccordionColor(props: Props) {
                             '& .MuiSlider-track': {
                                 background: 'transparent',
                                 border: 'none',
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
                             }
                         }}
                         size="small"
@@ -261,6 +267,9 @@ export default function HAccordionColor(props: Props) {
                             '& .MuiSlider-track': {
                                 background: 'transparent',
                                 border: 'none',
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
                             }
                         }}
                         size="small"

@@ -103,6 +103,9 @@ export default function HAccordionLight(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.ExposureScore}
@@ -175,6 +178,9 @@ export default function HAccordionLight(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.ContrastScore}
@@ -247,6 +253,9 @@ export default function HAccordionLight(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.HighlightsScore}
@@ -319,6 +328,9 @@ export default function HAccordionLight(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.ShadowsScore}
@@ -391,6 +403,9 @@ export default function HAccordionLight(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.WhitesScore}
@@ -463,6 +478,9 @@ export default function HAccordionLight(props: Props) {
                                 background: colors.surface,
                                 opacity: 1,
                             },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',   
+                            }
                         }}
                         size="small"
                         value={props.BlacksScore}
