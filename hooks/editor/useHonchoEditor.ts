@@ -104,11 +104,11 @@ export function useHonchoEditor() {
     }, []);
 
     const handleUndo = useCallback(()=> {
-
+        // TODO Undo logic here
     }, []);
 
     const handleRedo = useCallback(()=> {
-
+        // TODO Redo logic here
     }, []);
 
     useEffect(() => {
