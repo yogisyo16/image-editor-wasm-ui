@@ -103,6 +103,14 @@ export function useHonchoEditor() {
         setSharpnessScore(0);
     }, []);
 
+    const handleUndo = useCallback(()=> {
+
+    }, []);
+
+    const handleRedo = useCallback(()=> {
+
+    }, []);
+
     useEffect(() => {
         if (isImageLoaded && editorRef.current && canvasRef.current) {
         const { width, height } = editorRef.current.getImageSize();
