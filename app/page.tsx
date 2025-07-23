@@ -9,7 +9,7 @@ import useIsMobile from "@/utils/isMobile";
 import HHeaderEditor from "@/components/editor/HHeaderEditor";
 import HAccordionColorAdjustment from "@/components/editor/HAccordionColorAdjustment";
 // import HAccordionAspectRatio from "@/components/editor/HAccordionAspectRatio";
-import { HBaseDialog } from "@/components/editor/HDialogBox";
+import { HBaseDialog, PositiveButton } from "@/components/editor/HDialogBox";
 import HAccordionPreset from "@/components/editor/HAccordionPreset";
 import HImageEditorMobile from "@/components/editor/HImageEditorMobile";
 import HImageEditorDesktop from "@/components/editor/HImageEditorDekstop";
@@ -733,6 +733,10 @@ export default function HImageEditor() {
                         description="Create a preset with the current Light, Colour and Details settings"
                         title="Create Preset"
                         onClose={handleClosePresetModal}
+                    /> */}
+                    {/* <PositiveButton
+                        onClick={handleOpenPresetModal}
+                        text="Create Preset"
                     /> */}
                     <HModalEditorDekstop
                         modalName="preset"

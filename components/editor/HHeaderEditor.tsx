@@ -1,5 +1,5 @@
 import React from "react";
-import { Stack, IconButton, CardMedia, MenuItem, ListItemText , ListItemIcon, Menu, Button } from "@mui/material";
+import { Stack, IconButton, CardMedia, MenuItem, ListItemText , ListItemIcon, Menu, Button, Typography } from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 import useIsMobile from "@/utils/isMobile";
@@ -56,9 +56,6 @@ export default function HHeaderEditor(props: Props) {
                     anchorEl={props.anchorEl}
                     open={open}
                     onClose={props.onMenuClose}
-                    MenuListProps={{
-                        'aria-labelledby': 'options-button',
-                    }}
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                     slotProps={{
@@ -72,57 +69,36 @@ export default function HHeaderEditor(props: Props) {
                     }}
                 >
                     <MenuItem onClick={props.onRevert}>
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: 0, mr: "0px", px: "0px" }}>
                             <CardMedia component="img" image="/v1/svg/revert-editor.svg" sx={{ width: "20px", height: "20px" }} />
                         </ListItemIcon>
-                        <ListItemText 
-                            primaryTypographyProps={{ 
-                                sx: {
-                                    fontSize: '14px', 
-                                    color: colors.surface 
-                                } 
-                            }}
-                        >
-                            Revert to original
+                        <ListItemText>
+                            <Typography sx={{ fontSize: "14px", color: colors.surface }}>Revert to original</Typography>
                         </ListItemText>
                     </MenuItem>
                     <MenuItem onClick={props.onCopyEdit}>
                         {/* Should be align left and more closer with ListItemText*/}
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: 0, mr: "0px", px: "0px" }}>
                             <CardMedia component="img" image="/v1/svg/copy-editor.svg" sx={{ width: "20px", height: "20px" }} />
                         </ListItemIcon>
-                        <ListItemText
-                            primaryTypographyProps={{ 
-                                sx: { 
-                                    fontSize: '14px', 
-                                    color: colors.surface 
-                                } 
-                            }}
-                        >
-                            Copy edits
+                        <ListItemText>
+                            <Typography sx={{ fontSize: "14px", color: colors.surface }}>Copy edits</Typography>
                         </ListItemText>
                         {/* Should be align right */}
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ marginLeft: 'auto' }}>
                             <CardMedia component="img" image="/v1/svg/shortcut-copy-editor.svg" sx={{ width: "25px", height: "20px" }} />
                         </ListItemIcon>
                     </MenuItem>
                     <MenuItem onClick={props.onPasteEdit} disabled>
                         {/* Should be align left and more closer with ListItemText*/}
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ minWidth: 0, mr: "0px", px: "0px" }}>
                             <CardMedia component="img" image="/v1/svg/paste-editor.svg" sx={{ width: "20px", height: "20px" }} />
                         </ListItemIcon>
-                        <ListItemText 
-                            primaryTypographyProps={{ 
-                                sx: { 
-                                    fontSize: '14px', 
-                                    color: colors.surface 
-                                } 
-                            }}
-                        >
-                            Paste edits
+                        <ListItemText>
+                            <Typography sx={{ fontSize: "14px", color: colors.onSurfaceVariant1 }}>Paste edits</Typography>
                         </ListItemText>
                         {/* Should be align right */}
-                        <ListItemIcon>
+                        <ListItemIcon sx={{ marginLeft: '30px' }}>
                             <CardMedia component="img" image="/v1/svg/shortcut-paste-editor.svg" sx={{ width: "25px", height: "20px" }} />
                         </ListItemIcon>
                     </MenuItem>

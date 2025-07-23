@@ -1,5 +1,16 @@
 /**
- * Honcho Photo Editor - TypeScript Definitions
+ *     temperature?: number;   // -100 to 100
+    tint?: number;          // -100 to 100
+    saturation?: number;    // -100 to 100
+    vibrance?: number;      // -100 to 100
+    exposure?: number;      // -5 to 5
+    contrast?: number;      // -100 to 100
+    highlights?: number;    // -100 to 100
+    shadows?: number;       // -100 to 100
+    whites?: number;        // -100 to 100
+    blacks?: number;        // -100 to 100
+    clarity?: number;       // -100 to 100
+    sharpness?: number;     // -100 to 100 Editor - TypeScript Definitions
  * 
  * Type definitions for the Honcho Photo Editor JavaScript library.
  */
@@ -8,6 +19,7 @@ export interface AdjustmentValues {
     temperature?: number;    // -100 to 100
     tint?: number;          // -100 to 100
     saturation?: number;     // -1 to 1
+    vibrance?: number;      // -1 to 1
     exposure?: number;       // -3 to 3
     contrast?: number;       // -1 to 1
     highlights?: number;     // -1 to 1
@@ -34,6 +46,7 @@ export interface AdjustmentRanges {
     temperature: AdjustmentRange;
     tint: AdjustmentRange;
     saturation: AdjustmentRange;
+    vibrance: AdjustmentRange;
     exposure: AdjustmentRange;
     contrast: AdjustmentRange;
     highlights: AdjustmentRange;
@@ -62,6 +75,7 @@ export declare class HonchoEditor {
     setTemperature(value: number): void;
     setTint(value: number): void;
     setSaturation(value: number): void;
+    setVibrance(value: number): void;
     setExposure(value: number): void;
     setContrast(value: number): void;
     setHighlights(value: number): void;
@@ -74,7 +88,7 @@ export declare class HonchoEditor {
     // Batch adjustments
     setAdjustments(adjustments: AdjustmentValues): void;
     
-        // Reset all adjustments to default values
+    // Reset all adjustments to default values
     resetAdjustments(): void;
     
     // Manual processing trigger - call this after setting adjustments
