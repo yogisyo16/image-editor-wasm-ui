@@ -401,8 +401,8 @@ export default function HImageEditor() {
                             blacksScore={editor.blacksScore}
                             highlightsScore={editor.highlightsScore}
                             shadowsScore={editor.shadowsScore}
-                            clarityScore={editor.clarityScore}
-                            sharpnessScore={editor.sharpnessScore}
+                            adjustClarity={editor.adjustClarity}
+                            adjustSharpness={editor.adjustSharpness}
                             expandedPanels={colorAdjustmentExpandedPanels}
                             onPanelChange={handleColorAccordionChange}
                         />;

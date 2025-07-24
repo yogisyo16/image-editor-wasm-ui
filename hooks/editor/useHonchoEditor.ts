@@ -10,6 +10,37 @@ declare global {
   }
 }
 
+type AdjustmentState = {
+    tempScore: number;
+    tintScore: number;
+    exposureScore: number;
+    highlightsScore: number;
+    shadowsScore: number;
+    whitesScore: number;
+    blacksScore: number;
+    saturationScore: number;
+    contrastScore: number;
+    clarityScore: number;
+    sharpnessScore: number;
+};
+
+const initialAdjustments: AdjustmentState = {
+    tempScore: 0,
+    tintScore: 0,
+    exposureScore: 0,
+    highlightsScore: 0,
+    shadowsScore: 0,
+    whitesScore: 0,
+    blacksScore: 0,
+    saturationScore: 0,
+    contrastScore: 0,
+    clarityScore: 0,
+    sharpnessScore: 0,
+};
+
+
+const clamp = (value: number) => Math.max(-1, Math.min(1, value));
+
 export function useHonchoEditor() {
     const editorRef = useRef<HonchoEditor | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -19,8 +50,10 @@ export function useHonchoEditor() {
     const [isEditorReady, setIsEditorReady] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-    const [adjustArray, setAdjustArray] = useState([]);
-    const [scoreArray, setScoreArray] = useState([]);
+    const [adjustments, setAdjustments] = useState<AdjustmentState>(initialAdjustments);
+
+    const [history, setHistory] = useState<AdjustmentState[]>([initialAdjustments]);
+    const [historyIndex, setHistoryIndex] = useState(0);
 
     // Adjustment State
     // already 100
@@ -37,6 +70,20 @@ export function useHonchoEditor() {
     const [contrastScore, setContrastScore] = useState(0);
     const [clarityScore, setClarityScore] = useState(0);
     const [sharpnessScore, setSharpnessScore] = useState(0);
+
+    const setAdjustment = useCallback(<K extends keyof AdjustmentState>(key: K, value: AdjustmentState[K]) => {
+      setAdjustments(prev => ({ ...prev, [key]: value }));
+    }, []);
+
+    // Bulk Editor score detail
+    const adjustClarity = useCallback((uiAmount: number) => {
+      setAdjustment('clarityScore', clamp((adjustments.clarityScore * 100 + uiAmount) / 100));
+    }, [adjustments.clarityScore, setAdjustment]);
+
+    const adjustSharpness = useCallback((uiAmount: number) => {
+      setAdjustment('sharpnessScore', clamp((adjustments.sharpnessScore * 100 + uiAmount) / 100));
+    }, [adjustments.sharpnessScore, setAdjustment]);
+
 
     // Logic for WASM Module script load
 
@@ -146,6 +193,11 @@ export function useHonchoEditor() {
         handleScriptReady,
         handleFileChange,
         handleRevert,
+        
+        // Adjustment Functions
+        adjustClarity,
+        adjustSharpness,
+
         // Adjustment State & Setters
         tempScore, setTempScore,
         tintScore, setTintScore,

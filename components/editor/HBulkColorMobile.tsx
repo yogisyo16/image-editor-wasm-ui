@@ -16,20 +16,6 @@ export default function HBulkColorMobile(props: Props) {
     const typography = useHonchoTypography();
     const colors = useColors();
 
-    const formatValue = (value: number) => {
-            if (value > 0) return `+${value}`;
-            return value.toString();
-        };
-            
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, min: number, max: number, onChange: (value: number) => void) => {
-        const value = event.target.value;
-        if (value === '+' || value === '-') return;
-        let numericValue = parseInt(value, 10);
-        if (isNaN(numericValue)) numericValue = 0;
-        const clampedValue = Math.max(min, Math.min(max, numericValue));
-        onChange(clampedValue);
-    };
-
     return(
         <>
             <Stack spacing={0} direction="column" justifyContent="center" alignItems="flex-start" sx={{ width: '100%', pl: "10px", m: "0px" }}>

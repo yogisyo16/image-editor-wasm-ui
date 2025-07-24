@@ -16,9 +16,9 @@ interface Props {
     whitesScore: number;
     blacksScore: number;
     contrastScore: number;
-    clarityScore: number;
-    sharpnessScore: number;
     saturationScore: number;
+    adjustClarity: (amount: number) => void;
+    adjustSharpness: (amount: number) => void;
     expandedPanels: string[];
     // Setters get values update
     // setTempScore: (value: number) => void;
@@ -132,8 +132,8 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     </AccordionSummary>
                     <AccordionDetails>
                         <HBulkAccordionColorAdjustmentDetails
-                            clarityScore={props.clarityScore}
-                            sharpnessScore={props.sharpnessScore}
+                            adjustClarity={props.adjustClarity}
+                            adjustSharpness={props.adjustSharpness}
                         />
                     </AccordionDetails>
                 </Accordion>
