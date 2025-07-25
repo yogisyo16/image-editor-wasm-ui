@@ -88,7 +88,7 @@ export declare class HonchoEditor {
     // Batch adjustments
     setAdjustments(adjustments: AdjustmentValues): void;
     
-    // Reset all adjustments to default values
+        // Reset all adjustments to default values
     resetAdjustments(): void;
     
     // Manual processing trigger - call this after setting adjustments
