@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Stack, IconButton, CardMedia, MenuItem, ListItemText, Menu, ListItemIcon, Paper, Slide } from "@mui/material";
+import { Stack, IconButton, CardMedia, Paper, Slide } from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 

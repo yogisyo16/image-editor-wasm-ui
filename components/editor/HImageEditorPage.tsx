@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Box, Stack, SelectChangeEvent, Menu, MenuItem, ListItemText, CardMedia } from "@mui/material";
+import { Box, Stack, SelectChangeEvent} from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 import useIsMobile from "@/utils/isMobile";
 import HHeaderEditor from "./HHeaderEditor";
 import HAccordionColorAdjustment from "./HAccordionColorAdjustment";
 // import HAccordionAspectRatio from "./HAccordionAspectRatio";
-import { HBaseDialog } from "./HDialogBox";
+// import { HBaseDialog } from "./HDialogBox"; Will be used
 import HAccordionPreset from "./HAccordionPreset";
 import HImageEditorMobile from "./HImageEditorMobile";
 import HImageEditorDesktop from "./HImageEditorDekstop";
@@ -24,8 +24,8 @@ import HPresetOptionsMenu from "./HPresetOptionMenu";
 
 export default function HImageEditor() {
     // Basic const to be Used
-    const typography = useHonchoTypography();
-    const colors = useColors();
+    // const typography = useHonchoTypography();
+    // const colors = useColors();
     // Mobile breakpoint
     const isMobile = useIsMobile();
 
@@ -51,18 +51,17 @@ export default function HImageEditor() {
     // For Image Editor Header and Navbar
     // const [isPanelOpen, setIsPanelOpen] = useState(false);
     // const [isEditingHeader, setIsEditingHeader] = useState(false);
-    const [isPublished, setIsPublished] = useState(false);
     const [activePanel, setActivePanel] = useState('colorAdjustment');
     const [activeSubPanel, setActiveSubPanel] = useState('');
     const [headerMenuAnchorEl, setHeaderMenuAnchorEl] = useState<null | HTMLElement>(null);
 
     // State for Aspect Ratio
-    const [currentAspectRatio, setCurrentAspectRatio] = useState('potrait');
-    const [currentSquareRatio, setCurrentSquareRatio] = useState('original');
-    const [currentWideRatio, setCurrentWideRatio] = useState('1:1');
-    const [angelScore, setAngleScore] = useState(0);
-    const [widthSizePX, setWidthSizePX] = useState(0);
-    const [heightSizePX, setHeightSizePX] = useState(0);
+    // const [currentAspectRatio, setCurrentAspectRatio] = useState('potrait');
+    // const [currentSquareRatio, setCurrentSquareRatio] = useState('original');
+    // const [currentWideRatio, setCurrentWideRatio] = useState('1:1');
+    // const [angelScore, setAngleScore] = useState(0);
+    // const [widthSizePX, setWidthSizePX] = useState(0);
+    // const [heightSizePX, setHeightSizePX] = useState(0);
     const [anchorMenuZoom, setAnchorMenuZoom] = useState<null | HTMLElement>(null);
     
     // State for color adjustment
@@ -323,10 +322,10 @@ export default function HImageEditor() {
         console.log("Paste Edit button clicked!");
     }
 
-    const handleAspectRatioSelect = (ratio: string) => {
-        setCurrentAspectRatio(ratio);
-        console.log(`Aspect ratio selected: ${ratio}`);
-    };
+    // const handleAspectRatioSelect = (ratio: string) => {
+    //     setCurrentAspectRatio(ratio);
+    //     console.log(`Aspect ratio selected: ${ratio}`);
+    // };
 
     const handleScale = (event: React.MouseEvent<HTMLElement>) => {
         console.log("Scale button clicked, setting anchor.");
