@@ -55,20 +55,6 @@ export function useHonchoEditor() {
     const [history, setHistory] = useState<AdjustmentState[]>([initialAdjustments]);
     const [historyIndex, setHistoryIndex] = useState(0);
 
-    function applyAdjustmentState(state: AdjustmentState) {
-        setTempScore(state.tempScore);
-        setTintScore(state.tintScore);
-        setExposureScore(state.exposureScore);
-        setHighlightsScore(state.highlightsScore);
-        setShadowsScore(state.shadowsScore);
-        setWhitesScore(state.whitesScore);
-        setBlacksScore(state.blacksScore);
-        setSaturationScore(state.saturationScore);
-        setContrastScore(state.contrastScore);
-        setClarityScore(state.clarityScore);
-        setSharpnessScore(state.sharpnessScore);
-    }
-
     // Adjustment State
     // already 100
     const [tempScore, setTempScore] = useState(0);
@@ -85,11 +71,26 @@ export function useHonchoEditor() {
     const [clarityScore, setClarityScore] = useState(0);
     const [sharpnessScore, setSharpnessScore] = useState(0);
 
+    // for undo redo logic
+    function applyAdjustmentState(state: AdjustmentState) {
+        setTempScore(state.tempScore);
+        setTintScore(state.tintScore);
+        setExposureScore(state.exposureScore);
+        setHighlightsScore(state.highlightsScore);
+        setShadowsScore(state.shadowsScore);
+        setWhitesScore(state.whitesScore);
+        setBlacksScore(state.blacksScore);
+        setSaturationScore(state.saturationScore);
+        setContrastScore(state.contrastScore);
+        setClarityScore(state.clarityScore);
+        setSharpnessScore(state.sharpnessScore);
+    }
+
     const setAdjustment = useCallback(<K extends keyof AdjustmentState>(key: K, value: AdjustmentState[K]) => {
       setAdjustments(prev => ({ ...prev, [key]: value }));
     }, []);
 
-    // Bulk Editor score detail
+    // Bulk Editor score detail // still need to fix
     const adjustClarity = useCallback((uiAmount: number) => {
       setAdjustment('clarityScore', clamp((adjustments.clarityScore * 100 + uiAmount) / 100));
     }, [adjustments.clarityScore, setAdjustment]);
@@ -100,7 +101,6 @@ export function useHonchoEditor() {
 
 
     // Logic for WASM Module script load
-
     const handleScriptReady = useCallback(async () => {
         if (typeof window.Module === 'function' && !editorRef.current) {
         try {
@@ -228,7 +228,6 @@ export function useHonchoEditor() {
 
         setHistory([...newHistory, newState]);
         setHistoryIndex(newHistory.length);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         tempScore, tintScore, exposureScore, highlightsScore, shadowsScore,
         whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore,

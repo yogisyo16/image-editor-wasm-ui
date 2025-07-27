@@ -1,36 +1,42 @@
+'use client';
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Box, Stack, SelectChangeEvent} from "@mui/material";
+import { Box, Stack, SelectChangeEvent, CircularProgress, Typography } from "@mui/material";
+import Script from "next/script";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 import useIsMobile from "@/utils/isMobile";
-import HHeaderEditor from "./HHeaderEditor";
-import HAccordionColorAdjustment from "./HAccordionColorAdjustment";
-// import HAccordionAspectRatio from "./HAccordionAspectRatio";
-// import { HBaseDialog } from "./HDialogBox"; Will be used
-import HAccordionPreset from "./HAccordionPreset";
-import HImageEditorMobile from "./HImageEditorMobile";
-import HImageEditorDesktop from "./HImageEditorDekstop";
-import HImageEditorBulkDekstop from "./HImageEditorBulkDekstop";
-import HImageEditorBulkMobile from "./HImageEditorBulkMobile";
-import HBulkAccordionColorAdjustment from "./HBulkAccordionColorAdjustment";
-import HBulkPreset from "./HBulkPreset";
-import HModalEditorDekstop from "./HModalEditorDekstop";
-import HFooter from "./HFooter";
-import HTextField from "./HTextField";
-import HWatermarkView from "./HWatermarkView";
-import HModalMobile from "./HModalMobile";
-import HAlertBox from "./HAlertBox";
-import HPresetOptionsMenu from "./HPresetOptionMenu"; 
+// Components
+import HHeaderEditor from "@/components/editor/HHeaderEditor";
+import HAccordionColorAdjustment from "@/components/editor/HAccordionColorAdjustment";
+// import HAccordionAspectRatio from "@/components/editor/HAccordionAspectRatio";
+import { HBaseDialog, PositiveButton } from "@/components/editor/HDialogBox";
+import HAccordionPreset from "@/components/editor/HAccordionPreset";
+import HImageEditorMobile from "@/components/editor/HImageEditorMobile";
+import HImageEditorDesktop from "@/components/editor/HImageEditorDekstop";
+import HImageEditorBulkDekstop from "@/components/editor/HImageEditorBulkDekstop";
+import HImageEditorBulkMobile from "@/components/editor/HImageEditorBulkMobile";
+import HBulkAccordionColorAdjustment from "@/components/editor/HBulkAccordionColorAdjustment";
+import HBulkPreset from "@/components/editor/HBulkPreset";
+import HModalEditorDekstop from "@/components/editor/HModalEditorDekstop";
+import HFooter from "@/components/editor/HFooter";
+import HTextField from "@/components/editor/HTextField";
+import HWatermarkView from "@/components/editor/HWatermarkView";
+import HModalMobile from "@/components/editor/HModalMobile";
+import HAlertBox from "@/components/editor/HAlertBox";
+import HPresetOptionsMenu from "@/components/editor/HPresetOptionMenu";
+// Hooks
+import { useHonchoEditor } from "@/hooks/editor/useHonchoEditor";
 
 export default function HImageEditor() {
     // Basic const to be Used
-    // const typography = useHonchoTypography();
-    // const colors = useColors();
+    const typography = useHonchoTypography();
+    const colors = useColors();
+    const editor = useHonchoEditor();
     // Mobile breakpoint
     const isMobile = useIsMobile();
 
     // For Internet connection
-    const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [isOnline, setIsOnline] = useState(true);
     // UseEffect for internet connection
     useEffect(() => {
         // Event listener to update state when online
@@ -51,36 +57,37 @@ export default function HImageEditor() {
     // For Image Editor Header and Navbar
     // const [isPanelOpen, setIsPanelOpen] = useState(false);
     // const [isEditingHeader, setIsEditingHeader] = useState(false);
+    const [isPublished, setIsPublished] = useState(false);
     const [activePanel, setActivePanel] = useState('colorAdjustment');
     const [activeSubPanel, setActiveSubPanel] = useState('');
     const [headerMenuAnchorEl, setHeaderMenuAnchorEl] = useState<null | HTMLElement>(null);
 
     // State for Aspect Ratio
-    // const [currentAspectRatio, setCurrentAspectRatio] = useState('potrait');
-    // const [currentSquareRatio, setCurrentSquareRatio] = useState('original');
-    // const [currentWideRatio, setCurrentWideRatio] = useState('1:1');
-    // const [angelScore, setAngleScore] = useState(0);
-    // const [widthSizePX, setWidthSizePX] = useState(0);
-    // const [heightSizePX, setHeightSizePX] = useState(0);
+    const [currentAspectRatio, setCurrentAspectRatio] = useState('potrait');
+    const [currentSquareRatio, setCurrentSquareRatio] = useState('original');
+    const [currentWideRatio, setCurrentWideRatio] = useState('1:1');
+    const [angelScore, setAngleScore] = useState(0);
+    const [widthSizePX, setWidthSizePX] = useState(0);
+    const [heightSizePX, setHeightSizePX] = useState(0);
     const [anchorMenuZoom, setAnchorMenuZoom] = useState<null | HTMLElement>(null);
     
     // State for color adjustment
     const [colorAdjustmentExpandedPanels, setColorAdjustmentExpandedPanels] = useState<string[]>(['whiteBalance']);
     // State for White Balance
-    const [tempScore, setTempScore] = useState(0);
-    const [tintScore, setTintScore] = useState(0);
-    // State for Light adjustments
-    const [exposureScore, setExposureScore] = useState(0);
-    const [highlightsScore, setHighlightsScore] = useState(0);
-    const [shadowsScore, setShadowsScore] = useState(0);
-    const [whitesScore, setWhitesScore] = useState(0);
-    const [blacksScore, setBlacksScore] = useState(0);
-    // State for Presence
-    const [saturationScore, setSaturationScore] = useState(0);
-    // State for Details
-    const [contrastScore, setContrastScore] = useState(0);
-    const [clarityScore, setClarityScore] = useState(0);
-    const [sharpnessScore, setSharpnessScore] = useState(0);
+    // const [tempScore, setTempScore] = useState(0);
+    // const [tintScore, setTintScore] = useState(0);
+    // // State for Light adjustments
+    // const [exposureScore, setExposureScore] = useState(0);
+    // const [highlightsScore, setHighlightsScore] = useState(0);
+    // const [shadowsScore, setShadowsScore] = useState(0);
+    // const [whitesScore, setWhitesScore] = useState(0);
+    // const [blacksScore, setBlacksScore] = useState(0);
+    // // State for Presence
+    // const [saturationScore, setSaturationScore] = useState(0);
+    // // State for Details
+    // const [contrastScore, setContrastScore] = useState(0);
+    // const [clarityScore, setClarityScore] = useState(0);
+    // const [sharpnessScore, setSharpnessScore] = useState(0);
 
     // State for Preset and Watermark
     // State for Preset
@@ -322,10 +329,10 @@ export default function HImageEditor() {
         console.log("Paste Edit button clicked!");
     }
 
-    // const handleAspectRatioSelect = (ratio: string) => {
-    //     setCurrentAspectRatio(ratio);
-    //     console.log(`Aspect ratio selected: ${ratio}`);
-    // };
+    const handleAspectRatioSelect = (ratio: string) => {
+        setCurrentAspectRatio(ratio);
+        console.log(`Aspect ratio selected: ${ratio}`);
+    };
 
     const handleScale = (event: React.MouseEvent<HTMLElement>) => {
         console.log("Scale button clicked, setting anchor.");
@@ -385,17 +392,17 @@ export default function HImageEditor() {
         switch (activePanel) {
             case 'colorAdjustment':
                 return <HBulkAccordionColorAdjustment 
-                            tempScore={tempScore}
-                            tintScore={tintScore}
-                            saturationScore={saturationScore}
-                            exposureScore={exposureScore}
-                            contrastScore={contrastScore}
-                            whitesScore={whitesScore}
-                            blacksScore={blacksScore}
-                            highlightsScore={highlightsScore}
-                            shadowsScore={shadowsScore}
-                            clarityScore={clarityScore}
-                            sharpnessScore={sharpnessScore}
+                            tempScore={editor.tempScore}
+                            tintScore={editor.tintScore}
+                            saturationScore={editor.saturationScore}
+                            exposureScore={editor.exposureScore}
+                            contrastScore={editor.contrastScore}
+                            whitesScore={editor.whitesScore}
+                            blacksScore={editor.blacksScore}
+                            highlightsScore={editor.highlightsScore}
+                            shadowsScore={editor.shadowsScore}
+                            adjustClarity={editor.adjustClarity}
+                            adjustSharpness={editor.adjustSharpness}
                             expandedPanels={colorAdjustmentExpandedPanels}
                             onPanelChange={handleColorAccordionChange}
                         />;
@@ -424,28 +431,28 @@ export default function HImageEditor() {
         switch (activePanel) {
             case 'colorAdjustment':
                 return <HAccordionColorAdjustment 
-                            tempScore={tempScore}
-                            setTempScore={setTempScore}
-                            tintScore={tintScore}
-                            setTintScore={setTintScore}
-                            exposureScore={exposureScore}
-                            setExposureScore={setExposureScore}
-                            HighlightsScore={highlightsScore}
-                            setHighlightsScore={setHighlightsScore}
-                            shadowsScore={shadowsScore}
-                            setShadowsScore={setShadowsScore}
-                            whitesScore={whitesScore}
-                            setWhitesScore={setWhitesScore}
-                            blacksScore={blacksScore}
-                            setBlacksScore={setBlacksScore}
-                            contrastScore={contrastScore}
-                            setContrastScore={setContrastScore}
-                            clarityScore={clarityScore}
-                            setClarityScore={setClarityScore}
-                            sharpnessScore={sharpnessScore}
-                            setSharpnessScore={setSharpnessScore}
-                            saturationScore={saturationScore}
-                            setSaturationScore={setSaturationScore}
+                            tempScore={editor.tempScore}
+                            setTempScore={editor.setTempScore}
+                            tintScore={editor.tintScore}
+                            setTintScore={editor.setTintScore}
+                            exposureScore={editor.exposureScore}
+                            setExposureScore={editor.setExposureScore}
+                            HighlightsScore={editor.highlightsScore}
+                            setHighlightsScore={editor.setHighlightsScore}
+                            shadowsScore={editor.shadowsScore}
+                            setShadowsScore={editor.setShadowsScore}
+                            whitesScore={editor.whitesScore}
+                            setWhitesScore={editor.setWhitesScore}
+                            blacksScore={editor.blacksScore}
+                            setBlacksScore={editor.setBlacksScore}
+                            contrastScore={editor.contrastScore}
+                            setContrastScore={editor.setContrastScore}
+                            clarityScore={editor.clarityScore}
+                            setClarityScore={editor.setClarityScore}
+                            sharpnessScore={editor.sharpnessScore}
+                            setSharpnessScore={editor.setSharpnessScore}
+                            saturationScore={editor.saturationScore}
+                            setSaturationScore={editor.setSaturationScore}
                             expandedPanels={colorAdjustmentExpandedPanels}
                             onPanelChange={handleColorAccordionChange}
                         />;
@@ -494,14 +501,21 @@ export default function HImageEditor() {
 
     return(
         <>
+            <Script
+                src="/honcho-photo-editor.js"
+                strategy="lazyOnload"
+                onReady={() => {
+                editor.handleScriptReady();
+            }}
+            />
             <Stack direction="column" justifyContent="center" sx={{ width: '100%', height: isMobile ? '100%' : '100vh', background: 'black', px: isMobile ? 0 : "100px" }}>
                 {!isOnline && !isMobile && <HAlertBox />}
                 {isPresetCreated && !isMobile && <HAlertBox />}
                 <HHeaderEditor
                     onBack={handleBack}
-                    onUndo={handleUndo}
-                    onRedo={handleRedo}
-                    onRevert={handleRevert}
+                    onUndo={editor.handleUndo}
+                    onRedo={editor.handleRedo}
+                    onRevert={editor.handleRevert}
                     onCopyEdit={handleCopyEdit}
                     onPasteEdit={handlePasteEdit}
                     anchorEl={headerMenuAnchorEl}
@@ -510,23 +524,59 @@ export default function HImageEditor() {
                     onSelectButton={toggleBulkEditing}
                     valueSelect={selectedImages}
                 />
-                <Stack direction={directionForEditor} justifyContent="space-between" alignItems="flex-start" sx={{ width: '100%'}}>
+                <Stack 
+                    direction={directionForEditor} 
+                    justifyContent="space-between" 
+                    alignItems="stretch"
+                    sx={{ 
+                        width: '100%', 
+                        flexGrow: 1,
+                        overflow: 'hidden'
+                    }}
+                >
                     <Box sx={{
                         flexGrow: 1,
                         display: 'flex',
                         justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'relative',
+                        p: isMobile ? 1 : 2,
+                        minHeight: 0,
                     }}>
-                        <canvas
-                        style={{
-                            background: 'white',
-                            display: 'block',
-                            width: '100%',
-                            height: '100%',
-                            maxWidth: '1140px',
-                            maxHeight: '1140px'
-                        }}
-                        ></canvas>
+                        <input
+                            type="file"
+                            ref={editor.fileInputRef}
+                            onChange={editor.handleFileChange}
+                            accept="image/png, image/jpeg, image/webp"
+                            style={{ display: 'none' }}
+                        />
+
+                        {!editor.isImageLoaded ? (
+                            <Box
+                                onClick={() => editor.fileInputRef.current?.click()}
+                                sx={{
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                    border: '2px dashed grey', borderRadius: 2, p: 4, cursor: editor.isEditorReady ? 'pointer' : 'default',
+                                    textAlign: 'center', color: 'grey.500', width: '100%', height: '300px',
+                                }}
+                            >
+                                {!editor.isEditorReady && <CircularProgress color="inherit" sx={{ mb: 2 }} />}
+                                <Typography variant="h6">{editor.editorStatus}</Typography>
+                            </Box>
+                        ) : (
+                            <canvas
+                                ref={editor.canvasRef}
+                                style={{
+                                    display: 'block',
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    width: 'auto',
+                                    height: 'auto',
+                                }}
+                            />
+                        )}
                     </Box>
+
                     {!isMobile && !isBulkEditing && (
                         <HImageEditorDesktop 
                             activePanel={activePanel}
@@ -606,28 +656,28 @@ export default function HImageEditor() {
                                 }}
                                 activeSubPanel={activeSubPanel}
                                 setActiveSubPanel={setActiveSubPanel}
-                                tempScore={tempScore}
-                                onTempChange={setTempScore}
-                                tintScore={tintScore}
-                                onTintChange={setTintScore}
-                                saturationScore={saturationScore}
-                                onSaturationChange={setSaturationScore}
-                                exposureScore={exposureScore}
-                                onExposureChange={setExposureScore}
-                                highlightsScore={highlightsScore}
-                                onHighlightsChange={setHighlightsScore}
-                                shadowScore={shadowsScore}
-                                onShadowsChange={setShadowsScore}
-                                whiteScore={whitesScore}
-                                onWhitesChange={setWhitesScore}
-                                blackScore={blacksScore}
-                                onBlacksChange={setBlacksScore}
-                                contrastScore={contrastScore}
-                                onContrastChange={setContrastScore}
-                                clarityScore={clarityScore}
-                                onClarityChange={setClarityScore}
-                                sharpnessScore={sharpnessScore}
-                                onSharpnessChange={setSharpnessScore}
+                                tempScore={editor.tempScore}
+                                onTempChange={editor.setTempScore}
+                                tintScore={editor.tintScore}
+                                onTintChange={editor.setTintScore}
+                                saturationScore={editor.saturationScore}
+                                onSaturationChange={editor.setSaturationScore}
+                                exposureScore={editor.exposureScore}
+                                onExposureChange={editor.setExposureScore}
+                                highlightsScore={editor.highlightsScore}
+                                onHighlightsChange={editor.setHighlightsScore}
+                                shadowScore={editor.shadowsScore}
+                                onShadowsChange={editor.setShadowsScore}
+                                whiteScore={editor.whitesScore}
+                                onWhitesChange={editor.setWhitesScore}
+                                blackScore={editor.blacksScore}
+                                onBlacksChange={editor.setBlacksScore}
+                                contrastScore={editor.contrastScore}
+                                onContrastChange={editor.setContrastScore}
+                                clarityScore={editor.clarityScore}
+                                onClarityChange={editor.setClarityScore}
+                                sharpnessScore={editor.sharpnessScore}
+                                onSharpnessChange={editor.setSharpnessScore}
                                 onOpenPresetModal={handleOpenPresetModalMobile}
                                 selectedPreset={selectedMobilePreset}
                                 onSelectPreset={handleSelectMobilePreset}
@@ -651,28 +701,28 @@ export default function HImageEditor() {
                             }}
                             activeSubPanel={activeSubPanel}
                             setActiveSubPanel={setActiveSubPanel}
-                            tempScore={tempScore}
-                            onTempChange={setTempScore}
-                            tintScore={tintScore}
-                            onTintChange={setTintScore}
-                            saturationScore={saturationScore}
-                            onSaturationChange={setSaturationScore}
-                            exposureScore={exposureScore}
-                            onExposureChange={setExposureScore}
-                            highlightsScore={highlightsScore}
-                            onHighlightsChange={setHighlightsScore}
-                            shadowsScore={shadowsScore}
-                            onShadowsChange={setShadowsScore}
-                            whitesScore={whitesScore}
-                            onWhitesChange={setWhitesScore}
-                            blacksScore={blacksScore}
-                            onBlacksChange={setBlacksScore}
-                            contrastScore={contrastScore}
-                            onContrastChange={setContrastScore}
-                            clarityScore={clarityScore}
-                            onClarityChange={setClarityScore}
-                            sharpnessScore={sharpnessScore}
-                            onSharpnessChange={setSharpnessScore}
+                            tempScore={editor.tempScore}
+                            onTempChange={editor.setTempScore}
+                            tintScore={editor.tintScore}
+                            onTintChange={editor.setTintScore}
+                            saturationScore={editor.saturationScore}
+                            onSaturationChange={editor.setSaturationScore}
+                            exposureScore={editor.exposureScore}
+                            onExposureChange={editor.setExposureScore}
+                            highlightsScore={editor.highlightsScore}
+                            onHighlightsChange={editor.setHighlightsScore}
+                            shadowsScore={editor.shadowsScore}
+                            onShadowsChange={editor.setShadowsScore}
+                            whitesScore={editor.whitesScore}
+                            onWhitesChange={editor.setWhitesScore}
+                            blacksScore={editor.blacksScore}
+                            onBlacksChange={editor.setBlacksScore}
+                            contrastScore={editor.contrastScore}
+                            onContrastChange={editor.setContrastScore}
+                            clarityScore={editor.clarityScore}
+                            onClarityChange={editor.setClarityScore}
+                            sharpnessScore={editor.sharpnessScore}
+                            onSharpnessChange={editor.setSharpnessScore}
                             selectedPresetBulk={selectedBulkPreset}
                             onOpenPresetModalBulk={handleOpenPresetModalMobile}
                             onSelectPresetBulk={handleSelectBulkPreset}
@@ -683,6 +733,10 @@ export default function HImageEditor() {
                         description="Create a preset with the current Light, Colour and Details settings"
                         title="Create Preset"
                         onClose={handleClosePresetModal}
+                    /> */}
+                    {/* <PositiveButton
+                        onClick={handleOpenPresetModal}
+                        text="Create Preset"
                     /> */}
                     <HModalEditorDekstop
                         modalName="preset"
