@@ -513,8 +513,8 @@ export default function HImageEditor() {
                 {isPresetCreated && !isMobile && <HAlertBox />}
                 <HHeaderEditor
                     onBack={handleBack}
-                    onUndo={handleUndo}
-                    onRedo={handleRedo}
+                    onUndo={editor.handleUndo}
+                    onRedo={editor.handleRedo}
                     onRevert={editor.handleRevert}
                     onCopyEdit={handleCopyEdit}
                     onPasteEdit={handlePasteEdit}

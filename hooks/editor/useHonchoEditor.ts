@@ -55,6 +55,20 @@ export function useHonchoEditor() {
     const [history, setHistory] = useState<AdjustmentState[]>([initialAdjustments]);
     const [historyIndex, setHistoryIndex] = useState(0);
 
+    function applyAdjustmentState(state: AdjustmentState) {
+        setTempScore(state.tempScore);
+        setTintScore(state.tintScore);
+        setExposureScore(state.exposureScore);
+        setHighlightsScore(state.highlightsScore);
+        setShadowsScore(state.shadowsScore);
+        setWhitesScore(state.whitesScore);
+        setBlacksScore(state.blacksScore);
+        setSaturationScore(state.saturationScore);
+        setContrastScore(state.contrastScore);
+        setClarityScore(state.clarityScore);
+        setSharpnessScore(state.sharpnessScore);
+    }
+
     // Adjustment State
     // already 100
     const [tempScore, setTempScore] = useState(0);
@@ -150,13 +164,21 @@ export function useHonchoEditor() {
         setSharpnessScore(0);
     }, []);
 
-    const handleUndo = useCallback(()=> {
-        // TODO Undo logic here
-    }, []);
+    const handleUndo = useCallback(() => {
+        if (historyIndex > 0) {
+            const prevIndex = historyIndex - 1;
+            applyAdjustmentState(history[prevIndex]);
+            setHistoryIndex(prevIndex);
+        }
+    }, [history, historyIndex]);
 
-    const handleRedo = useCallback(()=> {
-        // TODO Redo logic here
-    }, []);
+    const handleRedo = useCallback(() => {
+        if (historyIndex < history.length - 1) {
+            const nextIndex = historyIndex + 1;
+            applyAdjustmentState(history[nextIndex]);
+            setHistoryIndex(nextIndex);
+        }
+    }, [history, historyIndex]);
 
     useEffect(() => {
         if (isImageLoaded && editorRef.current && canvasRef.current) {
@@ -181,6 +203,38 @@ export function useHonchoEditor() {
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setClarity(clarityScore); updateCanvas(); } }, [clarityScore, isImageLoaded, updateCanvas]);
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setSharpness(sharpnessScore); updateCanvas(); } }, [sharpnessScore, isImageLoaded, updateCanvas]);
 
+    useEffect(() => {
+        if (!isImageLoaded) return;
+
+        const newState: AdjustmentState = {
+            tempScore,
+            tintScore,
+            exposureScore,
+            highlightsScore,
+            shadowsScore,
+            whitesScore,
+            blacksScore,
+            saturationScore,
+            contrastScore,
+            clarityScore,
+            sharpnessScore,
+        };
+
+        // If the new state is the same as the current history index, do nothing
+        if (JSON.stringify(history[historyIndex]) === JSON.stringify(newState)) return;
+
+        // If we are not at the end of the history, discard redo states
+        const newHistory = history.slice(0, historyIndex + 1);
+
+        setHistory([...newHistory, newState]);
+        setHistoryIndex(newHistory.length);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        tempScore, tintScore, exposureScore, highlightsScore, shadowsScore,
+        whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore,
+        isImageLoaded
+    ]);
+
     return {
         // Refs
         canvasRef,
@@ -193,11 +247,11 @@ export function useHonchoEditor() {
         handleScriptReady,
         handleFileChange,
         handleRevert,
-        
+        handleUndo,
+        handleRedo,
         // Adjustment Functions
         adjustClarity,
         adjustSharpness,
-
         // Adjustment State & Setters
         tempScore, setTempScore,
         tintScore, setTintScore,
