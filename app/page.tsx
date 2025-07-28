@@ -306,17 +306,17 @@ export default function HImageEditor() {
     };
 
     const handleBack = () => {
-        console.log("Back button clicked on main header!");
+    // Check if the code is running inside an iOS WKWebView and the handler exists
+        if ((window as any).webkit?.messageHandlers?.nativeHandler) {
+            // Send the message "back" to the native iOS app
+            (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
+            console.log("Sent 'back' message to iOS native handler.");
+        } else {
+            // Fallback for browsers or other environments
+            console.log("Back button clicked! (Not in the target iOS WebView or handler is missing)");
+            // You could add other fallback logic here if needed, e.g., window.history.back();
+        }
     };
-    
-    // useEffect to handle iOS back button
-    useEffect(() => {
-        (window as any).handleBackFromiOS = handleBack;
-
-        return () => {
-            delete (window as any).handleBackFromiOS;
-        };
-    }, []);
 
     const handleCopyEdit = () => {
         console.log("Copy Edit button clicked!");
