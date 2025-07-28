@@ -308,18 +308,15 @@ export default function HImageEditor() {
     const handleBack = () => {
         console.log("Back button clicked on main header!");
     };
+    
+    // useEffect to handle iOS back button
+    useEffect(() => {
+        (window as any).receiveFromiOSBack = handleBack;
 
-    const handleUndo = () => {
-        console.log("Undo button clicked!");
-    }
-
-    const handleRedo = () => {
-        console.log("Redo button clicked!");
-    }
-
-    const handleRevert = () => {
-        console.log("Revert button clicked!");
-    }
+        return () => {
+        delete (window as any).receiveFromiOSBack;
+        };
+    }, []);
 
     const handleCopyEdit = () => {
         console.log("Copy Edit button clicked!");
