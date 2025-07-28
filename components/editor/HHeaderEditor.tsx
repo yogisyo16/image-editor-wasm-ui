@@ -28,7 +28,12 @@ export default function HHeaderEditor(props: Props) {
     <>
         <Stack direction="row" justifyContent="space-between" width="100%" sx={{ pr: !isMobile ? "35px" : "6px" }}> 
             <Stack direction="row" justifyContent="flex-start" sx={{ pl: !isMobile ? "0px" : "14px" }}>
-                <IconButton aria-label="back" onClick={props.onBack}>
+                <IconButton aria-label="back" onClick={props.onBack} 
+                sx={{ 
+                    '&:active': {
+                        transform: 'scale(0.92)', // Shrinks the button to 92% of its size
+                    },
+                 }}>
                     <CardMedia title="back" src="svg/Back.svg" component="img" />
                 </IconButton>
             </Stack>
