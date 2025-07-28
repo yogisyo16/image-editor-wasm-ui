@@ -311,10 +311,10 @@ export default function HImageEditor() {
     
     // useEffect to handle iOS back button
     useEffect(() => {
-        (window as any).window.webkit.messageHandlers = handleBack;
+        (window as any).handleBackFromiOS = handleBack;
 
         return () => {
-        delete (window as any).window.webkit.messageHandlers;
+            delete (window as any).handleBackFromiOS;
         };
     }, []);
 
