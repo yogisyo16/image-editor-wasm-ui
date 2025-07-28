@@ -87,16 +87,16 @@ export function useHonchoEditor() {
     }
 
     const setAdjustment = useCallback(<K extends keyof AdjustmentState>(key: K, value: AdjustmentState[K]) => {
-      setAdjustments(prev => ({ ...prev, [key]: value }));
+        setAdjustments(prev => ({ ...prev, [key]: value }));
     }, []);
 
     // Bulk Editor score detail // still need to fix
     const adjustClarity = useCallback((uiAmount: number) => {
-      setAdjustment('clarityScore', clamp((adjustments.clarityScore * 100 + uiAmount) / 100));
+        setAdjustment('clarityScore', clamp((adjustments.clarityScore * 100 + uiAmount) / 100));
     }, [adjustments.clarityScore, setAdjustment]);
 
     const adjustSharpness = useCallback((uiAmount: number) => {
-      setAdjustment('sharpnessScore', clamp((adjustments.sharpnessScore * 100 + uiAmount) / 100));
+        setAdjustment('sharpnessScore', clamp((adjustments.sharpnessScore * 100 + uiAmount) / 100));
     }, [adjustments.sharpnessScore, setAdjustment]);
 
 
@@ -119,25 +119,25 @@ export function useHonchoEditor() {
 
     const updateCanvas = useCallback(() => {
         if (editorRef.current && canvasRef.current && editorRef.current.getInitialized()) {
-        editorRef.current.processImage();
-        editorRef.current.renderToCanvas(canvasRef.current);
+            editorRef.current.processImage();
+            editorRef.current.renderToCanvas(canvasRef.current);
         }
     }, []);
 
     const loadImage = useCallback(async (file: File) => {
         if (!editorRef.current) {
-        console.error("loadImage called but editorRef is not set.");
-        setEditorStatus("Editor not ready. WASM module may have failed to load.");
-        return;
+            console.error("loadImage called but editorRef is not set.");
+            setEditorStatus("Editor not ready. WASM module may have failed to load.");
+            return;
         }
         setEditorStatus("Loading image...");
         try {
-        await editorRef.current.loadImageFromFile(file);
-        setIsImageLoaded(true); // This will trigger the useEffect below
+            await editorRef.current.loadImageFromFile(file);
+            setIsImageLoaded(true); // This will trigger the useEffect below
         } catch (e) {
-        console.error("Error loading image into WASM module:", e);
-        setEditorStatus("Error: Could not load the image file.");
-        setIsImageLoaded(false);
+            console.error("Error loading image into WASM module:", e);
+            setEditorStatus("Error: Could not load the image file.");
+            setIsImageLoaded(false);
         }
     }, []);
 
@@ -150,18 +150,18 @@ export function useHonchoEditor() {
 
     const handleRevert = useCallback(() => {
         if (!editorRef.current) return;
-        editorRef.current.resetAdjustments();
-        setTempScore(0);
-        setTintScore(0);
-        setExposureScore(0);
-        setHighlightsScore(0);
-        setShadowsScore(0);
-        setWhitesScore(0);
-        setBlacksScore(0);
-        setSaturationScore(0);
-        setContrastScore(0);
-        setClarityScore(0);
-        setSharpnessScore(0);
+            editorRef.current.resetAdjustments();
+            setTempScore(0);
+            setTintScore(0);
+            setExposureScore(0);
+            setHighlightsScore(0);
+            setShadowsScore(0);
+            setWhitesScore(0);
+            setBlacksScore(0);
+            setSaturationScore(0);
+            setContrastScore(0);
+            setClarityScore(0);
+            setSharpnessScore(0);
     }, []);
 
     const handleUndo = useCallback(() => {
