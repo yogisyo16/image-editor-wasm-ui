@@ -31,8 +31,9 @@ export default function HHeaderEditor(props: Props) {
                 <IconButton aria-label="back" onClick={props.onBack} 
                 sx={{ 
                     '&:active': {
-                        transform: 'scale(0.92)', // Shrinks the button to 92% of its size
+                        transform: 'scale(0.92)',
                     },
+                    transition: 'transform 0.1s ease-in-out',
                  }}>
                     <CardMedia title="back" src="svg/Back.svg" component="img" />
                 </IconButton>
