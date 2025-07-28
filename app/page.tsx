@@ -311,10 +311,10 @@ export default function HImageEditor() {
     
     // useEffect to handle iOS back button
     useEffect(() => {
-        (window as any).receiveFromiOSBack = handleBack;
+        (window as any).window.webkit.messageHandlers = handleBack;
 
         return () => {
-        delete (window as any).receiveFromiOSBack;
+        delete (window as any).window.webkit.messageHandlers;
         };
     }, []);
 
@@ -384,6 +384,11 @@ export default function HImageEditor() {
         setSelectedBulkPreset(event.target.value as string);
         console.log("Selected Bulk Preset from Page:", event.target.value);
     };
+
+    const onGetTokken = () => {
+        console.log("Get Token button clicked!");
+        // Implement the logic to get the token here
+    }
 
     const renderActivePanelBulk = () => {
         switch (activePanel) {
@@ -651,6 +656,7 @@ export default function HImageEditor() {
                                     setActivePanel(panel);
                                     setActiveSubPanel(''); 
                                 }}
+
                                 activeSubPanel={activeSubPanel}
                                 setActiveSubPanel={setActiveSubPanel}
                                 tempScore={editor.tempScore}

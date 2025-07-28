@@ -38,7 +38,6 @@ const initialAdjustments: AdjustmentState = {
     sharpnessScore: 0,
 };
 
-
 const clamp = (value: number) => Math.max(-1, Math.min(1, value));
 
 export function useHonchoEditor() {
