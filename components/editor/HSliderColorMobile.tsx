@@ -115,6 +115,9 @@ export default function HSliderColorMobile(props: Props) {
                         '& .MuiSlider-track': {
                             background: 'transparent',
                             border: 'none',
+                        },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
                         }
                     }}
                     size="small"
@@ -184,6 +187,9 @@ export default function HSliderColorMobile(props: Props) {
                         '& .MuiSlider-track': {
                             background: 'transparent',
                             border: 'none',
+                        },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
                         }
                     }}
                     size="small"
@@ -255,6 +261,9 @@ export default function HSliderColorMobile(props: Props) {
                         '& .MuiSlider-track': {
                             background: 'transparent',
                             border: 'none',
+                        },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
                         }
                     }}
                     size="small"

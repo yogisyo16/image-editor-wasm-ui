@@ -91,6 +91,9 @@ export default function HSliderDetailsMobile(props: Props) {
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.clarityScore}
@@ -160,6 +163,9 @@ export default function HSliderDetailsMobile(props: Props) {
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.sharpnessScore}

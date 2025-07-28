@@ -101,6 +101,9 @@ export default function HSliderLightMobile (props: Props){
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.exposureScore}
@@ -170,6 +173,9 @@ export default function HSliderLightMobile (props: Props){
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.contrastScore}
@@ -239,6 +245,9 @@ export default function HSliderLightMobile (props: Props){
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.highlightsScore}
@@ -308,6 +317,9 @@ export default function HSliderLightMobile (props: Props){
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.shadowScore}
@@ -377,6 +389,9 @@ export default function HSliderLightMobile (props: Props){
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.whiteScore}
@@ -446,6 +461,9 @@ export default function HSliderLightMobile (props: Props){
                             background: colors.surface,
                             opacity: 1,
                         },
+                        '& .MuiSlider-thumb:hover': {
+                            boxShadow: 'none',   
+                        }
                     }}
                     size="small"
                     value={props.blackScore}
