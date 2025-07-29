@@ -1,24 +1,15 @@
 import React from "react";
-import { 
-    Box, 
-    MenuItem, 
-    FormControl, 
-    Select, 
-    Stack, 
-    Accordion, 
-    AccordionSummary, 
-    AccordionDetails, 
-    CardMedia, 
-    Typography,
-    IconButton,
-    Button,
-    SelectChangeEvent
-} from "@mui/material";
+import { Box, MenuItem, FormControl, Select, Stack, Accordion, AccordionSummary, AccordionDetails, CardMedia, Typography, IconButton, Button, SelectChangeEvent } from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
-// The props interface defines the contract with the parent page
+type Preset = {
+    id: string;
+    name: string;
+};
+
 interface Props {
+    presets: Preset[];
     selectedPreset: string;
     expandedPanels: string[];
     presetMenuAnchorEl: null | HTMLElement;
@@ -34,36 +25,22 @@ interface Props {
     onOpenPresetModal: () => void;
 }
 
-const presets = [
-    { id: 'preset1', name: 'My Preset 1' },
-    { id: 'preset2', name: 'My Preset 2' },
-    { id: 'preset3', name: 'My Preset 3' },
-];
+// Static `presets` array has been removed.
 
 export default function HBulkPreset(props: Props) {
     const typography = useHonchoTypography();
     const colors = useColors();
     const isMenuOpen = Boolean(props.presetMenuAnchorEl);
-    
+
     const isPanelExpanded = (panelName: string) => props.expandedPanels.includes(panelName);
-    
+
     const accordionStyle = {
         backgroundColor: colors.onBackground,
         color: colors.surface,
-        '& .MuiAccordionSummary-root': {
-            backgroundColor: colors.onBackground,
-            color: colors.surface,
-        },
-        '& .MuiAccordionDetails-root': {
-            backgroundColor: colors.onBackground,
-            color: colors.surface,
-        },
-        '& .MuiTypography-root': {
-            color: colors.surface,
-        },
-        '& .MuiSvgIcon-root': {
-            color: colors.surface,
-        }
+        '& .MuiAccordionSummary-root': { backgroundColor: colors.onBackground, color: colors.surface },
+        '& .MuiAccordionDetails-root': { backgroundColor: colors.onBackground, color: colors.surface },
+        '& .MuiTypography-root': { color: colors.surface },
+        '& .MuiSvgIcon-root': { color: colors.surface }
     };
 
     const CustomSelectIcon = (iconProps: { className?: string }) => {
@@ -104,56 +81,32 @@ export default function HBulkPreset(props: Props) {
                                 onChange={props.onSelectPreset}
                                 IconComponent={CustomSelectIcon}
                                 renderValue={(selectedId) => {
-                                    const selectedPresetObject = presets.find(p => p.id === selectedId);
+                                    // Uses props.presets to find the name
+                                    const selectedPresetObject = props.presets.find(p => p.id === selectedId);
                                     if (!selectedPresetObject) {
                                         return <Typography sx={{ ...typography.bodyMedium }}>Select</Typography>;
                                     }
                                     return <Typography sx={{ ...typography.bodyMedium }}>{selectedPresetObject.name}</Typography>;
                                 }}
                                 MenuProps={{
-                                    slotProps: {
-                                        paper: {
-                                            sx: {
-                                                backgroundColor: colors.onBackground,
-                                                color: colors.surface,
-                                                border: `1px solid ${colors.onSurfaceVariant1}`,
-                                                mt: '20px',
-                                                width: '178px',
-                                            }
-                                        }
-                                    }
+                                    slotProps: { paper: { sx: { backgroundColor: colors.onBackground, color: colors.surface, border: `1px solid ${colors.onSurfaceVariant1}`, mt: '20px', width: '178px' } } }
                                 }}
                                 sx={{ border: `1px solid ${colors.outlineVariant}`, height: '44px', width: '178px'}}
                             >
-                                {presets.map((preset) => (
+                                {/* Maps over props.presets */}
+                                {props.presets.map((preset) => (
                                     <MenuItem key={preset.id} value={preset.id} sx={{ borderRadius: '4px', py: '4px', my: '0px', px: '0px', mx: '0px'}}>
                                         <Stack direction="row" justifyContent="space-around" alignItems="center" sx={{ width: '100%', py: '0px', px: '0px', mx: '0px', my: '4px'}}>
                                             <CardMedia
                                                 component="img"
                                                 image="v1/svg/check-ratio-editor.svg"
-                                                sx={{ 
-                                                    width: "20px", 
-                                                    height: "20px",
-                                                    mr: '-16px',
-                                                    px: '0px',
-                                                    visibility: props.selectedPreset === preset.id ? 'visible' : 'hidden' 
-                                                }}
+                                                sx={{ width: "20px", height: "20px", mr: '-16px', px: '0px', visibility: props.selectedPreset === preset.id ? 'visible' : 'hidden' }}
                                             />
-                                            <Typography sx={{
-                                                width: '24px',
-                                                textWrap: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                display: 'block',
-                                                color: colors.surface,
-                                                pr: "82px",
-                                                pl: "0px",
-                                                ml: "0px",
-                                                justifyContent: 'flex-start',
-                                                ...typography.bodyMedium
-                                            }}>{preset.name}</Typography>
-                                            <IconButton 
-                                                aria-label={`Options for ${preset.name}`} 
+                                            <Typography sx={{ width: '24px', textWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block', color: colors.surface, pr: "82px", pl: "0px", ml: "0px", justifyContent: 'flex-start', ...typography.bodyMedium }}>
+                                                {preset.name}
+                                            </Typography>
+                                            <IconButton
+                                                aria-label={`Options for ${preset.name}`}
                                                 onClick={(event) => props.onPresetMenuClick(event, preset.id)}
                                                 sx={{ padding: "0px", margin: "0px", mr: "0px" }}
                                             >
@@ -163,9 +116,9 @@ export default function HBulkPreset(props: Props) {
                                     </MenuItem>
                                 ))}
                                 <Box sx={{ px: '16px', my: '8px'}}>
-                                    <Button 
+                                    <Button
                                         fullWidth
-                                        variant="outlined" 
+                                        variant="outlined"
                                         sx={{ ...typography.labelMedium, height: '40px', color: colors.onBackground, backgroundColor: colors.surface, borderRadius: '100px', borderColor: colors.surface, textTransform: 'none', '&:hover': { backgroundColor: '#e0e0e0', borderColor: colors.surface } }}
                                         onClick={props.onOpenPresetModal}
                                     >
@@ -179,4 +132,4 @@ export default function HBulkPreset(props: Props) {
             </Stack>
         </>
     )
-}                                    
+}

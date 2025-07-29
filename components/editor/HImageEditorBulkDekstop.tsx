@@ -65,13 +65,13 @@ export default function HImageEditorBulkDekstop(props: Props) {
                                     sx={{ width: "20px", height: "20px" }}
                                 />
                             </IconButton>
-                            <IconButton onClick={() => props.setActivePanel('aspectRatio')}>
+                            {/* <IconButton onClick={() => props.setActivePanel('aspectRatio')}>
                                 <CardMedia
                                     component="img"
                                     image={props.activePanel === 'aspectRatio' ? "/v1/svg/crop-editor-active.svg" : "/v1/svg/crop-editor-inactive.svg"}
                                     sx={{ width: "20px", height: "20px" }}
                                 />
-                            </IconButton>
+                            </IconButton> */}
                             <IconButton onClick={() => props.setActivePanel('preset')}>
                                 <CardMedia
                                     component="img"

@@ -48,7 +48,7 @@ export default function HAccordionLight(props: Props) {
                             id="filled-hidden-label-small"
                             value={formatValue(props.ExposureScore)}
                             variant="filled"
-                            onChange={(e) => handleInputChange(e, -5, 5, props.onExposureChange)}
+                            onChange={(e) => handleInputChange(e, -100, 100, props.onExposureChange)}
                             sx={{
                                 width: "40px", 
                                 height: "10px", 
@@ -109,9 +109,9 @@ export default function HAccordionLight(props: Props) {
                         }}
                         size="small"
                         value={props.ExposureScore}
-                        step={0.1}
-                        min={-5}
-                        max={5}
+                        step={1}
+                        min={-100}
+                        max={100}
                         onChange={(_event, newValue) => props.onExposureChange(newValue as number)} // Add onChange
                     />
                 </Stack>

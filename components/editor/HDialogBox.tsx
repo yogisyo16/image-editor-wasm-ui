@@ -11,8 +11,9 @@ import React, {ReactElement} from "react";
 import {CloseOutlined} from "@mui/icons-material";
 
 interface Props {
+    open: boolean;
     title: React.ReactNode
-    description: React.ReactNode | ReactElement;
+    description?: React.ReactNode | ReactElement;
     onClose?: () => void;
     action?: React.ReactNode
 }
@@ -23,8 +24,8 @@ export function HBaseDialog(props: Props) {
     return (
         <Dialog
             disableScrollLock
-            open={true}
-            onClose={() => {}}
+            open={props.open}
+            onClose={props.onClose}
             aria-labelledby="responsive-dialog-title"
             PaperProps={{
                 sx: {
@@ -36,8 +37,9 @@ export function HBaseDialog(props: Props) {
             }}>
             <DialogContent
                 sx={{ padding: { xs: "24px 24px 0 24px", sm: "24 24px 0 24px" } }}>
-                <Stack spacing={2} direction="column">
+                <Stack spacing={0} direction="column">
                     <Stack direction={"row"} alignItems="center" justifyContent="space-between">
+                        <Typography></Typography>
                         <Typography
                             color={colors.onSurface}
                             variant="labelLarge">
@@ -54,7 +56,7 @@ export function HBaseDialog(props: Props) {
                 </Stack>
             </DialogContent>
             {props.action && (
-                <DialogActions sx={{ padding: 3 }}>
+                <DialogActions sx={{ padding: { xs: "0 24px 24px 24px", sm: "0 24px 24px 24px" } }}>
                     <Stack
                         direction="row"
                         justifyContent="end"

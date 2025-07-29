@@ -3,18 +3,19 @@ import {Typography, Stack, IconButton, CardMedia, Button} from "@mui/material";
 import useColors from "@/colors";
 import useHonchoTypography from "@/honchoTheme";
 
+type Preset = {
+    id: string;
+    name: string;
+};
+
 interface Props {
+    presets: Preset[]; // Prop to receive presets from the hook
     onOpenPresetModal: () => void;
     selectedPreset: string | null;
     onSelectPreset: (id: string) => void;
-    // For myPreset or preset name will hit API
 }
 
-const presets = [
-    { id: 'preset1', name: 'My Preset 1' },
-    { id: 'preset2', name: 'My Preset 2' },
-    { id: 'preset3', name: 'My Preset 3' },
-];
+// Static `presets` array has been removed.
 
 export default function HTabPresetMobile (props: Props){
     const typography = useHonchoTypography();
@@ -23,7 +24,8 @@ export default function HTabPresetMobile (props: Props){
     return(
         <>
             <Stack direction="column" spacing={0} sx={{ px: "0px", mx: "0px" }}>
-                {presets.map((preset) => (
+                {/* Maps over props.presets */}
+                {props.presets.map((preset) => (
                     <Stack key={preset.id} direction="row" alignItems="center" justifyContent="space-between">
                         <Button
                             sx={{ ...typography.bodyMedium, color: colors.surface, justifyContent: 'flex-start', flexGrow: 1, textTransform: 'none' }}
@@ -49,8 +51,8 @@ export default function HTabPresetMobile (props: Props){
                         </Stack>
                     </Stack>
                 ))}
-                <Button 
-                    variant="text" 
+                <Button
+                    variant="text"
                     sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px", mt: "12px", textTransform: 'none' }}
                     onClick={props.onOpenPresetModal}
                 >

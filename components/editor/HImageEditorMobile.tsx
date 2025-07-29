@@ -5,8 +5,14 @@ import useHonchoTypography from "@/honchoTheme";
 import HTabColorAdjustmentMobile from "./HTabColorAdjustmentMobile";
 import HTabPresetMobile from "./HTabPresetMobile";
 
+type Preset = {
+    id: string;
+    name: string;
+};
+
 interface Props {
     // EachPanel
+    presets: Preset[];
     activePanel: string;
     activeSubPanel: string;
     setActivePanel: (tab: string) => void;

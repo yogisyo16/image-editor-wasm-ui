@@ -38,6 +38,13 @@ export default function HAccordionColor(props: Props) {
     // The gradient for the *entire* background of the slider bar
     const fullTrackGradient = `linear-gradient(to right, ${greyScaleStart} 0%, ${greyScaleEnd} 50%, ${colorStops})`;
 
+    const focusedInputStyle = {
+        backgroundColor: "#1C1B1FB2",
+        borderRadius: '5px 5px 0px 0px',
+        borderBottom: 'none',
+        pl: '2px',
+    };
+
     const formatValue = (value: number) => {
         if (value > 0) return `+${value}`;
         return value.toString();
@@ -55,7 +62,7 @@ export default function HAccordionColor(props: Props) {
     return(
         <>
             <Stack>
-                <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Temperature</Typography>
                         <TextField
@@ -64,6 +71,7 @@ export default function HAccordionColor(props: Props) {
                             value={formatValue(props.TempScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onTempChange)}
+                            className="control-label"
                             sx={{
                                 width: "40px", 
                                 height: "10px", 
@@ -94,16 +102,6 @@ export default function HAccordionColor(props: Props) {
                                     color: colors.surface,
                                     fontSize: "14px",
                                 },
-                                '& .Mui-focused' : {
-                                    '& .MuiFilledInput-input': {
-                                        backgroundColor: "#1C1B1FB2",
-                                        textAlign: 'right',
-                                        borderRadius: '5px 5px 0px 0px',
-                                        borderBottom: 'none',
-                                        // pr: '8px',
-                                        pl: '2px',
-                                    }
-                                }
                             }}/>
                     </Stack>
                     <Slider
@@ -118,7 +116,7 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .MuiSlider-thumb:hover': {
+                            '& .MuiSlider-thumb': {
                                 boxShadow: 'none',   
                             }
                         }}
@@ -128,9 +126,10 @@ export default function HAccordionColor(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onTempChange(newValue as number)}
+                        onDoubleClick={() => props.onTempChange(0)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Tint</Typography>
                         <TextField
@@ -169,16 +168,6 @@ export default function HAccordionColor(props: Props) {
                                     color: colors.surface,
                                     fontSize: "14px",
                                 },
-                                '& .Mui-focused' : {
-                                    '& .MuiFilledInput-input': {
-                                        backgroundColor: "#1C1B1FB2",
-                                        textAlign: 'right',
-                                        borderRadius: '5px 5px 0px 0px',
-                                        borderBottom: 'none',
-                                        // pr: '8px',
-                                        pl: '2px',
-                                    }
-                                }
                             }}/>
                     </Stack>
                     <Slider
@@ -193,7 +182,7 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .MuiSlider-thumb:hover': {
+                            '& .MuiSlider-thumb': {
                                 boxShadow: 'none',   
                             }
                         }}
@@ -203,9 +192,10 @@ export default function HAccordionColor(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onTintChange(newValue as number)}
+                        onDoubleClick={() => props.onTintChange(0)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Saturation</Typography>
                         <TextField
@@ -244,16 +234,6 @@ export default function HAccordionColor(props: Props) {
                                         color: colors.surface,
                                         fontSize: "14px",
                                     },
-                                    '& .Mui-focused' : {
-                                        '& .MuiFilledInput-input': {
-                                            backgroundColor: "#1C1B1FB2",
-                                            textAlign: 'right',
-                                            borderRadius: '5px 5px 0px 0px',
-                                            borderBottom: 'none',
-                                            // pr: '8px',
-                                            pl: '2px',
-                                        }
-                                    }
                                 }}/>
                     </Stack>
                     <Slider
@@ -268,7 +248,7 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .MuiSlider-thumb:hover': {
+                            '& .MuiSlider-thumb': {
                                 boxShadow: 'none',   
                             }
                         }}
@@ -278,6 +258,7 @@ export default function HAccordionColor(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onSaturationChange(newValue as number)}
+                        onDoubleClick={() => props.onSaturationChange(0)}
                     />
                 </Stack>
             </Stack>
