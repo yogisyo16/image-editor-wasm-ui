@@ -27,6 +27,13 @@ export default function HAccordionLight(props: Props) {
         if (value > 0) return `+${value}`;
         return value.toString();
     };
+
+    const focusedInputStyle = {
+        backgroundColor: "#1C1B1FB2",
+        borderRadius: '5px 5px 0px 0px',
+        borderBottom: 'none',
+        pl: '2px',
+    };
     
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, min: number, max: number, onChange: (value: number) => void) => {
         const value = event.target.value;
@@ -40,7 +47,7 @@ export default function HAccordionLight(props: Props) {
     return (
         <>
             <Stack>
-                <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Exposure</Typography>
                         <TextField
@@ -48,7 +55,7 @@ export default function HAccordionLight(props: Props) {
                             id="filled-hidden-label-small"
                             value={formatValue(props.ExposureScore)}
                             variant="filled"
-                            onChange={(e) => handleInputChange(e, -5, 5, props.onExposureChange)}
+                            onChange={(e) => handleInputChange(e, -100, 100, props.onExposureChange)}
                             sx={{
                                 width: "40px", 
                                 height: "10px", 
@@ -109,13 +116,13 @@ export default function HAccordionLight(props: Props) {
                         }}
                         size="small"
                         value={props.ExposureScore}
-                        step={0.1}
-                        min={-5}
-                        max={5}
+                        step={1}
+                        min={-100}
+                        max={100}
                         onChange={(_event, newValue) => props.onExposureChange(newValue as number)} // Add onChange
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Contrast</Typography>
                         <TextField
@@ -190,7 +197,7 @@ export default function HAccordionLight(props: Props) {
                         onChange={(_event, newValue) => props.onContrastChange(newValue as number)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Highlights</Typography>
                         <TextField
@@ -265,7 +272,7 @@ export default function HAccordionLight(props: Props) {
                         onChange={(_event, newValue) => props.onHighlightsChange(newValue as number)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Shadows</Typography>
                         <TextField
@@ -340,7 +347,7 @@ export default function HAccordionLight(props: Props) {
                         onChange={(_event, newValue) => props.onShadowsChange(newValue as number)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Whites</Typography>
                         <TextField
@@ -415,7 +422,7 @@ export default function HAccordionLight(props: Props) {
                         onChange={(_event, newValue) => props.onWhitesChange(newValue as number)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px'}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography sx={{...typography.bodyMedium}}>Blacks</Typography>
                         <TextField

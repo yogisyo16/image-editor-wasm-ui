@@ -3,7 +3,13 @@ import { Box, Accordion, AccordionDetails , AccordionSummary, Button, Stack, Typ
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
+type Preset = {
+    id: string;
+    name: string;
+};
+
 interface Props {
+    presets: Preset[]; // --- Updated to accept presets as a prop ---
     expandedPanels: string[];
     selectedPreset: string | null;
     presetMenuAnchorEl: null | HTMLElement;
@@ -19,11 +25,7 @@ interface Props {
     onDeletePreset: () => void;
 }
 
-const presets = [
-    { id: 'preset1', name: 'My Preset 1' },
-    { id: 'preset2', name: 'My Preset 2' },
-    { id: 'preset3', name: 'My Preset 3' },
-];
+// --- The static presets array has been REMOVED from this component ---
 
 export default function HAccordionPreset(props: Props) {
     const typography = useHonchoTypography();
@@ -72,10 +74,8 @@ export default function HAccordionPreset(props: Props) {
                     </AccordionSummary>
                     <AccordionDetails sx={{ pr: '10px' }}>
                         <Stack direction="column" gap="8px" sx={{pt: '0px', pb: '0px', mx: '0px', width: '100%'}}>
-                            {presets.map((preset) => (
+                            {props.presets.map((preset) => (
                                 <Stack key={preset.id} direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
-                                    
-                                    {/* Unselected Preset Button */}
                                     {props.selectedPreset != preset.id && (
                                         <Button
                                             sx={{
@@ -97,8 +97,6 @@ export default function HAccordionPreset(props: Props) {
                                             {preset.name}
                                         </Button>
                                     )}
-                                    
-                                    {/* Selected Preset Button */}
                                     {props.selectedPreset === preset.id && (
                                         <Button
                                             sx={{
@@ -119,8 +117,6 @@ export default function HAccordionPreset(props: Props) {
                                             {preset.name}
                                         </Button>
                                     )}
-
-                                    {/* Options Button check and dots */}
                                     <Stack direction="row" alignItems="center" spacing={1}>
                                         {props.selectedPreset === preset.id && (
                                             <CardMedia
@@ -140,10 +136,10 @@ export default function HAccordionPreset(props: Props) {
                                     </Stack>
                                 </Stack>
                             ))}
-                        <Button 
-                            variant="text" 
-                            sx={{ color: colors.surface, border: "1px solid", 
-                                borderColor: colors.surface, 
+                        <Button
+                            variant="text"
+                            sx={{ color: colors.surface, border: "1px solid",
+                                borderColor: colors.surface,
                                 borderRadius: "40px",
                                 textTransform: 'none',
                             }}
@@ -172,10 +168,10 @@ export default function HAccordionPreset(props: Props) {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Stack direction="column">
-                            <Stack 
-                                direction="row" 
-                                justifyContent="space-between" 
-                                alignItems="center" 
+                            <Stack
+                                direction="row"
+                                justifyContent="space-between"
+                                alignItems="center"
                                 sx={{ width: '100%' }}
                             >
                                 <Typography color="initial">Jonathan</Typography>
@@ -183,17 +179,17 @@ export default function HAccordionPreset(props: Props) {
                                     aria-label="options"
                                     // onClick={handleMenuClick}
                                 >
-                                    <CardMedia 
-                                        component="img" 
-                                        image="/v1/svg/dots-editor.svg" 
+                                    <CardMedia
+                                        component="img"
+                                        image="/v1/svg/dots-editor.svg"
                                         alt="Options"
                                     />
                                 </IconButton>
                             </Stack>
                             <Stack
-                                direction="row" 
-                                justifyContent="space-between" 
-                                alignItems="center" 
+                                direction="row"
+                                justifyContent="space-between"
+                                alignItems="center"
                                 sx={{ width: '100%' }}
                             >
                                 <Typography color="initial">Jonathan</Typography>
@@ -201,15 +197,15 @@ export default function HAccordionPreset(props: Props) {
                                     aria-label="options"
                                     // onClick={handleMenuClick}
                                 >
-                                    <CardMedia 
-                                        component="img" 
-                                        image="/v1/svg/dots-editor.svg" 
+                                    <CardMedia
+                                        component="img"
+                                        image="/v1/svg/dots-editor.svg"
                                         alt="Options"
                                     />
                                 </IconButton>
                             </Stack>
-                            <Button 
-                                variant="text" 
+                            <Button
+                                variant="text"
                                 sx={{ color: colors.surface, border: "1px solid" ,borderColor: colors.surface, borderRadius: "40px", textTransform: 'none', }}
                                 onClick={props.onOpenWatermarkView}
                             >

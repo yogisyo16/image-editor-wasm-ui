@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { roboto } from "@/theme/fonts"; // Import from your new fonts file
-import ThemeRegistry from "@/theme/themeRegistry"; // Import the registry
 
 export const metadata: Metadata = {
   title: "Honcho Editor",
@@ -16,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.className}>
-        {/* <ThemeRegistry> */}
           {children}
-        {/* </ThemeRegistry> */}
       </body>
     </html>
   );

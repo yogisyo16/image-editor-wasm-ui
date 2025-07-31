@@ -7,6 +7,7 @@ import useIsMobile from "@/utils/isMobile";
 interface Props {
     anchorEl: null | HTMLElement;
     valueSelect: string;
+    isPasteEnabled: boolean;
     onBack: () => void;
     onUndo: () => void;
     onRedo: () => void;
@@ -95,15 +96,13 @@ export default function HHeaderEditor(props: Props) {
                             <CardMedia component="img" image="/v1/svg/shortcut-copy-editor.svg" sx={{ width: "25px", height: "20px" }} />
                         </ListItemIcon>
                     </MenuItem>
-                    <MenuItem onClick={props.onPasteEdit} disabled>
-                        {/* Should be align left and more closer with ListItemText*/}
+                    <MenuItem onClick={props.onPasteEdit} disabled={!props.isPasteEnabled}>
                         <ListItemIcon sx={{ minWidth: 0, mr: "0px", px: "0px" }}>
-                            <CardMedia component="img" image="/v1/svg/paste-editor.svg" sx={{ width: "20px", height: "20px" }} />
+                            <CardMedia component="img" image={!props.isPasteEnabled ? "/v1/svg/paste-editor.svg" : "/v1/svg/paste-white.svg"} sx={{ width: "20px", height: "20px" }} />
                         </ListItemIcon>
                         <ListItemText>
-                            <Typography sx={{ fontSize: "14px", color: colors.onSurfaceVariant1 }}>Paste edits</Typography>
+                            <Typography sx={{ fontSize: "14px", color: !props.isPasteEnabled ? colors.onSurfaceVariant1 : colors.surface }}>Paste edits</Typography>
                         </ListItemText>
-                        {/* Should be align right */}
                         <ListItemIcon sx={{ marginLeft: '30px' }}>
                             <CardMedia component="img" image="/v1/svg/shortcut-paste-editor.svg" sx={{ width: "25px", height: "20px" }} />
                         </ListItemIcon>

@@ -8,6 +8,7 @@ interface Props {
     onScale: (event: React.MouseEvent<HTMLElement>) => void;
     onBeforeAfter: () => void;
     onZoomMenuClose: () => void;
+    zoomLevelText: string;
     onZoomAction: (zoomLevel: string) => void;
 }
 
@@ -34,7 +35,7 @@ export default function HFooter(props: Props) {
                     }}
                     endIcon={<CardMedia component="img" image={isZoomMenuOpen ? "/v1/svg/expanded-editor.svg" : "/v1/svg/expand-editor.svg"} sx={{ width: "11.67px", height: "5.83px" }} />}
                 >
-                    100%
+                    {props.zoomLevelText}
                 </Button>
                 <IconButton aria-label="before-after" onClick={props.onBeforeAfter} sx={{ color: colors.outlineVariant }}>
                     <CardMedia component="img" title="before-after" image="/v1/svg/before-after-editor.svg" sx={{ width: "20px", height: "20px" }} />

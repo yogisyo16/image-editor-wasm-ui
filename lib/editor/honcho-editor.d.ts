@@ -3,7 +3,7 @@
     tint?: number;          // -100 to 100
     saturation?: number;    // -100 to 100
     vibrance?: number;      // -100 to 100
-    exposure?: number;      // -5 to 5
+    exposure?: number;      // -100 to 100
     contrast?: number;      // -100 to 100
     highlights?: number;    // -100 to 100
     shadows?: number;       // -100 to 100
@@ -62,8 +62,8 @@ export declare const ADJUSTMENT_RANGES: AdjustmentRanges;
 export declare class HonchoEditor {
     constructor();
     
-    // Initialization
-    initialize(): Promise<boolean>;
+    // Initialization - must be called before any other methods
+    initialize(verbose?: boolean): Promise<boolean>;
     
     // Image Loading
     loadImageFromFile(file: File): Promise<ImageSize>;
@@ -93,6 +93,20 @@ export declare class HonchoEditor {
     
     // Manual processing trigger - call this after setting adjustments
     processImage(): void;
+    
+    // Frame functionality
+    setFrame(frameData: Uint8Array, frameWidth: number, frameHeight: number, frameChannels: number): boolean;
+    setFrameFromImageData(frameImageData: ImageData): boolean;
+    setFrameFromCanvas(frameCanvas: HTMLCanvasElement): boolean;
+    clearFrame(): void;
+    hasFrame(): boolean;
+    
+    // Convenience methods
+    processImageOneShot(
+        imageSource: File | ImageData | HTMLImageElement,
+        adjustments?: Partial<AdjustmentValues>,
+        frameSource?: File | ImageData | HTMLImageElement | null
+    ): Promise<ImageData>;
     
     // Rendering
     renderToCanvas(canvas: HTMLCanvasElement): void;  // GPU path <1ms

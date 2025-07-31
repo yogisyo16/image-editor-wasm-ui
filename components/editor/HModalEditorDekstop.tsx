@@ -15,6 +15,8 @@ interface Props {
 
 // Create modal for any usage coverage
 export default function HModalEditorDekstop(props: Props) {
+    const colors = useColors();
+    const typography = useHonchoTypography();
     const style = {
         position: 'absolute',
         top: '50%',
@@ -44,10 +46,10 @@ export default function HModalEditorDekstop(props: Props) {
                         {props.children}
                     </Box>
                     <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: 'flex-end' }}>
-                        <Button onClick={props.modalClose}>
+                        <Button sx={{ ...typography.labelMedium, color: colors.onSurface, backgroundColor: colors.surface, }} onClick={props.modalClose}>
                             Cancel
                         </Button>
-                        <Button onClick={props.onConfirm}>
+                        <Button sx={{ ...typography.labelMedium, color: colors.onSurface, backgroundColor: colors.surface, }} onClick={props.onConfirm}>
                             Save
                         </Button>
                     </Stack>
