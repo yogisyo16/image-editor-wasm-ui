@@ -4,12 +4,18 @@ import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
 interface Props {
-    tempScore: number;
-    tintScore: number;
-    saturationScore: number;
-    onTempChange: (value: number) => void;
-    onTintChange: (value: number) => void;
-    onSaturationChange: (value: number) => void;
+    onTempDecreaseMax: () => void;
+    onTempDecrease: () => void;
+    onTempIncrease: () => void;
+    onTempIncreaseMax: () => void;
+    onTintDecreaseMax: () => void;
+    onTintDecrease: () => void;
+    onTintIncrease: () => void;
+    onTintIncreaseMax: () => void;
+    onSaturationDecreaseMax: () => void;
+    onSaturationDecrease: () => void;
+    onSaturationIncrease: () => void;
+    onSaturationIncreaseMax: () => void;
 }
 
 export default function HBulkColorMobile(props: Props) {
@@ -18,12 +24,12 @@ export default function HBulkColorMobile(props: Props) {
 
     return(
         <>
-            <Stack spacing={0} direction="column" justifyContent="center" alignItems="flex-start" sx={{ width: '100%', pl: "10px", m: "0px" }}>
+            <Stack spacing={0} direction="column" sx={{ width: '100%', pl: "10px", m: "0px" }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: "6px" }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Temperature</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "16px" }}>
-                    <IconButton value={props.tempScore}
+                    <IconButton onClick={props.onTempDecreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -34,7 +40,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ width: "20px", height: "20px", mr: "2px" }}/>
                     </IconButton>
-                    <IconButton value={props.tempScore}
+                    <IconButton onClick={props.onTempDecrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -45,7 +51,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ width: "20px", height: "20px", mr: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.tempScore}
+                    <IconButton onClick={props.onTempIncrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -56,7 +62,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ width: "20px", height: "20px", ml: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.tempScore}
+                    <IconButton onClick={props.onTempIncreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -72,7 +78,7 @@ export default function HBulkColorMobile(props: Props) {
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Tint</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "16px" }}>
-                    <IconButton value={props.tintScore}
+                    <IconButton onClick={props.onTintDecreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -83,7 +89,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ width: "20px", height: "20px", mr: "2px" }}/>
                     </IconButton>
-                    <IconButton value={props.tintScore}
+                    <IconButton onClick={props.onTintDecrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -94,7 +100,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ width: "20px", height: "20px", mr: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.tintScore}
+                    <IconButton onClick={props.onTintIncrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -105,7 +111,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ width: "20px", height: "20px", ml: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.tintScore}
+                    <IconButton onClick={props.onTintIncreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -121,7 +127,7 @@ export default function HBulkColorMobile(props: Props) {
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Saturation</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "16px" }}>
-                    <IconButton value={props.saturationScore}
+                    <IconButton onClick={props.onSaturationDecreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -132,7 +138,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ width: "20px", height: "20px", mr: "2px" }}/>
                     </IconButton>
-                    <IconButton value={props.saturationScore}
+                    <IconButton onClick={props.onSaturationDecrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -143,7 +149,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ width: "20px", height: "20px", mr: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.saturationScore}
+                    <IconButton onClick={props.onSaturationIncrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -154,7 +160,7 @@ export default function HBulkColorMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ width: "20px", height: "20px", ml: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.saturationScore}
+                    <IconButton onClick={props.onSaturationIncreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",

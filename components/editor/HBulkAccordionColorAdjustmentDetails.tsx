@@ -4,11 +4,17 @@ import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
 interface Props {
-    adjustClarity: (amount: number) => void;
-    adjustSharpness: (amount: number) => void;
+    onClarityDecreaseMax: () => void;
+    onClarityDecrease: () => void;
+    onClarityIncrease: () => void;
+    onClarityIncreaseMax: () => void;
+    onSharpnessDecreaseMax: () => void;
+    onSharpnessDecrease: () => void;
+    onSharpnessIncrease: () => void;
+    onSharpnessIncreaseMax: () => void;
 }
 
-export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) {
+export default function HBulkAccordionColorAdjustmentDetails(props: Props) {
     const typography = useHonchoTypography();
     const colors = useColors();
     
@@ -19,7 +25,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     <Typography sx={{...typography.bodyMedium}}>Clarity</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
-                    <IconButton onClick={() =>props.adjustClarity(-10)}
+                    <IconButton onClick={props.onClarityDecreaseMax}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -30,7 +36,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ mr: "2px" }}/>
                     </IconButton>
-                    <IconButton onClick={() =>props.adjustClarity(-1)}
+                    <IconButton onClick={props.onClarityDecrease}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -41,7 +47,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ mr: "3px" }}/>
                     </IconButton>
-                    <IconButton onClick={() =>props.adjustClarity(1)}
+                    <IconButton onClick={props.onClarityIncrease}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -52,7 +58,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ml: "3px" }}/>
                     </IconButton>
-                    <IconButton onClick={() =>props.adjustClarity(10)}
+                    <IconButton onClick={props.onClarityIncreaseMax}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -68,7 +74,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     <Typography sx={{...typography.bodyMedium}}>Sharpness</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
-                    <IconButton onClick={() =>props.adjustSharpness(-10)}
+                    <IconButton onClick={props.onSharpnessDecreaseMax}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -79,7 +85,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ mr: "2px" }}/>
                     </IconButton>
-                    <IconButton onClick={() =>props.adjustSharpness(-1)}
+                    <IconButton onClick={props.onSharpnessDecrease}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -90,7 +96,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ mr: "3px" }}/>
                     </IconButton>
-                    <IconButton onClick={() =>props.adjustSharpness(1)}
+                    <IconButton onClick={props.onSharpnessIncrease}
                     sx={{
                         width: "38.5px",
                         height: "24px",
@@ -101,7 +107,7 @@ export default function HBulkAccordionColorAdjustmentWhiteBalance(props: Props) 
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ ml: "3px" }}/>
                     </IconButton>
-                    <IconButton onClick={() =>props.adjustSharpness(10)}
+                    <IconButton onClick={props.onSharpnessIncreaseMax}
                     sx={{
                         width: "38.5px",
                         height: "24px",

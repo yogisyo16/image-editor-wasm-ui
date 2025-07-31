@@ -6,28 +6,56 @@ import HBulkDetailsMobile from "./HBulkDetailsMobile";
 
 interface Props {
     activeSubPanel: string;
-    tempScore: number;
-    tintScore: number;
-    exposureScore: number;
-    highlightsScore: number;
-    shadowsScore: number;
-    whitesScore: number;
-    blacksScore: number;
-    saturationScore: number;
-    contrastScore: number;
-    clarityScore: number;
-    sharpnessScore: number;
-    onTempChange: (value: number) => void;
-    onTintChange: (value: number) => void;
-    onExposureChange: (value: number) => void;
-    onHighlightsChange: (value: number) => void;
-    onShadowsChange: (value: number) => void;
-    onWhitesChange: (value: number) => void;
-    onBlacksChange: (value: number) => void;
-    onSaturationChange: (value: number) => void;
-    onContrastChange: (value: number) => void;
-    onClarityChange: (value: number) => void;
-    onSharpnessChange: (value: number) => void;
+
+    // Adjustments Colors
+    onTempDecreaseMax: () => void;
+    onTempDecrease: () => void;
+    onTempIncrease: () => void;
+    onTempIncreaseMax: () => void;
+    onTintDecreaseMax: () => void;
+    onTintDecrease: () => void;
+    onTintIncrease: () => void;
+    onTintIncreaseMax: () => void;
+    onSaturationDecreaseMax: () => void;
+    onSaturationDecrease: () => void;
+    onSaturationIncrease: () => void;
+    onSaturationIncreaseMax: () => void;
+    
+    // Adjustments Light
+    onExposureDecreaseMax: () => void;
+    onExposureDecrease: () => void;
+    onExposureIncrease: () => void;
+    onExposureIncreaseMax: () => void;
+    onContrastDecreaseMax: () => void;
+    onContrastDecrease: () => void;
+    onContrastIncrease: () => void;
+    onContrastIncreaseMax: () => void;
+    onHighlightsDecreaseMax: () => void;
+    onHighlightsDecrease: () => void;
+    onHighlightsIncrease: () => void;
+    onHighlightsIncreaseMax: () => void;
+    onShadowsDecreaseMax: () => void;
+    onShadowsDecrease: () => void;
+    onShadowsIncrease: () => void;
+    onShadowsIncreaseMax: () => void;
+    onWhitesDecreaseMax: () => void;
+    onWhitesDecrease: () => void;
+    onWhitesIncrease: () => void;
+    onWhitesIncreaseMax: () => void;
+    onBlacksDecreaseMax: () => void;
+    onBlacksDecrease: () => void;
+    onBlacksIncrease: () => void;
+    onBlacksIncreaseMax: () => void;
+
+    // Adjustments Details
+    onClarityDecreaseMax: () => void;
+    onClarityDecrease: () => void;
+    onClarityIncrease: () => void;
+    onClarityIncreaseMax: () => void;
+    onSharpnessDecreaseMax: () => void;
+    onSharpnessDecrease: () => void;
+    onSharpnessIncrease: () => void;
+    onSharpnessIncreaseMax: () => void;
 }
 
 export default function HBulkColorAdjustmentMobile(props: Props) {
@@ -35,38 +63,60 @@ export default function HBulkColorAdjustmentMobile(props: Props) {
         case 'color':
             return (
                 <HBulkColorMobile
-                    tempScore={props.tempScore}
-                    tintScore={props.tintScore}
-                    onTempChange={props.onTempChange}
-                    onTintChange={props.onTintChange}
-                    saturationScore={props.saturationScore}
-                    onSaturationChange={props.onSaturationChange}
+                    onTempDecreaseMax={props.onTempDecreaseMax}
+                    onTempDecrease={props.onTempDecrease}
+                    onTempIncrease={props.onTempIncrease}
+                    onTempIncreaseMax={props.onTempIncreaseMax}
+                    onTintDecreaseMax={props.onTintDecreaseMax}
+                    onTintDecrease={props.onTintDecrease}
+                    onTintIncrease={props.onTintIncrease}
+                    onTintIncreaseMax={props.onTintIncreaseMax}
+                    onSaturationDecreaseMax={props.onSaturationDecreaseMax}
+                    onSaturationDecrease={props.onSaturationDecrease}
+                    onSaturationIncrease={props.onSaturationIncrease}
+                    onSaturationIncreaseMax={props.onSaturationIncreaseMax}
                 />
             );
         case 'light':
             return (
                 <HBulkLightMobile
-                    contrastScore={props.contrastScore}
-                    exposureScore={props.exposureScore}
-                    highlightsScore={props.highlightsScore}
-                    shadowsScore={props.shadowsScore}
-                    whitesScore={props.whitesScore}
-                    blacksScore={props.blacksScore}
-                    onExposureChange={props.onExposureChange}
-                    onContrastChange={props.onContrastChange}
-                    onHighlightsChange={props.onHighlightsChange}
-                    onShadowsChange={props.onShadowsChange}
-                    onWhitesChange={props.onWhitesChange}
-                    onBlacksChange={props.onBlacksChange}
+                    onExposureDecreaseMax= {props.onExposureDecreaseMax}
+                    onExposureDecrease= {props.onExposureDecrease}
+                    onExposureIncrease= {props.onExposureIncrease}
+                    onExposureIncreaseMax= {props.onExposureIncreaseMax}
+                    onContrastDecreaseMax= {props.onContrastDecreaseMax}
+                    onContrastDecrease= {props.onContrastDecrease}
+                    onContrastIncrease= {props.onContrastIncrease}
+                    onContrastIncreaseMax= {props.onContrastIncreaseMax}
+                    onHighlightsDecreaseMax= {props.onHighlightsDecreaseMax}
+                    onHighlightsDecrease= {props.onHighlightsDecrease}
+                    onHighlightsIncrease= {props.onHighlightsIncrease}
+                    onHighlightsIncreaseMax= {props.onHighlightsIncreaseMax}
+                    onShadowsDecreaseMax= {props.onShadowsDecreaseMax}
+                    onShadowsDecrease= {props.onShadowsDecrease}
+                    onShadowsIncrease= {props.onShadowsIncrease}
+                    onShadowsIncreaseMax= {props.onShadowsIncreaseMax}
+                    onWhitesDecreaseMax= {props.onWhitesDecreaseMax}
+                    onWhitesDecrease= {props.onWhitesDecrease}
+                    onWhitesIncrease= {props.onWhitesIncrease}
+                    onWhitesIncreaseMax= {props.onWhitesIncreaseMax}
+                    onBlacksDecreaseMax= {props.onBlacksDecreaseMax}
+                    onBlacksDecrease= {props.onBlacksDecrease}
+                    onBlacksIncrease= {props.onBlacksIncrease}
+                    onBlacksIncreaseMax= {props.onBlacksIncreaseMax}
                 />
             );
         case 'details':
             return (
                 <HBulkDetailsMobile
-                    clarityScore={props.clarityScore}
-                    sharpnessScore={props.sharpnessScore}
-                    onClarityChange={props.onClarityChange}
-                    onSharpnessChange={props.onSharpnessChange}
+                    onClarityDecreaseMax={props.onClarityDecreaseMax}
+                    onClarityDecrease={props.onClarityDecrease}
+                    onClarityIncrease={props.onClarityIncrease}
+                    onClarityIncreaseMax={props.onClarityIncreaseMax}
+                    onSharpnessDecreaseMax={props.onSharpnessDecreaseMax}
+                    onSharpnessDecrease={props.onSharpnessDecrease}
+                    onSharpnessIncrease={props.onSharpnessIncrease}
+                    onSharpnessIncreaseMax={props.onSharpnessIncreaseMax}
                 />
             );
         default:

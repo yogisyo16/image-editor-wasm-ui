@@ -7,6 +7,7 @@ import {
     Typography,
 } from "@mui/material";
 import useColors from "@/colors";
+import useHonchoTypography from "@/honchoTheme";
 import React, {ReactElement} from "react";
 import {CloseOutlined} from "@mui/icons-material";
 
@@ -66,6 +67,51 @@ export function HBaseDialog(props: Props) {
                     </Stack>
                 </DialogActions>
             )}
+        </Dialog>
+    );
+}
+
+export function HDialogForPreset(props: Props) {
+    const colors = useColors();
+    const typography = useHonchoTypography();
+
+    return (
+        <Dialog
+            disableScrollLock
+            open={props.open}
+            onClose={props.onClose}
+            aria-labelledby="responsive-dialog-title"
+            PaperProps={{
+                sx: {
+                    borderRadius: "28px",
+                    maxWidth: { xs: 328, sm: "456px", md: "456px" },
+                    //maxHeight: 306,
+                    margin: { xs: 0, sm: "auto" },
+                },
+            }}>
+            <DialogContent
+                sx={{ padding: { xs: "24px 24px 0 24px", sm: "24 24px 0 24px" } }}>
+                <Stack spacing={0} direction="column">
+                    <Stack direction={"row"} alignItems="center" justifyContent="space-between">
+                        <Typography
+                            color={colors.onSurface}
+                            sx={{ ...typography.labelLarge }}>
+                            {props.title}
+                        </Typography>
+                        {/* <CloseButton onClick={props.onClose}/> */}
+                    </Stack>
+                    <Stack direction="column" sx={{ pt: "12px" }}>
+                        <Typography
+                            variant="bodyMedium"
+                            color={colors.onSurface}>
+                            {props.description}
+                        </Typography>
+                        <Stack sx={{ pt: "20px", pb: "20px" }}>
+                            {props.action}
+                        </Stack>
+                    </Stack>
+                </Stack>
+            </DialogContent>
         </Dialog>
     );
 }

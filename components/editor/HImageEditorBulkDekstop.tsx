@@ -31,7 +31,7 @@ export default function HImageEditorBulkDekstop(props: Props) {
                         right: '30px',
                         top: '55px',
                         width: '320px',
-                        height: 'calc(100vh - 100px)',
+                        height: 'calc(100vh - 70px)',
                         zIndex: 1200,
                         backgroundColor: '#000000',
                         overflow: 'hidden'

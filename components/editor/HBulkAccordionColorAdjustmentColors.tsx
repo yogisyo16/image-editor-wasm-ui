@@ -4,9 +4,18 @@ import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
 interface Props {
-    tempScore: number;
-    tintScore: number;
-    saturationScore: number;
+    onTempDecreaseMax: () => void;
+    onTempDecrease: () => void;
+    onTempIncrease: () => void;
+    onTempIncreaseMax: () => void;
+    onTintDecreaseMax: () => void;
+    onTintDecrease: () => void;
+    onTintIncrease: () => void;
+    onTintIncreaseMax: () => void;
+    onSaturationDecreaseMax: () => void;
+    onSaturationDecrease: () => void;
+    onSaturationIncrease: () => void;
+    onSaturationIncreaseMax: () => void;
 }
 
 export default function HBulkAccordionColorAdjustmentColors(props: Props) {
@@ -21,7 +30,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
                     <IconButton
-                        value={props.tempScore}
+                        onClick={props.onTempDecreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -33,7 +42,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                             <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ mr: "2px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.tempScore}
+                        onClick={props.onTempDecrease}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -45,7 +54,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ mr: "3px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.tempScore}
+                        onClick={props.onTempIncrease}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -57,7 +66,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ml: "3px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.tempScore}
+                        onClick={props.onTempIncreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -74,7 +83,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
                     <IconButton 
-                        value={props.tintScore}
+                        onClick={props.onTintDecreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -86,7 +95,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ mr: "2px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.tintScore}
+                        onClick={props.onTintDecrease}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -98,7 +107,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ mr: "3px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.tintScore}
+                        onClick={props.onTintIncrease}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -110,7 +119,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ml: "3px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.tintScore}
+                        onClick={props.onTintIncreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -127,7 +136,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
                     <IconButton 
-                        value={props.saturationScore}
+                        onClick={props.onSaturationDecreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -139,7 +148,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ mr: "2px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.saturationScore}
+                        onClick={props.onSaturationDecrease}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -151,7 +160,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ mr: "3px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.saturationScore}
+                        onClick={props.onSaturationIncrease}
                         sx={{
                             width: "38.5px",
                             height: "26px",
@@ -163,7 +172,7 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ml: "3px" }}/>
                     </IconButton>
                     <IconButton 
-                        value={props.saturationScore}
+                        onClick={props.onSaturationIncreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",

@@ -7,7 +7,7 @@ import useIsMobile from "@/utils/isMobile";
 import HHeaderEditor from "@/components/editor/HHeaderEditor";
 import HAccordionColorAdjustment from "@/components/editor/HAccordionColorAdjustment";
 import HAccordionPreset from "@/components/editor/HAccordionPreset";
-import { HBaseDialog } from "@/components/editor/HDialogBox";
+import { HBaseDialog, HDialogForPreset } from "@/components/editor/HDialogBox";
 import { HDialogCopy } from "@/components/editor/HDialogCopy";
 import HImageEditorMobile from "@/components/editor/HImageEditorMobile";
 import HImageEditorDesktop from "@/components/editor/HImageEditorDekstop";
@@ -17,23 +17,44 @@ import HBulkAccordionColorAdjustment from "@/components/editor/HBulkAccordionCol
 import HBulkPreset from "@/components/editor/HBulkPreset";
 import HModalEditorDekstop from "@/components/editor/HModalEditorDekstop";
 import HFooter from "@/components/editor/HFooter";
-import HTextField from "@/components/editor/HTextField";
+import {HTextField, HTextFieldRename} from "@/components/editor/HTextField";
 import HWatermarkView from "@/components/editor/HWatermarkView";
 import HModalMobile from "@/components/editor/HModalMobile";
 import HPresetOptionsMenu from "@/components/editor/HPresetOptionMenu";
 import { HAlertInternetBox, HAlertCopyBox } from "@/components/editor/HAlertBox";
 // Hooks
 import { useHonchoEditor } from "@/hooks/editor/useHonchoEditor";
+// API Controller
+import { apiController } from "@/lib/api/editorController";
 
 export default function HImageEditor() {
-    const editor = useHonchoEditor();
+    // useMemo ensures the object is not recreated on every render.
+    // const mockController = useMemo((): Controller => ({
+    //     // This simulates fetching an image. For now, it does nothing and returns null.
+    //     // Later, this will contain your `fetch` logic.
+    //     onGetImage: async (imageID: string) => {
+    //         console.log(`[MockController] onGetImage called for ID: ${imageID}`);
+    //         // In the future, you would fetch the image from your API here and return it as a File object.
+    //         // For example:
+    //         // const response = await fetch(`https://yourapi.com/images/${imageID}`);
+    //         // const blob = await response.blob();
+    //         // return new File([blob], "image.jpg", { type: blob.type });
+    //         return null; // Returning null for now as the endpoint isn't ready.
+    //     },
+    //     // This simulates syncing configuration.
+    //     syncConfig: async () => {
+    //         console.log("[MockController] syncConfig called.");
+    //     },
+    // }), []);
+
+    const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
 
     // Dummy/placeholder handlers that remain in the component
     const handleScale = (event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget);
-    const handleZoomMenuClose = () => editor.setAnchorMenuZoom(null);
-    const handleZoomAction = (level: string) => { console.log(`Zoom: ${level}`); handleZoomMenuClose(); };
     const handleBeforeAfter = () => console.log("Before/After toggled!");
+    // const handleZoomMenuClose = () => editor.setAnchorMenuZoom(null);
+    // const handleZoomAction = (level: string) => { console.log(`Zoom: ${level}`); handleZoomMenuClose(); };
 
     const renderActivePanelBulk = () => {
         // MARK: Dekstop Bulk Editor panels
@@ -41,17 +62,55 @@ export default function HImageEditor() {
             case 'colorAdjustment':
                 return (
                     <HBulkAccordionColorAdjustment
-                        tempScore={editor.tempScore}
-                        tintScore={editor.tintScore}
-                        saturationScore={editor.saturationScore}
-                        exposureScore={editor.exposureScore}
-                        contrastScore={editor.contrastScore}
-                        whitesScore={editor.whitesScore}
-                        blacksScore={editor.blacksScore}
-                        highlightsScore={editor.highlightsScore}
-                        shadowsScore={editor.shadowsScore}
-                        adjustClarity={editor.adjustClarity}
-                        adjustSharpness={editor.adjustSharpness}
+                        // Adjustments Colors
+                        onTempDecreaseMax={editor.handleBulkTempDecreaseMax}
+                        onTempDecrease={editor.handleBulkTempDecrease}
+                        onTempIncrease={editor.handleBulkTempIncrease}
+                        onTempIncreaseMax={editor.handleBulkTempIncreaseMax}
+                        onTintDecreaseMax={editor.handleBulkTintDecreaseMax}
+                        onTintDecrease={editor.handleBulkTintDecrease}
+                        onTintIncrease={editor.handleBulkTintIncrease}
+                        onTintIncreaseMax={editor.handleBulkTintIncreaseMax}
+                        onSaturationDecreaseMax={editor.handleBulkSaturationDecreaseMax}
+                        onSaturationDecrease={editor.handleBulkSaturationDecrease}
+                        onSaturationIncrease={editor.handleBulkSaturationIncrease}
+                        onSaturationIncreaseMax={editor.handleBulkSaturationIncreaseMax}
+                        // Adjustments Light
+                        onExposureDecreaseMax= {editor.handleBulkExposureDecreaseMax}
+                        onExposureDecrease= {editor.handleBulkExposureDecrease}
+                        onExposureIncrease= {editor.handleBulkExposureIncrease}
+                        onExposureIncreaseMax= {editor.handleBulkExposureIncreaseMax}
+                        onContrastDecreaseMax= {editor.handleBulkContrastDecreaseMax}
+                        onContrastDecrease= {editor.handleBulkContrastDecrease}
+                        onContrastIncrease= {editor.handleBulkContrastIncrease}
+                        onContrastIncreaseMax= {editor.handleBulkContrastIncreaseMax}
+                        onHighlightsDecreaseMax= {editor.handleBulkHighlightsDecreaseMax}
+                        onHighlightsDecrease= {editor.handleBulkHighlightsDecrease}
+                        onHighlightsIncrease= {editor.handleBulkHighlightsIncrease}
+                        onHighlightsIncreaseMax= {editor.handleBulkHighlightsIncreaseMax}
+                        onShadowsDecreaseMax= {editor.handleBulkShadowsDecreaseMax}
+                        onShadowsDecrease= {editor.handleBulkShadowsDecrease}
+                        onShadowsIncrease= {editor.handleBulkShadowsIncrease}
+                        onShadowsIncreaseMax= {editor.handleBulkShadowsIncreaseMax}
+                        onWhitesDecreaseMax= {editor.handleBulkWhitesDecreaseMax}
+                        onWhitesDecrease= {editor.handleBulkWhitesDecrease}
+                        onWhitesIncrease= {editor.handleBulkWhitesIncrease}
+                        onWhitesIncreaseMax= {editor.handleBulkWhitesIncreaseMax}
+                        onBlacksDecreaseMax= {editor.handleBulkBlacksDecreaseMax}
+                        onBlacksDecrease= {editor.handleBulkBlacksDecrease}
+                        onBlacksIncrease= {editor.handleBulkBlacksIncrease}
+                        onBlacksIncreaseMax= {editor.handleBulkBlacksIncreaseMax}
+                        // Adjustments Details
+                        onClarityDecreaseMax={editor.handleBulkClarityDecreaseMax}
+                        onClarityDecrease={editor.handleBulkClarityDecrease}
+                        onClarityIncrease={editor.handleBulkClarityIncrease}
+                        onClarityIncreaseMax={editor.handleBulkClarityIncreaseMax}
+                        onSharpnessDecreaseMax={editor.handleBulkSharpnessDecreaseMax}
+                        onSharpnessDecrease={editor.handleBulkSharpnessDecrease}
+                        onSharpnessIncrease={editor.handleBulkSharpnessIncrease}
+                        onSharpnessIncreaseMax={editor.handleBulkSharpnessIncreaseMax}
+                        
+                        // Panels Management
                         expandedPanels={editor.colorAdjustmentExpandedPanels}
                         onPanelChange={editor.handleColorAccordionChange}
                     />
@@ -70,7 +129,7 @@ export default function HImageEditor() {
                         onPresetMenuClick={editor.handlePresetMenuClick}
                         onPresetMenuClose={editor.handlePresetMenuClose}
                         onRemovePreset={editor.handleRemovePreset}
-                        onRenamePreset={editor.handleRenamePreset}
+                        onRenamePreset={editor.handleOpenRenameModal}
                         onDeletePreset={editor.handleDeletePreset}
                         onOpenPresetModal={editor.handleOpenPresetModal}
                     />
@@ -126,7 +185,7 @@ export default function HImageEditor() {
                         onPresetMenuClose={editor.handlePresetMenuClose}
                         activePresetMenuId={editor.activePresetMenuId}
                         onRemovePreset={editor.handleRemovePreset}
-                        onRenamePreset={editor.handleRenamePreset}
+                        onRenamePreset={editor.handleOpenRenameModal}
                         onDeletePreset={editor.handleDeletePreset}
                     />
                 );
@@ -200,15 +259,16 @@ export default function HImageEditor() {
                             onBeforeAfter={handleBeforeAfter}
                             isPanelOpen={!isMobile}
                             anchorElZoom={editor.anchorMenuZoom}
-                            onZoomMenuClose={handleZoomMenuClose}
-                            onZoomAction={handleZoomAction}
+                            onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
+                            onZoomAction={editor.handleZoomAction}
                             footer={
                                 <HFooter
                                     anchorElZoom={editor.anchorMenuZoom}
-                                    onScale={handleScale}
-                                    onBeforeAfter={handleBeforeAfter}
-                                    onZoomMenuClose={handleZoomMenuClose}
-                                    onZoomAction={handleZoomAction}
+                                    onScale={(event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget)}
+                                    onBeforeAfter={() => console.log("Before/After toggled!")}
+                                    onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
+                                    onZoomAction={editor.handleZoomAction}
+                                    zoomLevelText={editor.zoomLevelText} 
                                 />
                             }
                         >
@@ -224,15 +284,16 @@ export default function HImageEditor() {
                             onBeforeAfter={handleBeforeAfter}
                             isPanelOpen={!isMobile}
                             anchorElZoom={editor.anchorMenuZoom}
-                            onZoomMenuClose={handleZoomMenuClose}
-                            onZoomAction={handleZoomAction}
+                            onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
+                            onZoomAction={editor.handleZoomAction}
                             footer={
                                 <HFooter
                                     anchorElZoom={editor.anchorMenuZoom}
-                                    onScale={handleScale}
-                                    onBeforeAfter={handleBeforeAfter}
-                                    onZoomMenuClose={handleZoomMenuClose}
-                                    onZoomAction={handleZoomAction}
+                                    onScale={(event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget)}
+                                    onBeforeAfter={() => console.log("Before/After toggled!")}
+                                    onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
+                                    onZoomAction={editor.handleZoomAction}
+                                    zoomLevelText={editor.zoomLevelText} 
                                 />
                             }
                         >
@@ -252,14 +313,19 @@ export default function HImageEditor() {
                             setActivePanel={(panel) => { editor.setActivePanel(panel); editor.setActiveSubPanel(''); }}
                             activeSubPanel={editor.activeSubPanel}
                             setActiveSubPanel={editor.setActiveSubPanel}
+                            
+                            // Color Adjustments
                             tempScore={editor.tempScore}
                             onTempChange={editor.setTempScore}
                             tintScore={editor.tintScore}
                             onTintChange={editor.setTintScore}
                             saturationScore={editor.saturationScore}
                             onSaturationChange={editor.setSaturationScore}
+                            // Adjustments Light
                             exposureScore={editor.exposureScore}
                             onExposureChange={editor.setExposureScore}
+                            contrastScore={editor.contrastScore}
+                            onContrastChange={editor.setContrastScore}
                             highlightsScore={editor.highlightsScore}
                             onHighlightsChange={editor.setHighlightsScore}
                             shadowScore={editor.shadowsScore}
@@ -268,12 +334,13 @@ export default function HImageEditor() {
                             onWhitesChange={editor.setWhitesScore}
                             blackScore={editor.blacksScore}
                             onBlacksChange={editor.setBlacksScore}
-                            contrastScore={editor.contrastScore}
-                            onContrastChange={editor.setContrastScore}
+                            // Adjustments Details
                             clarityScore={editor.clarityScore}
                             onClarityChange={editor.setClarityScore}
                             sharpnessScore={editor.sharpnessScore}
                             onSharpnessChange={editor.setSharpnessScore}
+                            
+                            // Modal Management
                             onOpenPresetModal={editor.handleOpenPresetModalMobile}
                             selectedPreset={editor.selectedMobilePreset}
                             onSelectPreset={editor.handleSelectMobilePreset}
@@ -291,28 +358,55 @@ export default function HImageEditor() {
                             setActivePanel={(panel) => { editor.setActivePanel(panel); editor.setActiveSubPanel(''); }}
                             activeSubPanel={editor.activeSubPanel}
                             setActiveSubPanel={editor.setActiveSubPanel}
-                            tempScore={editor.tempScore}
-                            onTempChange={editor.setTempScore}
-                            tintScore={editor.tintScore}
-                            onTintChange={editor.setTintScore}
-                            saturationScore={editor.saturationScore}
-                            onSaturationChange={editor.setSaturationScore}
-                            exposureScore={editor.exposureScore}
-                            onExposureChange={editor.setExposureScore}
-                            highlightsScore={editor.highlightsScore}
-                            onHighlightsChange={editor.setHighlightsScore}
-                            shadowsScore={editor.shadowsScore}
-                            onShadowsChange={editor.setShadowsScore}
-                            whitesScore={editor.whitesScore}
-                            onWhitesChange={editor.setWhitesScore}
-                            blacksScore={editor.blacksScore}
-                            onBlacksChange={editor.setBlacksScore}
-                            contrastScore={editor.contrastScore}
-                            onContrastChange={editor.setContrastScore}
-                            clarityScore={editor.clarityScore}
-                            onClarityChange={editor.setClarityScore}
-                            sharpnessScore={editor.sharpnessScore}
-                            onSharpnessChange={editor.setSharpnessScore}
+                            
+                            // Color Adjustments
+                            onTempDecreaseMax={editor.handleBulkTempDecreaseMax}
+                            onTempDecrease={editor.handleBulkTempDecrease}
+                            onTempIncrease={editor.handleBulkTempIncrease}
+                            onTempIncreaseMax={editor.handleBulkTempIncreaseMax}
+                            onTintDecreaseMax={editor.handleBulkTintDecreaseMax}
+                            onTintDecrease={editor.handleBulkTintDecrease}
+                            onTintIncrease={editor.handleBulkTintIncrease}
+                            onTintIncreaseMax={editor.handleBulkTintIncreaseMax}
+                            onSaturationDecreaseMax={editor.handleBulkSaturationDecreaseMax}
+                            onSaturationDecrease={editor.handleBulkSaturationDecrease}
+                            onSaturationIncrease={editor.handleBulkSaturationIncrease}
+                            onSaturationIncreaseMax={editor.handleBulkSaturationIncreaseMax}
+                            // Adjustments Light
+                            onExposureDecreaseMax= {editor.handleBulkExposureDecreaseMax}
+                            onExposureDecrease= {editor.handleBulkExposureDecrease}
+                            onExposureIncrease= {editor.handleBulkExposureIncrease}
+                            onExposureIncreaseMax= {editor.handleBulkExposureIncreaseMax}
+                            onContrastDecreaseMax= {editor.handleBulkContrastDecreaseMax}
+                            onContrastDecrease= {editor.handleBulkContrastDecrease}
+                            onContrastIncrease= {editor.handleBulkContrastIncrease}
+                            onContrastIncreaseMax= {editor.handleBulkContrastIncreaseMax}
+                            onHighlightsDecreaseMax= {editor.handleBulkHighlightsDecreaseMax}
+                            onHighlightsDecrease= {editor.handleBulkHighlightsDecrease}
+                            onHighlightsIncrease= {editor.handleBulkHighlightsIncrease}
+                            onHighlightsIncreaseMax= {editor.handleBulkHighlightsIncreaseMax}
+                            onShadowsDecreaseMax= {editor.handleBulkShadowsDecreaseMax}
+                            onShadowsDecrease= {editor.handleBulkShadowsDecrease}
+                            onShadowsIncrease= {editor.handleBulkShadowsIncrease}
+                            onShadowsIncreaseMax= {editor.handleBulkShadowsIncreaseMax}
+                            onWhitesDecreaseMax= {editor.handleBulkWhitesDecreaseMax}
+                            onWhitesDecrease= {editor.handleBulkWhitesDecrease}
+                            onWhitesIncrease= {editor.handleBulkWhitesIncrease}
+                            onWhitesIncreaseMax= {editor.handleBulkWhitesIncreaseMax}
+                            onBlacksDecreaseMax= {editor.handleBulkBlacksDecreaseMax}
+                            onBlacksDecrease= {editor.handleBulkBlacksDecrease}
+                            onBlacksIncrease= {editor.handleBulkBlacksIncrease}
+                            onBlacksIncreaseMax= {editor.handleBulkBlacksIncreaseMax}
+                            // Adjustments Details
+                            onClarityDecreaseMax={editor.handleBulkClarityDecreaseMax}
+                            onClarityDecrease={editor.handleBulkClarityDecrease}
+                            onClarityIncrease={editor.handleBulkClarityIncrease}
+                            onClarityIncreaseMax={editor.handleBulkClarityIncreaseMax}
+                            onSharpnessDecreaseMax={editor.handleBulkSharpnessDecreaseMax}
+                            onSharpnessDecrease={editor.handleBulkSharpnessDecrease}
+                            onSharpnessIncrease={editor.handleBulkSharpnessIncrease}
+                            onSharpnessIncreaseMax={editor.handleBulkSharpnessIncreaseMax}
+
                             selectedPresetBulk={editor.selectedBulkPreset}
                             onOpenPresetModalBulk={editor.handleOpenPresetModalMobile}
                             onSelectPresetBulk={editor.handleSelectBulkPreset}
@@ -325,7 +419,7 @@ export default function HImageEditor() {
                         isOpen={Boolean(editor.presetMenuAnchorEl)}
                         onClose={editor.handlePresetMenuClose}
                         onRemove={editor.handleRemovePreset}
-                        onRename={editor.handleRenamePreset}
+                        onRename={editor.handleOpenRenameModal}
                         onDelete={editor.handleDeletePreset}
                         isPresetSelected={(editor.isBulkEditing ? editor.selectedBulkPreset : editor.selectedDesktopPreset) === editor.activePresetMenuId}
                     />
@@ -367,6 +461,20 @@ export default function HImageEditor() {
                     }
                 />
             )}
+            <HDialogForPreset
+                open={editor.isRenameModalOpen}
+                title={"Rename"}
+                description={"Rename a preset with the current Light, Colour and Details settings"}
+                onClose={editor.handleCloseRenameModal}
+                action={
+                    <HTextFieldRename
+                        valueName={editor.newPresetName}
+                        setName={(e) => editor.setNewPresetName(e.target.value)}
+                        onSaveRenamePreset={editor.handleConfirmRename}
+                        onCancel={editor.handleCloseRenameModal}
+                    />
+                }
+            />
         </>
     )
 }

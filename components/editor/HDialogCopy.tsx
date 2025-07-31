@@ -72,7 +72,7 @@ export function HDialogCopy(props: Props) {
                         }
                     />
                 </Stack>
-                <Button onClick={props.onCopyEdit} variant="contained" color="primary">
+                <Button onClick={props.onCopyEdit} sx={{...typography.labelMedium, color: colors.surface, backgroundColor: colors.onSurface}}>
                     Copy
                 </Button>
             </Stack>

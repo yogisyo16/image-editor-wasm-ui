@@ -25,31 +25,57 @@ interface Props {
     handleDragStart: (e: React.MouseEvent | React.TouchEvent) => void;
     onContentHeightChange: (height: number) => void;
 
-    // Color Adjustment Mobile
-    tempScore: number;
-    tintScore: number;
-    exposureScore: number;
-    highlightsScore: number;
-    shadowsScore: number;
-    whitesScore: number;
-    blacksScore: number;
-    saturationScore: number;
-    contrastScore: number;
-    clarityScore: number;
-    sharpnessScore: number;
-    onTempChange: (value: number) => void;
-    onTintChange: (value: number) => void;
-    onExposureChange: (value: number) => void;
-    onHighlightsChange: (value: number) => void;
-    onShadowsChange: (value: number) => void;
-    onWhitesChange: (value: number) => void;
-    onBlacksChange: (value: number) => void;
-    onSaturationChange: (value: number) => void;
-    onContrastChange: (value: number) => void;
-    onClarityChange: (value: number) => void;
-    onSharpnessChange: (value: number) => void;
+    // Color Adjustments
+    // Adjustments Colors
+    onTempDecreaseMax: () => void;
+    onTempDecrease: () => void;
+    onTempIncrease: () => void;
+    onTempIncreaseMax: () => void;
+    onTintDecreaseMax: () => void;
+    onTintDecrease: () => void;
+    onTintIncrease: () => void;
+    onTintIncreaseMax: () => void;
+    onSaturationDecreaseMax: () => void;
+    onSaturationDecrease: () => void;
+    onSaturationIncrease: () => void;
+    onSaturationIncreaseMax: () => void;
 
-    
+    // Adjustments Light
+    onExposureDecreaseMax: () => void;
+    onExposureDecrease: () => void;
+    onExposureIncrease: () => void;
+    onExposureIncreaseMax: () => void;
+    onContrastDecreaseMax: () => void;
+    onContrastDecrease: () => void;
+    onContrastIncrease: () => void;
+    onContrastIncreaseMax: () => void;
+    onHighlightsDecreaseMax: () => void;
+    onHighlightsDecrease: () => void;
+    onHighlightsIncrease: () => void;
+    onHighlightsIncreaseMax: () => void;
+    onShadowsDecreaseMax: () => void;
+    onShadowsDecrease: () => void;
+    onShadowsIncrease: () => void;
+    onShadowsIncreaseMax: () => void;
+    onWhitesDecreaseMax: () => void;
+    onWhitesDecrease: () => void;
+    onWhitesIncrease: () => void;
+    onWhitesIncreaseMax: () => void;
+    onBlacksDecreaseMax: () => void;
+    onBlacksDecrease: () => void;
+    onBlacksIncrease: () => void;
+    onBlacksIncreaseMax: () => void;
+
+    // Adjustments Details
+    onClarityDecreaseMax: () => void;
+    onClarityDecrease: () => void;
+    onClarityIncrease: () => void;
+    onClarityIncreaseMax: () => void;
+    onSharpnessDecreaseMax: () => void;
+    onSharpnessDecrease: () => void;
+    onSharpnessIncrease: () => void;
+    onSharpnessIncreaseMax: () => void;
+
     // Preset Mobile (For now)
     selectedPresetBulk: string;
     onSelectPresetBulk: (event: SelectChangeEvent<string>) => void;

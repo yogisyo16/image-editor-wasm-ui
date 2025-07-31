@@ -8,30 +8,57 @@ import HBulkAccordionColorAdjustmentDetails from "./HBulkAccordionColorAdjustmen
 
 interface Props {
     // Getters get values
-    tempScore: number;
-    tintScore: number;
-    exposureScore: number;
-    highlightsScore: number;
-    shadowsScore: number;
-    whitesScore: number;
-    blacksScore: number;
-    contrastScore: number;
-    saturationScore: number;
-    adjustClarity: (amount: number) => void;
-    adjustSharpness: (amount: number) => void;
+    // Adjustments Colors
+    onTempDecreaseMax: () => void;
+    onTempDecrease: () => void;
+    onTempIncrease: () => void;
+    onTempIncreaseMax: () => void;
+    onTintDecreaseMax: () => void;
+    onTintDecrease: () => void;
+    onTintIncrease: () => void;
+    onTintIncreaseMax: () => void;
+    onSaturationDecreaseMax: () => void;
+    onSaturationDecrease: () => void;
+    onSaturationIncrease: () => void;
+    onSaturationIncreaseMax: () => void;
+
+    // Adjustments Light
+    onExposureDecreaseMax: () => void;
+    onExposureDecrease: () => void;
+    onExposureIncrease: () => void;
+    onExposureIncreaseMax: () => void;
+    onContrastDecreaseMax: () => void;
+    onContrastDecrease: () => void;
+    onContrastIncrease: () => void;
+    onContrastIncreaseMax: () => void;
+    onHighlightsDecreaseMax: () => void;
+    onHighlightsDecrease: () => void;
+    onHighlightsIncrease: () => void;
+    onHighlightsIncreaseMax: () => void;
+    onShadowsDecreaseMax: () => void;
+    onShadowsDecrease: () => void;
+    onShadowsIncrease: () => void;
+    onShadowsIncreaseMax: () => void;
+    onWhitesDecreaseMax: () => void;
+    onWhitesDecrease: () => void;
+    onWhitesIncrease: () => void;
+    onWhitesIncreaseMax: () => void;
+    onBlacksDecreaseMax: () => void;
+    onBlacksDecrease: () => void;
+    onBlacksIncrease: () => void;
+    onBlacksIncreaseMax: () => void;
+
+    // Adjustments Details
+    onClarityDecreaseMax: () => void;
+    onClarityDecrease: () => void;
+    onClarityIncrease: () => void;
+    onClarityIncreaseMax: () => void;
+    onSharpnessDecreaseMax: () => void;
+    onSharpnessDecrease: () => void;
+    onSharpnessIncrease: () => void;
+    onSharpnessIncreaseMax: () => void;
+
     expandedPanels: string[];
-    // Setters get values update
-    // setTempScore: (value: number) => void;
-    // setTintScore: (value: number) => void;
-    // setExposureScore: (value: number) => void;
-    // sethighlightsScore: (value: number) => void;
-    // setShadowsScore: (value: number) => void;
-    // setWhitesScore: (value: number) => void;
-    // setBlacksScore: (value: number) => void;
-    // setContrastScore: (value: number) => void;
-    // setClarityScore: (value: number) => void;
-    // setSharpnessScore: (value: number) => void;
-    // setSaturationScore: (value: number) => void;
     onPanelChange: (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => void;
 }
 
@@ -81,9 +108,18 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     </AccordionSummary>
                     <AccordionDetails>
                         <HBulkAccordionColorAdjustmentColors
-                            tempScore = {props.tempScore}
-                            tintScore = {props.tintScore}
-                            saturationScore={props.saturationScore}
+                            onTempDecreaseMax={props.onTempDecreaseMax}
+                            onTempDecrease={props.onTempDecrease}
+                            onTempIncrease={props.onTempIncrease}
+                            onTempIncreaseMax={props.onTempIncreaseMax}
+                            onTintDecreaseMax={props.onTintDecreaseMax}
+                            onTintDecrease={props.onTintDecrease}
+                            onTintIncrease={props.onTintIncrease}
+                            onTintIncreaseMax={props.onTintIncreaseMax}
+                            onSaturationDecreaseMax={props.onSaturationDecreaseMax}
+                            onSaturationDecrease={props.onSaturationDecrease}
+                            onSaturationIncrease={props.onSaturationIncrease}
+                            onSaturationIncreaseMax={props.onSaturationIncreaseMax}
                         />
                     </AccordionDetails>
                 </Accordion>
@@ -105,12 +141,30 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     </AccordionSummary>
                     <AccordionDetails>
                         <HBulkAccordionColorAdjustmentLight
-                            exposureScore={props.exposureScore}
-                            contrastScore={props.contrastScore}
-                            highlightsScore={props.highlightsScore}
-                            shadowsScore={props.shadowsScore}
-                            whitesScore={props.whitesScore}
-                            blacksScore={props.blacksScore}
+                            onExposureDecreaseMax= {props.onExposureDecreaseMax}
+                            onExposureDecrease= {props.onExposureDecrease}
+                            onExposureIncrease= {props.onExposureIncrease}
+                            onExposureIncreaseMax= {props.onExposureIncreaseMax}
+                            onContrastDecreaseMax= {props.onContrastDecreaseMax}
+                            onContrastDecrease= {props.onContrastDecrease}
+                            onContrastIncrease= {props.onContrastIncrease}
+                            onContrastIncreaseMax= {props.onContrastIncreaseMax}
+                            onHighlightsDecreaseMax= {props.onHighlightsDecreaseMax}
+                            onHighlightsDecrease= {props.onHighlightsDecrease}
+                            onHighlightsIncrease= {props.onHighlightsIncrease}
+                            onHighlightsIncreaseMax= {props.onHighlightsIncreaseMax}
+                            onShadowsDecreaseMax= {props.onShadowsDecreaseMax}
+                            onShadowsDecrease= {props.onShadowsDecrease}
+                            onShadowsIncrease= {props.onShadowsIncrease}
+                            onShadowsIncreaseMax= {props.onShadowsIncreaseMax}
+                            onWhitesDecreaseMax= {props.onWhitesDecreaseMax}
+                            onWhitesDecrease= {props.onWhitesDecrease}
+                            onWhitesIncrease= {props.onWhitesIncrease}
+                            onWhitesIncreaseMax= {props.onWhitesIncreaseMax}
+                            onBlacksDecreaseMax= {props.onBlacksDecreaseMax}
+                            onBlacksDecrease= {props.onBlacksDecrease}
+                            onBlacksIncrease= {props.onBlacksIncrease}
+                            onBlacksIncreaseMax= {props.onBlacksIncreaseMax}
                         />
                     </AccordionDetails>
                 </Accordion>
@@ -132,8 +186,14 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     </AccordionSummary>
                     <AccordionDetails>
                         <HBulkAccordionColorAdjustmentDetails
-                            adjustClarity={props.adjustClarity}
-                            adjustSharpness={props.adjustSharpness}
+                            onClarityDecreaseMax={props.onClarityDecreaseMax}
+                            onClarityDecrease={props.onClarityDecrease}
+                            onClarityIncrease={props.onClarityIncrease}
+                            onClarityIncreaseMax={props.onClarityIncreaseMax}
+                            onSharpnessDecreaseMax={props.onSharpnessDecreaseMax}
+                            onSharpnessDecrease={props.onSharpnessDecrease}
+                            onSharpnessIncrease={props.onSharpnessIncrease}
+                            onSharpnessIncreaseMax={props.onSharpnessIncreaseMax}
                         />
                     </AccordionDetails>
                 </Accordion>

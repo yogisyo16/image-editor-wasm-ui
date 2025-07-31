@@ -4,16 +4,14 @@ import useColors from "@/colors";
 import useHonchoTypography from "@/honchoTheme";
 
 interface Props {
-    clarityScoreMinus10: number;
-    clarityScoreMinus1: number;
-    clarityScorePlus1: number;
-    clarityScorePlus10: number;
-    sharpnessScoreMinus10: number;
-    sharpnessScoreMinus1: number;
-    sharpnessScorePlus1: number;
-    sharpnessScorePlus10: number;
-    onClarityChange: (value: number) => void;
-    onSharpnessChange: (value: number) => void;
+    onClarityDecreaseMax: () => void;
+    onClarityDecrease: () => void;
+    onClarityIncrease: () => void;
+    onClarityIncreaseMax: () => void;
+    onSharpnessDecreaseMax: () => void;
+    onSharpnessDecrease: () => void;
+    onSharpnessIncrease: () => void;
+    onSharpnessIncreaseMax: () => void;
 }
 
 export default function HBulkDetailsMobile(props: Props) {
@@ -22,12 +20,12 @@ export default function HBulkDetailsMobile(props: Props) {
 
     return (
         <>
-            <Stack spacing={0} direction="column" justifyContent="center" alignItems="flex-start" sx={{ width: '100%', pl: "10px", m: "0px" }}>
+            <Stack spacing={0} direction="column" sx={{ width: '100%', pl: "10px", m: "0px" }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: "6px" }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Clarity</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "16px" }}>
-                    <IconButton value={props.clarityScoreMinus10}
+                    <IconButton onClick={props.onClarityDecreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -38,7 +36,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ width: "20px", height: "20px", mr: "2px" }}/>
                     </IconButton>
-                    <IconButton value={props.clarityScoreMinus1}
+                    <IconButton onClick={props.onClarityDecrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -49,7 +47,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ width: "20px", height: "20px", mr: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.clarityScorePlus1}
+                    <IconButton onClick={props.onClarityIncrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -60,7 +58,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ width: "20px", height: "20px", ml: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.clarityScorePlus10}
+                    <IconButton onClick={props.onClarityIncreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -76,7 +74,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Sharpness</Typography>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
-                    <IconButton value={props.sharpnessScoreMinus10}
+                    <IconButton onClick={props.onSharpnessDecreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -87,7 +85,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ width: "20px", height: "20px", mr: "2px" }}/>
                     </IconButton>
-                    <IconButton value={props.sharpnessScoreMinus1}
+                    <IconButton onClick={props.onSharpnessDecrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -98,7 +96,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ width: "20px", height: "20px", mr: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.sharpnessScorePlus1}
+                    <IconButton onClick={props.onSharpnessIncrease}
                     sx={{
                         width: "76px",
                         height: "28px",
@@ -109,7 +107,7 @@ export default function HBulkDetailsMobile(props: Props) {
                     }}>
                         <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ width: "20px", height: "20px", ml: "3px" }}/>
                     </IconButton>
-                    <IconButton value={props.sharpnessScorePlus10}
+                    <IconButton onClick={props.onSharpnessIncreaseMax}
                     sx={{
                         width: "76px",
                         height: "28px",
