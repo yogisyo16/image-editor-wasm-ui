@@ -10,8 +10,9 @@ type Preset = {
 
 interface Props {
     presets: Preset[]; // Prop to receive presets from the hook
-    onOpenPresetModal: () => void;
     selectedPreset: string | null;
+    presetOptionModal: (event: React.MouseEvent<HTMLElement>, presetId: string) => void;
+    onOpenPresetModal: () => void;
     onSelectPreset: (id: string) => void;
 }
 
@@ -41,7 +42,7 @@ export default function HTabPresetMobile (props: Props){
                                     sx={{ width: "20px", height: "20px", px: "2px" }}
                                 />
                             )}
-                            <IconButton aria-label={preset.name} sx={{ px: "8px" }}>
+                            <IconButton aria-label={preset.name} sx={{ px: "8px" }} onClick={(event) => props.presetOptionModal(event, preset.id)}>
                                 <CardMedia
                                     component="img"
                                     image="/v1/svg/dots-editor.svg"

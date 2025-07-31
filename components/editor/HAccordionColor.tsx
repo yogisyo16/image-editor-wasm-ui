@@ -64,7 +64,7 @@ export default function HAccordionColor(props: Props) {
             <Stack>
                 <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Temperature</Typography>
+                        <Typography sx={{...typography.bodyMedium}} onClick={() => {}}>Temperature</Typography>
                         <TextField
                             hiddenLabel
                             id="filled-hidden-label-small"

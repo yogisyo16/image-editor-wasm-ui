@@ -28,27 +28,24 @@ import { useHonchoEditor } from "@/hooks/editor/useHonchoEditor";
 import { apiController } from "@/lib/api/editorController";
 
 export default function HImageEditor() {
-    // useMemo ensures the object is not recreated on every render.
-    // const mockController = useMemo((): Controller => ({
-    //     // This simulates fetching an image. For now, it does nothing and returns null.
-    //     // Later, this will contain your `fetch` logic.
-    //     onGetImage: async (imageID: string) => {
-    //         console.log(`[MockController] onGetImage called for ID: ${imageID}`);
-    //         // In the future, you would fetch the image from your API here and return it as a File object.
-    //         // For example:
-    //         // const response = await fetch(`https://yourapi.com/images/${imageID}`);
-    //         // const blob = await response.blob();
-    //         // return new File([blob], "image.jpg", { type: blob.type });
-    //         return null; // Returning null for now as the endpoint isn't ready.
-    //     },
-    //     // This simulates syncing configuration.
-    //     syncConfig: async () => {
-    //         console.log("[MockController] syncConfig called.");
-    //     },
-    // }), []);
 
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
+
+    const handleBack = () => {
+            if ((window as any).webkit?.messageHandlers?.nativeHandler) {
+                (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
+                console.log("Sent 'back' message to iOS native handler.");
+            } 
+            else if ((window as any).Android?.goBack) {
+                console.log("Android environment detected. Calling goBack().");
+                (window as any).Android.goBack();
+            }
+            else {
+                console.log("Standard web browser detected. Navigating back in history.");
+                window.history.back();
+            }
+        };
 
     // Dummy/placeholder handlers that remain in the component
     const handleScale = (event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget);
@@ -217,7 +214,7 @@ export default function HImageEditor() {
                 {editor.showCopyAlert && <HAlertCopyBox />}
 
                 <HHeaderEditor
-                    onBack={editor.handleBack}
+                    onBack={handleBack}
                     onUndo={editor.handleUndo}
                     onRedo={editor.handleRedo}
                     onRevert={editor.handleRevert}
@@ -342,6 +339,7 @@ export default function HImageEditor() {
                             
                             // Modal Management
                             onOpenPresetModal={editor.handleOpenPresetModalMobile}
+                            presetOptionModal={editor.handlePresetMenuClick}
                             selectedPreset={editor.selectedMobilePreset}
                             onSelectPreset={editor.handleSelectMobilePreset}
                         />

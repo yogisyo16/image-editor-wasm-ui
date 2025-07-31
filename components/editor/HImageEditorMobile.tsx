@@ -54,6 +54,7 @@ interface Props {
 
     // Preset Mobile (For now)
     onOpenPresetModal: () => void;
+    presetOptionModal: (event: React.MouseEvent<HTMLElement>, presetId: string) => void;
 }
 
 // Data structure for the sub-navigation tabs
