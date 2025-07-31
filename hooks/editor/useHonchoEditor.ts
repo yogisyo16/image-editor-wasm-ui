@@ -4,9 +4,16 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { SelectChangeEvent } from "@mui/material";
 import { HonchoEditor } from '@/lib/editor/honcho-editor';
 
+// Augment the global window object for the WASM Module
+declare global {
+  interface Window {
+    Module: any;
+  }
+}
+
 export interface Controller {
     // Image Handling
-    onGetImage(imageID: string): Promise<File | null>;
+    onGetImage(imageID: string): Promise<string | null>;
     getImageList(): Promise<ImageItem[]>;
 
     // syncConfig
@@ -17,13 +24,6 @@ export interface Controller {
     createPreset(name: string, settings: AdjustmentState): Promise<Preset | null>;
     deletePreset(presetId: string): Promise<void>;
     renamePreset(presetId: string, newName: string): Promise<void>;
-}
-
-// Augment the global window object for the WASM Module
-declare global {
-  interface Window {
-    Module: any;
-  }
 }
 
 export type AdjustmentState = {
@@ -177,36 +177,53 @@ export function useHonchoEditor(controller: Controller) {
         }
     }, []);
 
-    const loadImageFromId = useCallback(async (imageId: string) => {
-        if (!controller) {
-            console.error("Controller not provided to useHonchoEditor hook.");
-            setEditorStatus("Error: Controller is missing.");
-            return;
-        }
-
-        console.log(`Fetching image for ID: ${imageId}`);
-        setEditorStatus("Fetching image from source...");
-        
+    const loadImageFromUrl = useCallback(async (url: string) => {
         try {
-            const imageFile = await controller.onGetImage(imageId);
+            setEditorStatus("Downloading image...");
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Failed to fetch image from URL: ${url}`);
             
-            if (imageFile) {
-                await loadImage(imageFile);
-                 // Optional: Communicate back to native environments
-                if ((window as any).webkit?.messageHandlers?.nativeHandler) {
-                    (window as any).webkit.messageHandlers.nativeHandler.postMessage({ status: 'imageLoaded', id: imageId });
-                } else if ((window as any).Android?.onImageLoaded) {
-                    (window as any).Android.onImageLoaded(imageId);
-                }
+            const blob = await response.blob();
+            const filename = url.substring(url.lastIndexOf('/') + 1) || 'image.jpg';
+            const file = new File([blob], filename, { type: blob.type });
+
+            await loadImage(file); // Pass the final File object to the core loader
+        } catch (error) {
+            console.error(error);
+            setEditorStatus("Error: Could not load image from URL.");
+        }
+    }, [loadImage]);
+
+    const loadImageFromId = useCallback(async (imageId: string) => {
+        if (!controller) return;
+        setEditorStatus("Fetching image URL...");
+        try {
+            const imageUrl = await controller.onGetImage(imageId);
+            if (imageUrl) {
+                await loadImageFromUrl(imageUrl);
             } else {
-                throw new Error("Controller did not return an image file.");
+                throw new Error("Controller did not return an image URL.");
             }
         } catch (error) {
             console.error("Failed to fetch or load image via controller:", error);
             setEditorStatus("Error: Could not fetch the image.");
-            setIsImageLoaded(false);
         }
-    }, [controller, loadImage]);
+    }, [controller, loadImageFromUrl]);
+
+    useEffect(() => {
+        // When the primary image ID changes, load it into the main canvas.
+        if (primaryImageId) {
+            const imageToLoad = imageList.find(img => img.id === primaryImageId);
+            if (imageToLoad && imageToLoad.url) {
+                loadImageFromUrl(imageToLoad.url);
+            }
+        } else {
+            // If no primary image is selected (in bulk mode), clear the canvas.
+            if (isBulkEditing) {
+                setIsImageLoaded(false);
+            }
+        }
+    }, [primaryImageId, imageList, isBulkEditing, loadImageFromUrl]);
 
     const fetchImageList = useCallback(async () => {
         if (!controller) return;
@@ -453,21 +470,6 @@ export function useHonchoEditor(controller: Controller) {
             applyAdjustmentState(copiedAdjustments);
         }
     }, [copiedAdjustments, applyAdjustmentState]);
-
-    const handleBack = () => {
-        if ((window as any).webkit?.messageHandlers?.nativeHandler) {
-            (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
-            console.log("Sent 'back' message to iOS native handler.");
-        } 
-        else if ((window as any).Android?.goBack) {
-            console.log("Android environment detected. Calling goBack().");
-            (window as any).Android.goBack();
-        }
-        else {
-            console.log("Standard web browser detected. Navigating back in history.");
-            window.history.back();
-        }
-    };
 
     // Panel Handlers
     const handleColorAccordionChange = (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
@@ -832,12 +834,12 @@ export function useHonchoEditor(controller: Controller) {
         handleScriptReady,
         handleFileChange,
         loadImageFromId,
+        loadImageFromUrl,
         handleRevert,
         handleUndo,
         handleRedo,
         handleCopyEdit,
         handlePasteEdit,
-        handleBack,
         adjustClarityBulk,
         adjustSharpnessBulk,
 

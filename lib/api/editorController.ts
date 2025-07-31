@@ -12,27 +12,16 @@ export const apiController: Controller = {
    * @param imageID The ID of the image to fetch.
    * @returns A Promise that resolves to a File object, or null if it fails.
    */
-  onGetImage: async (imageID: string): Promise<File | null> => {
-    console.log(`[API Controller] Fetching image for ID: ${imageID}`);
-    try {
-      const response = await fetch(`https://your-backend-api.com/images/${imageID}`, {
-        method: 'GET',
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-
-      const imageBlob = await response.blob();
-      const fileName = imageID.includes('.') ? imageID : `${imageID}.jpg`;
-      const imageFile = new File([imageBlob], fileName, { type: imageBlob.type });
-
-      return imageFile;
-
-    } catch (error) {
-      console.error("Error in onGetImage:", error);
-      return null;
+  onGetImage: async (imageID: string): Promise<string | null> => {
+    console.log(`[API Controller] Getting URL for image ID: ${imageID}`);
+    // In a real app, this would query your backend for the image's public URL.
+    // For this demo, we'll find it in our mock list.
+    const image = MOCK_IMAGES.find(img => img.id === imageID);
+    if (image) {
+        return Promise.resolve(image.url);
     }
+    console.error(`Image with ID ${imageID} not found in mock list.`);
+    return Promise.resolve(null);
   },
 
   getImageList: async (): Promise<ImageItem[]> => {
