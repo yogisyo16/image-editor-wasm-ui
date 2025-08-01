@@ -390,7 +390,8 @@ export default function HImageEditor() {
                                 <HFooter
                                     anchorElZoom={editor.anchorMenuZoom}
                                     onScale={(event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget)}
-                                    onBeforeAfter={() => console.log("Before/After toggled!")}
+                                    onShowOriginal={editor.handleShowOriginal}
+                                    onShowEdited={editor.handleShowEdited}
                                     onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
                                     onZoomAction={editor.handleZoomAction}
                                     zoomLevelText={editor.zoomLevelText} 
@@ -415,7 +416,8 @@ export default function HImageEditor() {
                                 <HFooter
                                     anchorElZoom={editor.anchorMenuZoom}
                                     onScale={(event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget)}
-                                    onBeforeAfter={() => console.log("Before/After toggled!")}
+                                    onShowOriginal={editor.handleShowOriginal}
+                                    onShowEdited={editor.handleShowEdited}
                                     onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
                                     onZoomAction={editor.handleZoomAction}
                                     zoomLevelText={editor.zoomLevelText} 
@@ -587,10 +589,21 @@ export default function HImageEditor() {
                     onClose={editor.handleCloseCopyDialog}
                     action={
                         <HDialogCopy
-                            colorAdjustments={editor.colorAdjustments}
-                            lightAdjustments={editor.lightAdjustments}
-                            detailsAdjustments={editor.detailsAdjustments}
                             onCopyEdit={editor.handleConfirmCopy}
+                
+                            colorChecks={editor.copyColorChecks}
+                            lightChecks={editor.copyLightChecks}
+                            detailsChecks={editor.copyDetailsChecks}
+                            
+                            setColorChecks={editor.setCopyColorChecks}
+                            setLightChecks={editor.setCopyLightChecks}
+                            setDetailsChecks={editor.setCopyDetailsChecks}
+                            
+                            expanded={editor.copyDialogExpanded}
+                            
+                            onParentChange={editor.handleCopyParentChange}
+                            onChildChange={editor.handleCopyChildChange}
+                            onToggleExpand={editor.handleToggleCopyDialogExpand}
                         />
                     }
                 />

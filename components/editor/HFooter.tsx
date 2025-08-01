@@ -6,10 +6,11 @@ import React, { useState } from "react";
 interface Props {
     anchorElZoom: null | HTMLElement;
     onScale: (event: React.MouseEvent<HTMLElement>) => void;
-    onBeforeAfter: () => void;
     onZoomMenuClose: () => void;
     zoomLevelText: string;
     onZoomAction: (zoomLevel: string) => void;
+    onShowOriginal: () => void;
+    onShowEdited: () => void;
 }
 
 export default function HFooter(props: Props) {
@@ -37,7 +38,15 @@ export default function HFooter(props: Props) {
                 >
                     {props.zoomLevelText}
                 </Button>
-                <IconButton aria-label="before-after" onClick={props.onBeforeAfter} sx={{ color: colors.outlineVariant }}>
+                <IconButton
+                    aria-label="before-after"
+                    onMouseDown={props.onShowOriginal} // Mouse button down
+                    onMouseUp={props.onShowEdited}     // Mouse button release
+                    onMouseLeave={props.onShowEdited}  // In case mouse leaves while pressed
+                    onTouchStart={props.onShowOriginal} // Finger touch down
+                    onTouchEnd={props.onShowEdited}     // Finger touch release
+                    sx={{ color: colors.outlineVariant }}
+                >
                     <CardMedia component="img" title="before-after" image="/v1/svg/before-after-editor.svg" sx={{ width: "20px", height: "20px" }} />
                 </IconButton>
                 <Menu
