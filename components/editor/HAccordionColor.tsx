@@ -69,6 +69,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography
                             component="label"
                             htmlFor="temperature-input"
+                            onDoubleClick={() => props.onTempChange(0)}
                             sx={{...typography.bodyMedium, userSelect: 'none' }}>Temperature</Typography>
                         <TextField
                             hiddenLabel
@@ -123,7 +124,10 @@ export default function HAccordionColor(props: Props) {
                             },
                             '& .MuiSlider-thumb': {
                                 boxShadow: 'none',   
-                            }
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',
+                            },
                         }}
                         size="small"
                         value={props.TempScore}
@@ -139,6 +143,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography
                             component="label"
                             htmlFor="tint-input"
+                            onDoubleClick={() => props.onTintChange(0)}
                             sx={{...typography.bodyMedium, userSelect: 'none' }}>Tint</Typography>
                         <TextField
                             hiddenLabel
@@ -190,9 +195,12 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .MuiSlider-thumb': {
+                            '& .': {
                                 boxShadow: 'none',   
-                            }
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',
+                            },
                         }}
                         size="small"
                         value={props.TintScore}
@@ -208,6 +216,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography 
                             component="label"
                             htmlFor="vibrance-input"
+                            onDoubleClick={() => props.onVibranceChange(0)}
                             sx={{...typography.bodyMedium, userSelect: 'none' }}>Vibrance</Typography>
                         <TextField
                             hiddenLabel
@@ -259,9 +268,12 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .MuiSlider-thumb': {
+                            '& .': {
                                 boxShadow: 'none',   
-                            }
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',
+                            },
                         }}
                         size="small"
                         value={props.VibranceScore}
@@ -277,6 +289,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography
                             component="label"
                             htmlFor="saturation-input"
+                            onDoubleClick={() => props.onSaturationChange(0)}
                             sx={{...typography.bodyMedium, userSelect: 'none' }}>Saturation</Typography>
                         <TextField
                             hiddenLabel
@@ -328,9 +341,12 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .MuiSlider-thumb': {
+                            '& .': {
                                 boxShadow: 'none',   
-                            }
+                            },
+                            '& .MuiSlider-thumb:hover': {
+                                boxShadow: 'none',
+                            },
                         }}
                         size="small"
                         value={props.SaturationScore}
