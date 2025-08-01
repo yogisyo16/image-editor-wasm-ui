@@ -39,7 +39,7 @@ export function HBaseDialog(props: Props) {
                 },
             }}>
             <DialogContent
-                sx={{ padding: { xs: "24px 24px 0 24px", sm: "24 24px 0 24px" } }}
+                
             >
                 <Stack direction="column">
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -59,7 +59,7 @@ export function HBaseDialog(props: Props) {
                 </Stack>
             </DialogContent>
             {props.action && (
-                <DialogContent sx={{ padding: { xs: "0 24px 24px 24px", sm: "0 24px 24px 24px" } }}>
+                <DialogContent>
                     <Stack alignItems="center" width="100%">
                         {props.action}
                     </Stack>
