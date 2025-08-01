@@ -31,6 +31,9 @@ export default function HImageEditor() {
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
 
+    const PEEK_HEIGHT = 20;
+    const COLLAPSED_HEIGHT = 165;
+
     // Mobile Draggable Panel State
     const [panelHeight, setPanelHeight] = useState(165);
     const [contentHeight, setContentHeight] = useState(0);
@@ -40,7 +43,7 @@ export default function HImageEditor() {
     const panelRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 
-     const PANEL_HEIGHT = 80;
+     const PANEL_CHROME_HEIGHT = 10;
 
      // Mobile Panel Drag Handlers
     const handleContentHeightChange = useCallback((height: number) => {
@@ -60,8 +63,10 @@ export default function HImageEditor() {
         const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
         const deltaY = dragStartPos.current - currentY;
         const newHeight = initialHeight.current + deltaY;
-        const dynamicPanelFullHeight = contentHeight + PANEL_HEIGHT;
-        const clampedHeight = Math.max(165, Math.min(newHeight, dynamicPanelFullHeight));
+        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
+        
+        // UPDATED: Allow dragging down to the new PEEK_HEIGHT
+        const clampedHeight = Math.max(PEEK_HEIGHT, Math.min(newHeight, dynamicPanelFullHeight));
         setPanelHeight(clampedHeight);
     }, [isDragging, contentHeight]);
 
@@ -70,9 +75,20 @@ export default function HImageEditor() {
         setIsDragging(false);
         dragStartPos.current = 0;
         if (panelRef.current) panelRef.current.style.transition = 'height 0.3s ease-in-out';
-        const dynamicPanelFullHeight = contentHeight + PANEL_HEIGHT;
-        const halfwayPoint = (dynamicPanelFullHeight + 165) / 2;
-        setPanelHeight(panelHeight > halfwayPoint ? dynamicPanelFullHeight : 165);
+        
+        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
+
+        // UPDATED: New logic to snap to one of three points
+        const snapPointLow = (PEEK_HEIGHT + COLLAPSED_HEIGHT) / 2;
+        const snapPointHigh = (COLLAPSED_HEIGHT + dynamicPanelFullHeight) / 2;
+
+        if (panelHeight < snapPointLow) {
+            setPanelHeight(PEEK_HEIGHT); // Snap down to the "peek" state
+        } else if (panelHeight >= snapPointLow && panelHeight < snapPointHigh) {
+            setPanelHeight(COLLAPSED_HEIGHT); // Snap to the default collapsed state
+        } else {
+            setPanelHeight(dynamicPanelFullHeight); // Snap to the fully open state
+        }
     }, [isDragging, panelHeight, contentHeight]);
     
     useEffect(() => {
@@ -139,6 +155,10 @@ export default function HImageEditor() {
                         onTintDecrease={editor.handleBulkTintDecrease}
                         onTintIncrease={editor.handleBulkTintIncrease}
                         onTintIncreaseMax={editor.handleBulkTintIncreaseMax}
+                        onVibranceDecreaseMax={editor.handleBulkVibranceDecreaseMax}
+                        onVibranceDecrease={editor.handleBulkVibranceDecrease}
+                        onVibranceIncrease={editor.handleBulkVibranceIncrease}
+                        onVibranceIncreaseMax={editor.handleBulkVibranceIncreaseMax}
                         onSaturationDecreaseMax={editor.handleBulkSaturationDecreaseMax}
                         onSaturationDecrease={editor.handleBulkSaturationDecrease}
                         onSaturationIncrease={editor.handleBulkSaturationIncrease}
@@ -389,8 +409,11 @@ export default function HImageEditor() {
                             onTempChange={editor.setTempScore}
                             tintScore={editor.tintScore}
                             onTintChange={editor.setTintScore}
+                            vibranceScore={editor.vibranceScore}
+                            onVibranceChange={editor.setVibranceScore}
                             saturationScore={editor.saturationScore}
                             onSaturationChange={editor.setSaturationScore}
+
                             // Adjustments Light
                             exposureScore={editor.exposureScore}
                             onExposureChange={editor.setExposureScore}
@@ -404,6 +427,7 @@ export default function HImageEditor() {
                             onWhitesChange={editor.setWhitesScore}
                             blackScore={editor.blacksScore}
                             onBlacksChange={editor.setBlacksScore}
+
                             // Adjustments Details
                             clarityScore={editor.clarityScore}
                             onClarityChange={editor.setClarityScore}
@@ -439,6 +463,10 @@ export default function HImageEditor() {
                             onTintDecrease={editor.handleBulkTintDecrease}
                             onTintIncrease={editor.handleBulkTintIncrease}
                             onTintIncreaseMax={editor.handleBulkTintIncreaseMax}
+                            onVibranceDecreaseMax={editor.handleBulkVibranceDecreaseMax}
+                            onVibranceDecrease={editor.handleBulkVibranceDecrease}
+                            onVibranceIncrease={editor.handleBulkVibranceIncrease}
+                            onVibranceIncreaseMax={editor.handleBulkVibranceIncreaseMax}
                             onSaturationDecreaseMax={editor.handleBulkSaturationDecreaseMax}
                             onSaturationDecrease={editor.handleBulkSaturationDecrease}
                             onSaturationIncrease={editor.handleBulkSaturationIncrease}

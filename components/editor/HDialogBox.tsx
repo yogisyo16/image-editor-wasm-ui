@@ -21,6 +21,7 @@ interface Props {
 
 export function HBaseDialog(props: Props) {
     const colors = useColors();
+    const typography = useHonchoTypography();
 
     return (
         <Dialog
@@ -31,24 +32,25 @@ export function HBaseDialog(props: Props) {
             PaperProps={{
                 sx: {
                     borderRadius: "28px",
-                    maxWidth: { xs: 328, sm: "456px", md: "456px" },
+                    width: { xs: "328px", sm: "456px", md: "456px" },
+                    // maxWidth: { xs: 328, sm: "456px", md: "456px" },
                     //maxHeight: 306,
-                    margin: { xs: 0, sm: "auto" },
+                    // margin: { xs: 0, sm: "auto" },
                 },
             }}>
             <DialogContent
-                sx={{ padding: { xs: "24px 24px 0 24px", sm: "24 24px 0 24px" } }}>
-                <Stack spacing={0} direction="column">
-                    <Stack direction={"row"} alignItems="center" justifyContent="space-between">
+                sx={{ padding: { xs: "24px 24px 0 24px", sm: "24 24px 0 24px" } }}
+            >
+                <Stack direction="column">
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Typography></Typography>
                         <Typography
                             color={colors.onSurface}
-                            variant="labelLarge">
+                            sx={{ ...typography.titleMedium }}>
                             {props.title}
                         </Typography>
                         <CloseButton onClick={props.onClose}/>
                     </Stack>
-
                     <Typography
                         variant="bodyMedium"
                         color={colors.onSurface}>
@@ -57,15 +59,11 @@ export function HBaseDialog(props: Props) {
                 </Stack>
             </DialogContent>
             {props.action && (
-                <DialogActions sx={{ padding: { xs: "0 24px 24px 24px", sm: "0 24px 24px 24px" } }}>
-                    <Stack
-                        direction="row"
-                        justifyContent="end"
-                        alignItems="center"
-                        gap={1}>
+                <DialogContent sx={{ padding: { xs: "0 24px 24px 24px", sm: "0 24px 24px 24px" } }}>
+                    <Stack alignItems="center" width="100%">
                         {props.action}
                     </Stack>
-                </DialogActions>
+                </DialogContent>
             )}
         </Dialog>
     );

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack, Slider, Typography, TextField } from "@mui/material";
+import { Stack, Slider, Typography, TextField } from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
@@ -64,12 +64,15 @@ export default function HAccordionColor(props: Props) {
     return(
         <>
             <Stack>
-                <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
+                <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}} onClick={() => {}}>Temperature</Typography>
+                        <Typography
+                            component="label"
+                            htmlFor="temperature-input"
+                            sx={{...typography.bodyMedium}}>Temperature</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="temperature-input"
                             value={formatValue(props.TempScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onTempChange)}
@@ -133,10 +136,13 @@ export default function HAccordionColor(props: Props) {
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Tint</Typography>
+                        <Typography
+                            component="label"
+                            htmlFor="tint-input"
+                            sx={{...typography.bodyMedium}}>Tint</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="tint-input"
                             value={formatValue(props.TintScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onTintChange)}
@@ -197,12 +203,15 @@ export default function HAccordionColor(props: Props) {
                         onDoubleClick={() => props.onTintChange(0)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Vibrance</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="vibrance-input"
+                            sx={{...typography.bodyMedium}}>Vibrance</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="vibrance-input"
                             value={formatValue(props.VibranceScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onVibranceChange)}
@@ -263,12 +272,15 @@ export default function HAccordionColor(props: Props) {
                         onDoubleClick={() => props.onVibranceChange(0)}
                     />
                 </Stack>
-                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Saturation</Typography>
+                        <Typography
+                            component="label"
+                            htmlFor="saturation-input"
+                            sx={{...typography.bodyMedium}}>Saturation</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="saturation-input"
                             value={formatValue(props.SaturationScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onSaturationChange)}

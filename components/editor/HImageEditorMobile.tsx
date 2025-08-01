@@ -28,23 +28,25 @@ interface Props {
     // Color Adjustment Mobile
     tempScore: number;
     tintScore: number;
+    vibranceScore: number;
+    saturationScore: number;
     exposureScore: number;
     highlightsScore: number;
     shadowScore: number;
     whiteScore: number;
     blackScore: number;
-    saturationScore: number;
     contrastScore: number;
     clarityScore: number;
     sharpnessScore: number;
     onTempChange: (value: number) => void;
     onTintChange: (value: number) => void;
+    onVibranceChange: (value: number) => void;
+    onSaturationChange: (value: number) => void;
     onExposureChange: (value: number) => void;
     onHighlightsChange: (value: number) => void;
     onShadowsChange: (value: number) => void;
     onWhitesChange: (value: number) => void;
     onBlacksChange: (value: number) => void;
-    onSaturationChange: (value: number) => void;
     onContrastChange: (value: number) => void;
     onClarityChange: (value: number) => void;
     onSharpnessChange: (value: number) => void;
@@ -200,11 +202,11 @@ export default function HImageEditorMobile(props: Props) {
                                 sx={{ px: '12px', py: '0px', minWidth: 'auto' }}
                                 icon={<CardMedia component="img" image={props.activePanel === 'colorAdjustment' ? "/v1/svg/color-adjustment-active-mobile.svg" : "/v1/svg/color-adjustment-inactive-mobile.svg"} sx={{ width: "20px", height: "20px" }} />}
                             />
-                            <BottomNavigationAction
+                            {/* <BottomNavigationAction
                                 value="aspectRatio"
                                 sx={{ px: '12px', py: '0px', minWidth: 'auto' }}
                                 icon={<CardMedia component="img" image={props.activePanel === 'aspectRatio' ? "/v1/svg/aspect-ratio-inactive-mobile.svg" : "/v1/svg/aspect-ratio-inactive-mobile.svg"} sx={{ width: "20px", height: "20px" }} />}
-                            />
+                            /> */}
                             <BottomNavigationAction
                                 value="preset"
                                 sx={{ px: '12px', py: '0px', minWidth: 'auto' }}

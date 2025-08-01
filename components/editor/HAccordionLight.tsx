@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Stack, Slider, Typography, TextField  } from "@mui/material";
+import { Stack, Slider, Typography, TextField  } from "@mui/material";
 import useHonchoTypography from "@/honchoTheme";
 import useColors from "@/colors";
 
