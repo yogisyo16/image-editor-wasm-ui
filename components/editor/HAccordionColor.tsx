@@ -7,9 +7,11 @@ interface Props {
     TempScore: number;
     TintScore: number;
     SaturationScore: number;
+    VibranceScore: number;
     onTempChange: (value: number) => void;
     onTintChange: (value: number) => void;
     onSaturationChange: (value: number) => void;
+    onVibranceChange: (value: number) => void;
 }
 
 export default function HAccordionColor(props: Props) {
@@ -193,6 +195,72 @@ export default function HAccordionColor(props: Props) {
                         max={100}
                         onChange={(_event, newValue) => props.onTintChange(newValue as number)}
                         onDoubleClick={() => props.onTintChange(0)}
+                    />
+                </Stack>
+                <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
+                    <Stack direction="row" justifyContent="space-between">
+                        <Typography sx={{...typography.bodyMedium}}>Vibrance</Typography>
+                        <TextField
+                            hiddenLabel
+                            id="filled-hidden-label-small"
+                            value={formatValue(props.VibranceScore)}
+                            variant="filled"
+                            onChange={(e) => handleInputChange(e, -100, 100, props.onVibranceChange)}
+                            sx={{
+                                    width: "40px", 
+                                    height: "10px", 
+                                    alignItems: "center", 
+                                    textAlign: "right", 
+                                    display: "flex",
+                                    '& .MuiFilledInput-root': {
+                                        backgroundColor: 'transparent',
+                                        borderRadius: "0px",
+                                        border: 'none',
+                                        '&:before': {
+                                            borderBottom: 'none',
+                                        },
+                                        '&:after': {
+                                            borderBottom: 'none',
+                                        },
+                                        '&:hover:not(.Mui-disabled):before': {
+                                            borderBottom: 'none',
+                                        },
+                                        '&.Mui-focused:after': {
+                                            borderBottom: 'none',
+                                        },
+                                    },
+                                    '& .MuiFilledInput-input': {
+                                        textAlign: 'right',
+                                        padding: 0,
+                                        pr: '4px',
+                                        color: colors.surface,
+                                        fontSize: "14px",
+                                    },
+                                }}/>
+                    </Stack>
+                    <Slider
+                        sx={{
+                            width: "200px",
+                            color: colors.surface,
+                            '& .MuiSlider-rail': {
+                                background: fullTrackGradient,
+                                opacity: 1,
+                            },
+                            '& .MuiSlider-track': {
+                                background: 'transparent',
+                                border: 'none',
+                            },
+                            '& .MuiSlider-thumb': {
+                                boxShadow: 'none',   
+                            }
+                        }}
+                        size="small"
+                        value={props.VibranceScore}
+                        step={1}
+                        min={-100}
+                        max={100}
+                        onChange={(_event, newValue) => props.onVibranceChange(newValue as number)}
+                        onDoubleClick={() => props.onVibranceChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>

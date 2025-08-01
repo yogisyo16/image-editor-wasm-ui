@@ -11,6 +11,8 @@ interface Props {
     // Getters get values
     tempScore: number;
     tintScore: number;
+    vibranceScore: number;
+    saturationScore: number;
     exposureScore: number;
     HighlightsScore: number;
     shadowsScore: number;
@@ -19,12 +21,13 @@ interface Props {
     contrastScore: number;
     clarityScore: number;
     sharpnessScore: number;
-    saturationScore: number;
     expandedPanels: string[];
     // Setters get values update
     setTempScore: (value: number) => void;
     setTintScore: (value: number) => void;
     setExposureScore: (value: number) => void;
+    setVibranceScore: (value: number) => void;
+    setSaturationScore: (value: number) => void
     setHighlightsScore: (value: number) => void;
     setShadowsScore: (value: number) => void;
     setWhitesScore: (value: number) => void;
@@ -32,7 +35,6 @@ interface Props {
     setContrastScore: (value: number) => void;
     setClarityScore: (value: number) => void;
     setSharpnessScore: (value: number) => void;
-    setSaturationScore: (value: number) => void;
     onPanelChange: (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => void;
 }
 
@@ -84,9 +86,11 @@ export default function HAccordionColorAdjustment(props: Props) {
                         <HAccordionColor
                             TempScore = {props.tempScore}
                             TintScore = {props.tintScore}
+                            VibranceScore = {props.vibranceScore}
+                            SaturationScore={props.saturationScore}
                             onTempChange={props.setTempScore}
                             onTintChange={props.setTintScore}
-                            SaturationScore={props.saturationScore}
+                            onVibranceChange={props.setVibranceScore}
                             onSaturationChange={props.setSaturationScore}
                         />
                     </AccordionDetails>

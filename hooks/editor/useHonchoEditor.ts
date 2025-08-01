@@ -29,12 +29,13 @@ export interface Controller {
 export type AdjustmentState = {
     tempScore: number;
     tintScore: number;
+    vibranceScore: number;
+    saturationScore: number;
     exposureScore: number;
     highlightsScore: number;
     shadowsScore: number;
     whitesScore: number;
     blacksScore: number;
-    saturationScore: number;
     contrastScore: number;
     clarityScore: number;
     sharpnessScore: number;
@@ -54,7 +55,7 @@ export type ImageItem = {
 };
 
 const initialAdjustments: AdjustmentState = {
-    tempScore: 0, tintScore: 0, exposureScore: 0, highlightsScore: 0, shadowsScore: 0,
+    tempScore: 0, tintScore: 0, vibranceScore: 0, exposureScore: 0, highlightsScore: 0, shadowsScore: 0,
     whitesScore: 0, blacksScore: 0, saturationScore: 0, contrastScore: 0, clarityScore: 0, sharpnessScore: 0,
 };
 
@@ -80,12 +81,13 @@ export function useHonchoEditor(controller: Controller) {
     // Individual Adjustment State
     const [tempScore, setTempScore] = useState(0);
     const [tintScore, setTintScore] = useState(0);
+    const [vibranceScore, setVibranceScore] = useState(0);
+    const [saturationScore, setSaturationScore] = useState(0);
     const [exposureScore, setExposureScore] = useState(0);
     const [highlightsScore, setHighlightsScore] = useState(0);
     const [shadowsScore, setShadowsScore] = useState(0);
     const [whitesScore, setWhitesScore] = useState(0);
     const [blacksScore, setBlacksScore] = useState(0);
-    const [saturationScore, setSaturationScore] = useState(0);
     const [contrastScore, setContrastScore] = useState(0);
     const [clarityScore, setClarityScore] = useState(0);
     const [sharpnessScore, setSharpnessScore] = useState(0);
@@ -143,15 +145,6 @@ export function useHonchoEditor(controller: Controller) {
     const [colorAdjustments, setColorAdjustments] = useState(true);
     const [lightAdjustments, setLightAdjustments] = useState(true);
     const [detailsAdjustments, setDetailsAdjustments] = useState(true);
-
-    // Mobile Draggable Panel State
-    const [panelHeight, setPanelHeight] = useState(165);
-    const [contentHeight, setContentHeight] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
-    const dragStartPos = useRef(0);
-    const initialHeight = useRef(0);
-    const panelRef = useRef<HTMLDivElement | null>(null);
-    const contentRef = useRef<HTMLDivElement | null>(null);
 
     // MARK: - Core Editor Logic
     const updateCanvas = useCallback(() => {
@@ -307,6 +300,14 @@ export function useHonchoEditor(controller: Controller) {
         });
     }, []);
 
+    const adjustVibranceBulk = useCallback((uiAmount: number) => {
+        setVibranceScore(prevScore => {
+            const newScore = clamp(prevScore + uiAmount);
+            console.log("Adjusting vibrance. New score:", newScore);
+            return newScore;
+        });
+    }, []);
+
     const adjustSaturationBulk = useCallback((uiAmount: number) => {
         setSaturationScore(prevScore => {
             const newScore = clamp(prevScore + uiAmount);
@@ -389,6 +390,11 @@ export function useHonchoEditor(controller: Controller) {
     const handleBulkTintIncrease = useCallback(() => adjustTintBulk(1), [adjustTintBulk]);
     const handleBulkTintIncreaseMax = useCallback(() => adjustTintBulk(100), [adjustTintBulk]);
 
+    const handleBulkVibranceDecreaseMax = useCallback(() => adjustVibranceBulk(-100), [adjustVibranceBulk]);
+    const handleBulkVibranceDecrease = useCallback(() => adjustVibranceBulk(-1), [adjustVibranceBulk]);
+    const handleBulkVibranceIncrease = useCallback(() => adjustVibranceBulk(1), [adjustVibranceBulk]);
+    const handleBulkVibranceIncreaseMax = useCallback(() => adjustVibranceBulk(100), [adjustVibranceBulk]);
+
     const handleBulkSaturationDecreaseMax = useCallback(() => adjustSaturationBulk(-100), [adjustSaturationBulk]);
     const handleBulkSaturationDecrease = useCallback(() => adjustSaturationBulk(-1), [adjustSaturationBulk]);
     const handleBulkSaturationIncrease = useCallback(() => adjustSaturationBulk(1), [adjustSaturationBulk]);
@@ -458,7 +464,7 @@ export function useHonchoEditor(controller: Controller) {
     const handleCloseCopyDialog = () => setCopyDialogOpen(false);
 
     const handleCopyEdit = useCallback(() => {
-        const currentState: AdjustmentState = { tempScore, tintScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
+        const currentState: AdjustmentState = { tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
         setCopiedAdjustments(currentState);
         console.log("Copied current adjustments:", currentState);
     }, [tempScore, tintScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore]);
@@ -537,7 +543,7 @@ export function useHonchoEditor(controller: Controller) {
     const handleCreatePreset = useCallback(async () => {
         if (!controller) return;
 
-        const currentAdjustments: AdjustmentState = { tempScore, tintScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
+        const currentAdjustments: AdjustmentState = { tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
 
         try {
             const newPreset = await controller.createPreset(presetName, currentAdjustments);
@@ -619,41 +625,7 @@ export function useHonchoEditor(controller: Controller) {
     };
     const handleSelectBulkPreset = (event: SelectChangeEvent<string>) => setSelectedBulkPreset(event.target.value as string);
 
-    // Mobile Panel Drag Handlers
-    const handleContentHeightChange = useCallback((height: number) => {
-        if (height > 0 && height !== contentHeight) setContentHeight(height);
-    }, [contentHeight]);
-
-    const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-        setIsDragging(true);
-        const startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-        dragStartPos.current = startY;
-        initialHeight.current = panelHeight;
-        if (panelRef.current) panelRef.current.style.transition = 'none';
-    }, [panelHeight]);
-
-    const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
-        if (!isDragging) return;
-        const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-        const deltaY = dragStartPos.current - currentY;
-        const newHeight = initialHeight.current + deltaY;
-        const panelChromeHeight = 60;
-        const dynamicPanelFullHeight = contentHeight + panelChromeHeight;
-        const clampedHeight = Math.max(165, Math.min(newHeight, dynamicPanelFullHeight));
-        setPanelHeight(clampedHeight);
-    }, [isDragging, contentHeight]);
-
-    const handleDragEnd = useCallback(() => {
-        if (!isDragging) return;
-        setIsDragging(false);
-        dragStartPos.current = 0;
-        if (panelRef.current) panelRef.current.style.transition = 'height 0.3s ease-in-out';
-        const panelChromeHeight = 60;
-        const dynamicPanelFullHeight = contentHeight + panelChromeHeight;
-        const halfwayPoint = (dynamicPanelFullHeight + 165) / 2;
-        setPanelHeight(panelHeight > halfwayPoint ? dynamicPanelFullHeight : 165);
-    }, [isDragging, panelHeight, contentHeight]);
-
+   
     // MARK: - Zoom Handlers
     const handleZoomAction = useCallback((action: string) => {
         let newZoom = zoomLevel;
@@ -727,6 +699,7 @@ export function useHonchoEditor(controller: Controller) {
 
     // Adjustment USE EFFECTS
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setExposure(exposureScore); updateCanvas(); } }, [exposureScore, isImageLoaded, updateCanvas]);
+    useEffect(() => { if (isImageLoaded) { editorRef.current?.setVibrance(vibranceScore); updateCanvas(); } }, [vibranceScore, isImageLoaded, updateCanvas]);
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setContrast(contrastScore); updateCanvas(); } }, [contrastScore, isImageLoaded, updateCanvas]);
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setHighlights(highlightsScore); updateCanvas(); } }, [highlightsScore, isImageLoaded, updateCanvas]);
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setShadows(shadowsScore); updateCanvas(); } }, [shadowsScore, isImageLoaded, updateCanvas]);
@@ -740,7 +713,7 @@ export function useHonchoEditor(controller: Controller) {
 
     useEffect(() => {
         if (!isImageLoaded) return;
-        const newState: AdjustmentState = { tempScore, tintScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
+        const newState: AdjustmentState = { tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
         if (JSON.stringify(history[historyIndex]) === JSON.stringify(newState)) return;
         const newHistory = history.slice(0, historyIndex + 1);
         setHistory([...newHistory, newState]);
@@ -766,27 +739,21 @@ export function useHonchoEditor(controller: Controller) {
     }, []);
 
     useEffect(() => {
-        if (isDragging) {
-            window.addEventListener('mousemove', handleDragMove);
-            window.addEventListener('mouseup', handleDragEnd);
-            window.addEventListener('touchmove', handleDragMove);
-            window.addEventListener('touchend', handleDragEnd);
-        }
+        // The function returned by useEffect is the cleanup function.
+        // It will run only when the component that uses this hook unmounts.
         return () => {
-            window.removeEventListener('mousemove', handleDragMove);
-            window.removeEventListener('mouseup', handleDragEnd);
-            window.removeEventListener('touchmove', handleDragMove);
-            window.removeEventListener('touchend', handleDragEnd);
+            if (editorRef.current) {
+                console.log("Cleaning up Honcho Editor instance...");
+                editorRef.current.cleanup(); // This calls the C++ cleanup function
+            }
         };
-    }, [isDragging, handleDragMove, handleDragEnd]);
+    }, []);
 
     return {
         // Refs
         canvasRef,
         canvasContainerRef,
         fileInputRef,
-        panelRef,
-        contentRef,
 
         // Status & State
         editorStatus,
@@ -824,7 +791,6 @@ export function useHonchoEditor(controller: Controller) {
         colorAdjustments,
         lightAdjustments,
         detailsAdjustments,
-        panelHeight,
         handleWheelZoom,
         handleZoomAction,
         zoomLevelText: `${Math.round(zoomLevel * 100)}%`,
@@ -885,14 +851,14 @@ export function useHonchoEditor(controller: Controller) {
         handleCancelWatermark,
         toggleBulkEditing,
         handleSelectBulkPreset,
-        handleDragStart,
-        handleContentHeightChange,
 
         // Adjustment State & Setters
         tempScore,
         setTempScore,
         tintScore,
         setTintScore,
+        vibranceScore,
+        setVibranceScore,
         exposureScore,
         setExposureScore,
         highlightsScore,
