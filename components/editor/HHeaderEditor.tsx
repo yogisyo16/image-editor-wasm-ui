@@ -92,9 +92,11 @@ export default function HHeaderEditor(props: Props) {
                             <Typography sx={{ fontSize: "14px", color: colors.surface }}>Copy edits</Typography>
                         </ListItemText>
                         {/* Should be align right */}
-                        <ListItemIcon sx={{ marginLeft: 'auto' }}>
-                            <CardMedia component="img" image="/v1/svg/shortcut-copy-editor.svg" sx={{ width: "25px", height: "20px" }} />
-                        </ListItemIcon>
+                        {!isMobile && 
+                            <ListItemIcon sx={{ marginLeft: 'auto' }}>
+                                <CardMedia component="img" image="/v1/svg/shortcut-copy-editor.svg" sx={{ width: "25px", height: "20px" }} />
+                            </ListItemIcon>
+                        }
                     </MenuItem>
                     <MenuItem onClick={props.onPasteEdit} disabled={!props.isPasteEnabled}>
                         <ListItemIcon sx={{ minWidth: 0, mr: "0px", px: "0px" }}>
@@ -103,9 +105,12 @@ export default function HHeaderEditor(props: Props) {
                         <ListItemText>
                             <Typography sx={{ fontSize: "14px", color: !props.isPasteEnabled ? colors.onSurfaceVariant1 : colors.surface }}>Paste edits</Typography>
                         </ListItemText>
-                        <ListItemIcon sx={{ marginLeft: '30px' }}>
-                            <CardMedia component="img" image="/v1/svg/shortcut-paste-editor.svg" sx={{ width: "25px", height: "20px" }} />
-                        </ListItemIcon>
+                        { !isMobile &&  
+                            <ListItemIcon sx={{ marginLeft: '30px' }}>
+                                <CardMedia component="img" image="/v1/svg/shortcut-paste-editor.svg" sx={{ width: "25px", height: "20px" }} />
+                            </ListItemIcon>
+                        }
+                        
                     </MenuItem>
                 </Menu>
             </Stack>

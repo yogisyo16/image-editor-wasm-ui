@@ -77,6 +77,10 @@ export function useHonchoEditor(controller: Controller) {
     const [history, setHistory] = useState<AdjustmentState[]>([initialAdjustments]);
     const [historyIndex, setHistoryIndex] = useState(0);
     const [copiedAdjustments, setCopiedAdjustments] = useState<AdjustmentState | null>(null);
+    const [copyColorChecks, setCopyColorChecks] = useState({ temperature: true, tint: true, vibrance: true, saturation: true });
+    const [copyLightChecks, setCopyLightChecks] = useState({ exposure: true, contrast: true, highlights: true, shadows: true, whites: true, blacks: true });
+    const [copyDetailsChecks, setCopyDetailsChecks] = useState({ clarity: true, sharpness: true });
+    const [copyDialogExpanded, setCopyDialogExpanded] = useState({ color: true, light: true, details: true });
 
     // Individual Adjustment State
     const [tempScore, setTempScore] = useState(0);
@@ -460,14 +464,99 @@ export function useHonchoEditor(controller: Controller) {
     // Header and Dialog Handlers
     const handleHeaderMenuClick = (event: React.MouseEvent<HTMLElement>) => setHeaderMenuAnchorEl(event.currentTarget);
     const handleHeaderMenuClose = () => setHeaderMenuAnchorEl(null);
-    const handleOpenCopyDialog = () => { setCopyDialogOpen(true); handleHeaderMenuClose(); };
+    const handleOpenCopyDialog = () => {
+        const newColorChecks = {
+            temperature: tempScore !== 0,
+            tint: tintScore !== 0,
+            vibrance: vibranceScore !== 0,
+            saturation: saturationScore !== 0,
+        };
+        const newLightChecks = {
+            exposure: exposureScore !== 0,
+            contrast: contrastScore !== 0,
+            highlights: highlightsScore !== 0,
+            shadows: shadowsScore !== 0,
+            whites: whitesScore !== 0,
+            blacks: blacksScore !== 0,
+        };
+        const newDetailsChecks = {
+            clarity: clarityScore !== 0,
+            sharpness: sharpnessScore !== 0,
+        };
+
+        setCopyColorChecks(newColorChecks);
+        setCopyLightChecks(newLightChecks);
+        setCopyDetailsChecks(newDetailsChecks);
+
+        setCopyDialogExpanded({
+            color: Object.values(newColorChecks).some(isChecked => isChecked),
+            light: Object.values(newLightChecks).some(isChecked => isChecked),
+            details: Object.values(newDetailsChecks).some(isChecked => isChecked),
+        });
+
+        setCopyDialogOpen(true);
+        handleHeaderMenuClose();
+    };
+
     const handleCloseCopyDialog = () => setCopyDialogOpen(false);
 
+    const handleCopyParentChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        const isChecked = event.target.checked;
+        setter((prev: any) => {
+            const newState: any = {};
+            Object.keys(prev).forEach(key => { newState[key] = isChecked; });
+            return newState;
+        });
+    };
+    
+    const handleCopyChildChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        setter((prev: any) => ({
+            ...prev,
+            [event.target.name]: event.target.checked,
+        }));
+    };
+
+    const handleToggleCopyDialogExpand = (section: 'color' | 'light' | 'details') => {
+        setCopyDialogExpanded(prev => ({ ...prev, [section]: !prev[section] }));
+    };
+
+
     const handleCopyEdit = useCallback(() => {
-        const currentState: AdjustmentState = { tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
-        setCopiedAdjustments(currentState);
-        console.log("Copied current adjustments:", currentState);
-    }, [tempScore, tintScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore]);
+        const adjustmentsToCopy: Partial<AdjustmentState> = {};
+
+        // Color Adjustments
+        if (copyColorChecks.temperature) adjustmentsToCopy.tempScore = tempScore;
+        if (copyColorChecks.tint) adjustmentsToCopy.tintScore = tintScore;
+        if (copyColorChecks.vibrance) adjustmentsToCopy.vibranceScore = vibranceScore;
+        if (copyColorChecks.saturation) adjustmentsToCopy.saturationScore = saturationScore;
+        
+        // Light Adjustments
+        if (copyLightChecks.exposure) adjustmentsToCopy.exposureScore = exposureScore;
+        if (copyLightChecks.contrast) adjustmentsToCopy.contrastScore = contrastScore;
+        if (copyLightChecks.highlights) adjustmentsToCopy.highlightsScore = highlightsScore;
+        if (copyLightChecks.shadows) adjustmentsToCopy.shadowsScore = shadowsScore;
+        if (copyLightChecks.whites) adjustmentsToCopy.whitesScore = whitesScore;
+        if (copyLightChecks.blacks) adjustmentsToCopy.blacksScore = blacksScore;
+
+        // Details Adjustments
+        if (copyDetailsChecks.clarity) adjustmentsToCopy.clarityScore = clarityScore;
+        if (copyDetailsChecks.sharpness) adjustmentsToCopy.sharpnessScore = sharpnessScore;
+
+        // Combine with existing copied adjustments to not lose unchecked values from a previous copy
+        setCopiedAdjustments(prev => ({ ...initialAdjustments, ...prev, ...adjustmentsToCopy }));
+        
+        console.log("Copied selected adjustments:", adjustmentsToCopy);
+    }, [
+        copyColorChecks, copyLightChecks, copyDetailsChecks,
+        tempScore, tintScore, vibranceScore, saturationScore, exposureScore, contrastScore,
+        highlightsScore, shadowsScore, whitesScore, blacksScore, clarityScore, sharpnessScore
+    ]);
 
     const handleConfirmCopy = () => { handleCopyEdit(); handleCloseCopyDialog(); setShowCopyAlert(true); };
 
@@ -625,6 +714,28 @@ export function useHonchoEditor(controller: Controller) {
     };
     const handleSelectBulkPreset = (event: SelectChangeEvent<string>) => setSelectedBulkPreset(event.target.value as string);
 
+    // MARK : Image original and canvas
+    const handleShowOriginal = useCallback(() => {
+        if (!editorRef.current || !isImageLoaded) return;
+        
+        console.log("Showing original image...");
+        // Temporarily apply the initial state to the view
+        applyAdjustmentState(initialAdjustments);
+    }, [isImageLoaded, applyAdjustmentState]);
+
+    /**
+     * Restores the currently active edits to the canvas.
+     */
+    const handleShowEdited = useCallback(() => {
+        if (!editorRef.current || !isImageLoaded) return;
+
+        console.log("Restoring edited image...");
+        // Re-apply the latest state from our edit history
+        const latestState = history[historyIndex];
+        if (latestState) {
+            applyAdjustmentState(latestState);
+        }
+    }, [isImageLoaded, history, historyIndex, applyAdjustmentState]);
    
     // MARK: - Zoom Handlers
     const handleZoomAction = useCallback((action: string) => {
@@ -791,6 +902,8 @@ export function useHonchoEditor(controller: Controller) {
         colorAdjustments,
         lightAdjustments,
         detailsAdjustments,
+        handleShowOriginal,
+        handleShowEdited,
         handleWheelZoom,
         handleZoomAction,
         zoomLevelText: `${Math.round(zoomLevel * 100)}%`,
@@ -804,6 +917,19 @@ export function useHonchoEditor(controller: Controller) {
         handleRevert,
         handleUndo,
         handleRedo,
+        handleOpenCopyDialog,
+        handleCloseCopyDialog,
+        copyColorChecks,
+        setCopyColorChecks,
+        copyLightChecks,
+        setCopyLightChecks,
+        copyDetailsChecks,
+        setCopyDetailsChecks,
+        copyDialogExpanded,
+        handleCopyParentChange,
+        handleCopyChildChange,
+        handleToggleCopyDialogExpand,
+        handleConfirmCopy,
         handleCopyEdit,
         handlePasteEdit,
         adjustClarityBulk,
@@ -816,9 +942,6 @@ export function useHonchoEditor(controller: Controller) {
         setAnchorMenuZoom,
         handleHeaderMenuClick,
         handleHeaderMenuClose,
-        handleOpenCopyDialog,
-        handleCloseCopyDialog,
-        handleConfirmCopy,
         setColorAdjustments,
         setLightAdjustments,
         setDetailsAdjustments,

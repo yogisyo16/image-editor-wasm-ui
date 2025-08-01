@@ -49,10 +49,14 @@ export default function HAccordionLight(props: Props) {
             <Stack>
                 <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Exposure</Typography>
+                        <Typography
+                            component="label"
+                            htmlFor="exposure-input"
+                            onDoubleClick={() => props.onExposureChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Exposure</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="exposure-input"
                             value={formatValue(props.ExposureScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onExposureChange)}
@@ -109,9 +113,7 @@ export default function HAccordionLight(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
+                                boxShadow: 'none',
                             }
                         }}
                         size="small"
@@ -119,15 +121,20 @@ export default function HAccordionLight(props: Props) {
                         step={1}
                         min={-100}
                         max={100}
-                        onChange={(_event, newValue) => props.onExposureChange(newValue as number)} // Add onChange
+                        onChange={(_event, newValue) => props.onExposureChange(newValue as number)}
+                        onDoubleClick={() => props.onExposureChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Contrast</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="contrast-input"
+                            onDoubleClick={() => props.onContrastChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Contrast</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="contrast-input"
                             value={formatValue(props.ContrastScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onContrastChange)}
@@ -184,9 +191,7 @@ export default function HAccordionLight(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
+                                boxShadow: 'none',
                             }
                         }}
                         size="small"
@@ -195,14 +200,19 @@ export default function HAccordionLight(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onContrastChange(newValue as number)}
+                        onDoubleClick={() => props.onContrastChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Highlights</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="highlights-input"
+                            onDoubleClick={() => props.onHighlightsChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Highlights</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="highlights-input"
                             value={formatValue(props.HighlightsScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onHighlightsChange)}
@@ -259,9 +269,7 @@ export default function HAccordionLight(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
+                                boxShadow: 'none',
                             }
                         }}
                         size="small"
@@ -270,14 +278,19 @@ export default function HAccordionLight(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onHighlightsChange(newValue as number)}
+                        onDoubleClick={() => props.onHighlightsChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Shadows</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="shadows-input"
+                            onDoubleClick={() => props.onShadowsChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Shadows</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="shadows-input"
                             value={formatValue(props.ShadowsScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onShadowsChange)}
@@ -334,9 +347,7 @@ export default function HAccordionLight(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
+                                boxShadow: 'none',
                             }
                         }}
                         size="small"
@@ -345,14 +356,19 @@ export default function HAccordionLight(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onShadowsChange(newValue as number)}
+                        onDoubleClick={() => props.onShadowsChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Whites</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="whites-input"
+                            onDoubleClick={() => props.onWhitesChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Whites</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="whites-input"
                             value={formatValue(props.WhitesScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onWhitesChange)}
@@ -409,9 +425,7 @@ export default function HAccordionLight(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
+                                boxShadow: 'none',
                             }
                         }}
                         size="small"
@@ -420,14 +434,19 @@ export default function HAccordionLight(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onWhitesChange(newValue as number)}
+                        onDoubleClick={() => props.onWhitesChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Blacks</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="blacks-input"
+                            onDoubleClick={() => props.onBlacksChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Blacks</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="blacks-input"
                             value={formatValue(props.BlacksScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onBlacksChange)}
@@ -484,9 +503,7 @@ export default function HAccordionLight(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
+                                boxShadow: 'none',
                             }
                         }}
                         size="small"
@@ -495,6 +512,7 @@ export default function HAccordionLight(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onBlacksChange(newValue as number)}
+                        onDoubleClick={() => props.onBlacksChange(0)}
                     />
                 </Stack>
             </Stack>

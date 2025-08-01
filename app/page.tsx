@@ -348,15 +348,22 @@ export default function HImageEditor() {
                     onSelectButton={editor.toggleBulkEditing}
                     valueSelect={editor.selectedImages}
                 />
-                <Stack direction={isMobile ? "column" : "row"} justifyContent="space-between" alignItems="stretch" sx={{ width: '100%', flexGrow: 1, overflow: 'hidden' }}>
+                <Stack
+                    direction={isMobile ? "column" : "row"}
+                    // On mobile, we change from 'space-between' to 'flex-start'
+                    // to allow the canvas container to grow and center its content.
+                    justifyContent={isMobile ? "flex-start" : "space-between"}
+                    alignItems="stretch"
+                    sx={{ width: '100%', flexGrow: 1, overflow: 'hidden' }}
+                >
                     <Box sx={{
                         flexGrow: 1,
                         display: 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center',
+                        alignItems: 'center', // This will now work correctly on mobile
                         position: 'relative',
                         p: isMobile ? 2 : 4,
-                        minHeight: 0
+                        minHeight: 700
                     }}>
                         <input type="file" ref={editor.fileInputRef} onChange={editor.handleFileChange} accept="image/png, image/jpeg, image/webp" style={{ display: 'none' }} />
                         {!editor.isImageLoaded ? (
@@ -383,7 +390,8 @@ export default function HImageEditor() {
                                 <HFooter
                                     anchorElZoom={editor.anchorMenuZoom}
                                     onScale={(event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget)}
-                                    onBeforeAfter={() => console.log("Before/After toggled!")}
+                                    onShowOriginal={editor.handleShowOriginal}
+                                    onShowEdited={editor.handleShowEdited}
                                     onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
                                     onZoomAction={editor.handleZoomAction}
                                     zoomLevelText={editor.zoomLevelText} 
@@ -408,7 +416,8 @@ export default function HImageEditor() {
                                 <HFooter
                                     anchorElZoom={editor.anchorMenuZoom}
                                     onScale={(event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget)}
-                                    onBeforeAfter={() => console.log("Before/After toggled!")}
+                                    onShowOriginal={editor.handleShowOriginal}
+                                    onShowEdited={editor.handleShowEdited}
                                     onZoomMenuClose={() => editor.setAnchorMenuZoom(null)}
                                     onZoomAction={editor.handleZoomAction}
                                     zoomLevelText={editor.zoomLevelText} 
@@ -580,10 +589,21 @@ export default function HImageEditor() {
                     onClose={editor.handleCloseCopyDialog}
                     action={
                         <HDialogCopy
-                            colorAdjustments={editor.colorAdjustments}
-                            lightAdjustments={editor.lightAdjustments}
-                            detailsAdjustments={editor.detailsAdjustments}
                             onCopyEdit={editor.handleConfirmCopy}
+                
+                            colorChecks={editor.copyColorChecks}
+                            lightChecks={editor.copyLightChecks}
+                            detailsChecks={editor.copyDetailsChecks}
+                            
+                            setColorChecks={editor.setCopyColorChecks}
+                            setLightChecks={editor.setCopyLightChecks}
+                            setDetailsChecks={editor.setCopyDetailsChecks}
+                            
+                            expanded={editor.copyDialogExpanded}
+                            
+                            onParentChange={editor.handleCopyParentChange}
+                            onChildChange={editor.handleCopyChildChange}
+                            onToggleExpand={editor.handleToggleCopyDialogExpand}
                         />
                     }
                 />

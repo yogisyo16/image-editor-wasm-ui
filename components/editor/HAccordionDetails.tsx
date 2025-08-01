@@ -40,10 +40,14 @@ export default function HAccordionDetails(props: Props) {
             <Stack>
                 <Stack direction="column" gap="4px" sx={{pt: '6px', pb: '2px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Clarity</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="clarity-input"
+                            onDoubleClick={() => props.onClarityChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none'}}>Clarity</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="clarity-input"
                             value={formatValue(props.ClarityScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onClarityChange)}
@@ -99,10 +103,8 @@ export default function HAccordionDetails(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
-                            },
-                            '& .MuiSlider-thumb:hover': {
                                 boxShadow: 'none',   
-                            }
+                            },
                         }}
                         size="small"
                         value={props.ClarityScore}
@@ -110,14 +112,19 @@ export default function HAccordionDetails(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onClarityChange(newValue as number)}
+                        onDoubleClick={() => props.onClarityChange(0)}
                     />
                 </Stack>
                 <Stack direction="column" gap="3px" sx={{pt: '10px', pb: '0px', px: '0px', mx: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle,}}>
                     <Stack direction="row" justifyContent="space-between">
-                        <Typography sx={{...typography.bodyMedium}}>Sharpness</Typography>
+                        <Typography 
+                            component="label"
+                            htmlFor="sharpness-input"
+                            onDoubleClick={() => props.onSharpnessChange(0)}
+                            sx={{...typography.bodyMedium, userSelect: 'none'}}>Sharpness</Typography>
                         <TextField
                             hiddenLabel
-                            id="filled-hidden-label-small"
+                            id="sharpness-input"
                             value={formatValue(props.SharpnessScore)}
                             variant="filled"
                             onChange={(e) => handleInputChange(e, -100, 100, props.onSharpnessChange)}
@@ -174,10 +181,8 @@ export default function HAccordionDetails(props: Props) {
                             '& .MuiSlider-thumb': {
                                 background: colors.surface,
                                 opacity: 1,
+                                boxShadow: 'none', 
                             },
-                            '& .MuiSlider-thumb:hover': {
-                                boxShadow: 'none',   
-                            }
                         }}
                         size="small"
                         value={props.SharpnessScore}
@@ -185,6 +190,7 @@ export default function HAccordionDetails(props: Props) {
                         min={-100}
                         max={100}
                         onChange={(_event, newValue) => props.onSharpnessChange(newValue as number)}
+                        onDoubleClick={() => props.onSharpnessChange(0)}
                     />
                 </Stack>
             </Stack>
