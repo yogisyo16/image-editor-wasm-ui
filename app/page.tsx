@@ -1,6 +1,8 @@
 'use client';
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Box, Stack, CircularProgress, Typography } from "@mui/material";
+import { Box, Stack, CircularProgress, Typography, Checkbox, Paper } from "@mui/material";
+import useColors from "@/colors";
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'; // Magic Wand Icon
 import Script from "next/script";
 import useIsMobile from "@/utils/isMobile";
 // Components
@@ -21,15 +23,27 @@ import {HTextField, HTextFieldRename} from "@/components/editor/HTextField";
 import HWatermarkView from "@/components/editor/HWatermarkView";
 import HModalMobile from "@/components/editor/HModalMobile";
 import HPresetOptionsMenu from "@/components/editor/HPresetOptionMenu";
-import { HAlertInternetBox, HAlertCopyBox } from "@/components/editor/HAlertBox";
+import { HAlertInternetBox, HAlertCopyBox, HAlertInternetConnectionBox } from "@/components/editor/HAlertBox";
 // Hooks
-import { useHonchoEditor } from "@/hooks/editor/useHonchoEditor";
+import { useHonchoEditor, AdjustmentState  } from "@/hooks/editor/useHonchoEditor";
 // API Controller
 import { apiController } from "@/lib/api/editorController";
+
+const initialAdjustments: AdjustmentState = {
+    tempScore: 0, tintScore: 0, vibranceScore: 0, exposureScore: 0, highlightsScore: 0, shadowsScore: 0,
+    whitesScore: 0, blacksScore: 0, saturationScore: 0, contrastScore: 0, clarityScore: 0, sharpnessScore: 0,
+};
+
+// Helper to check if an image has any edits
+const hasAdjustments = (state: AdjustmentState): boolean => {
+    if (!state) return false;
+    return Object.values(state).some(value => value !== 0);
+};
 
 export default function HImageEditor() {
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
+    const colors = useColors();
 
     const PEEK_HEIGHT = 20;
     const COLLAPSED_HEIGHT = 165;
@@ -160,6 +174,20 @@ export default function HImageEditor() {
             window.removeEventListener('touchend', handleDragEnd);
         };
     }, [isDragging, handleDragMove, handleDragEnd]);
+
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    if (!isMounted) {
+        return (
+            <Stack sx={{ width: '100%', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'black' }}>
+                <CircularProgress sx={{ color: colors.onSurfaceVariant }} />
+            </Stack>
+        );
+    }
 
 
     // Dummy/placeholder handlers that remain in the component
@@ -329,8 +357,9 @@ export default function HImageEditor() {
                     editor.handleScriptReady();
                 }}
             />
-            <Stack direction="column" justifyContent="center" sx={{ width: '100%', height: isMobile ? '100%' : '100vh', background: 'black', px: isMobile ? 0 : "100px" }}>
-                {!editor.isOnline && !isMobile && <HAlertInternetBox />}
+            <Stack direction="column" justifyContent="center" sx={{ width: '100%', height: isMobile ? '100%' : '100vh', background: 'black', px: isMobile ? 0 : "10px" }}>
+                {editor.isConnectionSlow && <HAlertInternetConnectionBox onClose={editor.handleAlertClose} />}
+                {!editor.isOnline && <HAlertInternetBox />}
                 {editor.isPresetCreated && !isMobile && <HAlertInternetBox />}
                 {editor.showCopyAlert && <HAlertCopyBox />}
 
@@ -350,29 +379,93 @@ export default function HImageEditor() {
                 />
                 <Stack
                     direction={isMobile ? "column" : "row"}
-                    // On mobile, we change from 'space-between' to 'flex-start'
-                    // to allow the canvas container to grow and center its content.
-                    justifyContent={isMobile ? "flex-start" : "space-between"}
+                    justifyContent="space-between"
                     alignItems="stretch"
                     sx={{ width: '100%', flexGrow: 1, overflow: 'hidden' }}
                 >
-                    <Box sx={{
+                    {/* Main Canvas Area */}
+                    <Box sx={{ 
                         flexGrow: 1,
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center', // This will now work correctly on mobile
                         position: 'relative',
                         p: isMobile ? 2 : 4,
-                        minHeight: 700
-                    }}>
-                        <input type="file" ref={editor.fileInputRef} onChange={editor.handleFileChange} accept="image/png, image/jpeg, image/webp" style={{ display: 'none' }} />
+                        minHeight: 720
+                     }}>
+                        <input type="file" ref={editor.fileInputRef} onChange={editor.handleFileChange} multiple accept="image/*" style={{ display: 'none' }} />
+
                         {!editor.isImageLoaded ? (
                             <Box onClick={() => editor.fileInputRef.current?.click()} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', border: '2px dashed grey', borderRadius: 2, p: 4, cursor: editor.isEditorReady ? 'pointer' : 'default', textAlign: 'center', color: 'grey.500', width: '100%', height: '300px' }}>
                                 {!editor.isEditorReady && <CircularProgress color="inherit" sx={{ mb: 2 }} />}
                                 <Typography variant="h6">{editor.editorStatus}</Typography>
                             </Box>
                         ) : (
-                            <canvas ref={editor.canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }} />
+                            editor.isBulkEditing ? (
+                                // Responsive Image Grid for Bulk Edit
+                                <Box sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+                                    gap: 2,
+                                    width: '100%',
+                                    height: '100%',
+                                    p: 1
+                                }}>
+                                    {editor.imageList.map(image => {
+                                        const imageAdjustments = editor.adjustmentsMap.get(image.id) || initialAdjustments;
+                                        const isEdited = hasAdjustments(imageAdjustments);
+
+                                        return (
+                                            <Paper
+                                                key={image.id}
+                                                elevation={3}
+                                                sx={{
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                    aspectRatio: '1 / 1',
+                                                    '& img': {
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        objectFit: 'cover',
+                                                        display: 'block',
+                                                        transition: 'opacity 0.2s ease-in-out',
+                                                        opacity: editor.selectedImageIds.has(image.id) ? 1 : 0.4,
+                                                    }
+                                                }}
+                                            >
+                                                <img src={image.url} alt={image.name} />
+                                                <Checkbox
+                                                    checked={editor.selectedImageIds.has(image.id)}
+                                                    onChange={() => editor.handleToggleImageSelection(image.id)}
+                                                    sx={{
+                                                        position: 'absolute', top: 4, left: 4, color: 'common.white',
+                                                        '&.Mui-checked': { color: '#1976d2' },
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                                        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.7)' }
+                                                    }}
+                                                />
+                                                {isEdited && (
+                                                    <AutoFixHighIcon 
+                                                        fontSize="small"
+                                                        sx={{ 
+                                                            position: 'absolute', 
+                                                            bottom: 8, 
+                                                            right: 8, 
+                                                            color: 'white', 
+                                                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                                            borderRadius: '50%',
+                                                            padding: '2px'
+                                                        }} 
+                                                    />
+                                                )}
+                                            </Paper>
+                                        );
+                                    })}
+                                </Box>
+                            ) : (
+                                // Canvas for Single Edit
+                                <canvas ref={editor.canvasRef} style={{ display: 'block', maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto' }} />
+                            )
                         )}
                     </Box>
 

@@ -11,6 +11,16 @@ declare global {
   }
 }
 
+interface NetworkInformation extends EventTarget {
+  readonly effectiveType: 'slow-2g' | '2g' | '3g' | '4g';
+  readonly saveData: boolean;
+  readonly downlink: number;
+}
+
+interface NavigatorWithConnection extends Navigator {
+  readonly connection: NetworkInformation;
+}
+
 export interface Controller {
     // Image Handling
     onGetImage(imageID: string): Promise<string | null>;
@@ -50,8 +60,9 @@ export type Preset = {
 
 export type ImageItem = {
     id: string;
-    url: string;
+    url: string;    // Temporary URL for displaying the thumbnail
     name: string;
+    file: File;     // The actual File object
 };
 
 const initialAdjustments: AdjustmentState = {
@@ -76,11 +87,14 @@ export function useHonchoEditor(controller: Controller) {
     // const [adjustments, setAdjustments] = useState<AdjustmentState>(initialAdjustments);
     const [history, setHistory] = useState<AdjustmentState[]>([initialAdjustments]);
     const [historyIndex, setHistoryIndex] = useState(0);
+    const [isViewingOriginal, setIsViewingOriginal] = useState(false);
     const [copiedAdjustments, setCopiedAdjustments] = useState<AdjustmentState | null>(null);
     const [copyColorChecks, setCopyColorChecks] = useState({ temperature: true, tint: true, vibrance: true, saturation: true });
     const [copyLightChecks, setCopyLightChecks] = useState({ exposure: true, contrast: true, highlights: true, shadows: true, whites: true, blacks: true });
     const [copyDetailsChecks, setCopyDetailsChecks] = useState({ clarity: true, sharpness: true });
     const [copyDialogExpanded, setCopyDialogExpanded] = useState({ color: true, light: true, details: true });
+
+    const [adjustmentsMap, setAdjustmentsMap] = useState<Map<string, AdjustmentState>>(new Map());
 
     // Individual Adjustment State
     const [tempScore, setTempScore] = useState(0);
@@ -99,6 +113,8 @@ export function useHonchoEditor(controller: Controller) {
     // MARK: - UI & App State (Moved from page.tsx)
     // General UI State
     const [isOnline, setIsOnline] = useState(true);
+    const [isConnectionSlow, setIsConnectionSlow] = useState(false);
+    
     const [showCopyAlert, setShowCopyAlert] = useState(false);
     const [isCopyDialogOpen, setCopyDialogOpen] = useState(false);
     const [isPublished, setIsPublished] = useState(false);
@@ -143,12 +159,41 @@ export function useHonchoEditor(controller: Controller) {
     const [selectedImages, setSelectedImages] = useState('Select');
     const [imageList, setImageList] = useState<ImageItem[]>([]);
     const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
-    const [primaryImageId, setPrimaryImageId] = useState<string | null>(null);
 
     // State for Copying specific adjustments
     const [colorAdjustments, setColorAdjustments] = useState(true);
     const [lightAdjustments, setLightAdjustments] = useState(true);
     const [detailsAdjustments, setDetailsAdjustments] = useState(true);
+
+    useEffect(() => {
+        // Cast navigator to our custom type to access the connection property safely
+        const navigatorWithConnection = navigator as NavigatorWithConnection;
+
+        if (!navigatorWithConnection.connection) {
+            return;
+        }
+
+        const navigatorConnection = navigatorWithConnection.connection;
+
+        const updateConnectionStatus = () => {
+            const slowConnectionTypes = ['slow-2g', '2g', '3g'];
+            const isSlow = navigatorConnection.saveData ||
+                        slowConnectionTypes.includes(navigatorConnection.effectiveType);
+            
+            setIsConnectionSlow(isSlow);
+        };
+
+        // Check status immediately
+        updateConnectionStatus();
+
+        // Add event listener for changes
+        navigatorConnection.addEventListener('change', updateConnectionStatus);
+
+        // Cleanup on unmount
+        return () => {
+            navigatorConnection.removeEventListener('change', updateConnectionStatus);
+        };
+    }, []);
 
     // MARK: - Core Editor Logic
     const updateCanvas = useCallback(() => {
@@ -173,6 +218,16 @@ export function useHonchoEditor(controller: Controller) {
             setIsImageLoaded(false);
         }
     }, []);
+
+    const applyUiStateToSelectedImages = useCallback((uiState: AdjustmentState) => {
+        setAdjustmentsMap(prevMap => {
+            const newMap = new Map(prevMap);
+            selectedImageIds.forEach(id => {
+                newMap.set(id, uiState);
+            });
+            return newMap;
+        });
+    }, [selectedImageIds]);
 
     const loadImageFromUrl = useCallback(async (url: string) => {
         try {
@@ -207,51 +262,44 @@ export function useHonchoEditor(controller: Controller) {
         }
     }, [controller, loadImageFromUrl]);
 
-    useEffect(() => {
-        // When the primary image ID changes, load it into the main canvas.
-        if (primaryImageId) {
-            const imageToLoad = imageList.find(img => img.id === primaryImageId);
-            if (imageToLoad && imageToLoad.url) {
-                loadImageFromUrl(imageToLoad.url);
-            }
-        } else {
-            // If no primary image is selected (in bulk mode), clear the canvas.
-            if (isBulkEditing) {
-                setIsImageLoaded(false);
-            }
-        }
-    }, [primaryImageId, imageList, isBulkEditing, loadImageFromUrl]);
-
-    const fetchImageList = useCallback(async () => {
-        if (!controller) return;
-        try {
-            const images = await controller.getImageList();
-            setImageList(images);
-        } catch (error) {
-            console.error("Failed to fetch image list:", error);
-        }
-    }, [controller]);
-
-    const handleToggleImageSelection = useCallback((imageId: string) => {
-        setSelectedImageIds(prevSelectedIds => {
-            const newSelectedIds = new Set(prevSelectedIds);
-            if (newSelectedIds.has(imageId)) {
-                newSelectedIds.delete(imageId);
-            } else {
-                newSelectedIds.add(imageId);
-            }
-            console.log("Selected IDs:", Array.from(newSelectedIds)); // For debugging
-            return newSelectedIds;
-        });
-    }, []);
-
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target?.files?.[0];
-        if (file) loadImage(file);
+        const files = event.target?.files;
+        if (!files || files.length === 0) return;
+
+        applyAdjustmentState(initialAdjustments);
+        setHistory([initialAdjustments]);
+        setHistoryIndex(0);
+
+        if (files.length === 1) {
+            setIsBulkEditing(false);
+            setImageList([]);
+            setSelectedImageIds(new Set());
+            setAdjustmentsMap(new Map());
+            loadImage(files[0]);
+        } else {
+            setIsBulkEditing(true);
+            const newImageList = Array.from(files).map((file, index) => ({
+                id: `${file.name}-${Date.now()}-${index}`,
+                name: file.name,
+                file: file,
+                url: URL.createObjectURL(file),
+            }));
+            
+            const newAdjustmentsMap = new Map<string, AdjustmentState>();
+            newImageList.forEach(image => {
+                newAdjustmentsMap.set(image.id, { ...initialAdjustments });
+            });
+            setAdjustmentsMap(newAdjustmentsMap);
+
+            setImageList(newImageList);
+            setIsImageLoaded(true); 
+            setSelectedImageIds(new Set(newImageList.map(img => img.id)));
+        }
     };
 
     const applyAdjustmentState = useCallback((state: AdjustmentState) => {
+        // Always update the UI controls
         setTempScore(state.tempScore);
         setTintScore(state.tintScore);
         setExposureScore(state.exposureScore);
@@ -263,13 +311,22 @@ export function useHonchoEditor(controller: Controller) {
         setContrastScore(state.contrastScore);
         setClarityScore(state.clarityScore);
         setSharpnessScore(state.sharpnessScore);
-    }, []);
+
+        // If in bulk mode, apply this state to all selected images
+        if (isBulkEditing) {
+            applyUiStateToSelectedImages(state);
+        }
+    }, [isBulkEditing, applyUiStateToSelectedImages]);
 
     const handleRevert = useCallback(() => {
-        if (!editorRef.current) return;
-        editorRef.current.resetAdjustments();
+        // This will reset the UI controls and, if in bulk mode, the selected images
         applyAdjustmentState(initialAdjustments);
-    }, [applyAdjustmentState]);
+        
+        // For single image mode, also reset the underlying canvas engine
+        if (!isBulkEditing && editorRef.current) {
+            editorRef.current.resetAdjustments();
+        }
+    }, [applyAdjustmentState, isBulkEditing]);
 
     const handleUndo = useCallback(() => {
         if (historyIndex > 0) {
@@ -288,161 +345,231 @@ export function useHonchoEditor(controller: Controller) {
     }, [history, historyIndex, applyAdjustmentState]);
 
     // MARK: - Bulk Editor Functions For Desktop and Mobile
-    const adjustTempBulk = useCallback((uiAmount: number) => {
-        setTempScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting temperature. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustTempBulk = useCallback((uiAmount: number) => {
+    //     setTempScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting temperature. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustTintBulk = useCallback((uiAmount: number) => {
-        setTintScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting tint. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustTintBulk = useCallback((uiAmount: number) => {
+    //     setTintScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting tint. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustVibranceBulk = useCallback((uiAmount: number) => {
-        setVibranceScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting vibrance. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustVibranceBulk = useCallback((uiAmount: number) => {
+    //     setVibranceScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting vibrance. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustSaturationBulk = useCallback((uiAmount: number) => {
-        setSaturationScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting saturation. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustSaturationBulk = useCallback((uiAmount: number) => {
+    //     setSaturationScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting saturation. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustExposureBulk = useCallback((uiAmount: number) => {
-        setExposureScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting exposure. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustExposureBulk = useCallback((uiAmount: number) => {
+    //     setExposureScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting exposure. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustContrastBulk = useCallback((uiAmount: number) => {
-        setContrastScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting contrast. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustContrastBulk = useCallback((uiAmount: number) => {
+    //     setContrastScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting contrast. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustHighlightsBulk = useCallback((uiAmount: number) => {
-        setHighlightsScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting highlights. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustHighlightsBulk = useCallback((uiAmount: number) => {
+    //     setHighlightsScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting highlights. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustShadowsBulk = useCallback((uiAmount: number) => {
-        setShadowsScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting shadows. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustShadowsBulk = useCallback((uiAmount: number) => {
+    //     setShadowsScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting shadows. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustWhitesBulk = useCallback((uiAmount: number) => {
-        setWhitesScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting whites. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustWhitesBulk = useCallback((uiAmount: number) => {
+    //     setWhitesScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting whites. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustBlacksBulk = useCallback((uiAmount: number) => {
-        setBlacksScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting blacks. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustBlacksBulk = useCallback((uiAmount: number) => {
+    //     setBlacksScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting blacks. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustClarityBulk = useCallback((uiAmount: number) => {
-        setClarityScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting clarity. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustClarityBulk = useCallback((uiAmount: number) => {
+    //     setClarityScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting clarity. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const adjustSharpnessBulk = useCallback((uiAmount: number) => {
-        setSharpnessScore(prevScore => {
-            const newScore = clamp(prevScore + uiAmount);
-            console.log("Adjusting sharpness. New score:", newScore);
-            return newScore;
-        });
-    }, []);
+    // const adjustSharpnessBulk = useCallback((uiAmount: number) => {
+    //     setSharpnessScore(prevScore => {
+    //         const newScore = clamp(prevScore + uiAmount);
+    //         console.log("Adjusting sharpness. New score:", newScore);
+    //         return newScore;
+    //     });
+    // }, []);
 
-    const handleBulkTempDecreaseMax = useCallback(() => adjustTempBulk(-100), [adjustTempBulk]);
-    const handleBulkTempDecrease = useCallback(() => adjustTempBulk(-1), [adjustTempBulk]);
-    const handleBulkTempIncrease = useCallback(() => adjustTempBulk(1), [adjustTempBulk]);
-    const handleBulkTempIncreaseMax = useCallback(() => adjustTempBulk(100), [adjustTempBulk]);
+    const handleToggleImageSelection = useCallback((imageId: string) => {
+        const newSelectedIds = new Set(selectedImageIds);
+        const isCurrentlySelected = newSelectedIds.has(imageId);
 
-    const handleBulkTintDecreaseMax = useCallback(() => adjustTintBulk(-100), [adjustTintBulk]);
-    const handleBulkTintDecrease = useCallback(() => adjustTintBulk(-1), [adjustTintBulk]);
-    const handleBulkTintIncrease = useCallback(() => adjustTintBulk(1), [adjustTintBulk]);
-    const handleBulkTintIncreaseMax = useCallback(() => adjustTintBulk(100), [adjustTintBulk]);
+        if (isCurrentlySelected) {
+            if (newSelectedIds.size > 1) {
+                newSelectedIds.delete(imageId);
+            }
+        } else {
+            newSelectedIds.add(imageId);
+            // Apply the current UI's adjustments to the newly selected image.
+            setAdjustmentsMap(prevMap => {
+                const newMap = new Map(prevMap);
+                const currentUiState = {
+                    tempScore, tintScore, vibranceScore, saturationScore,
+                    exposureScore, highlightsScore, shadowsScore, whitesScore,
+                    blacksScore, contrastScore, clarityScore, sharpnessScore
+                };
+                newMap.set(imageId, currentUiState);
+                return newMap;
+            });
+        }
+        setSelectedImageIds(newSelectedIds);
+    }, [selectedImageIds, tempScore, tintScore, vibranceScore, saturationScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, contrastScore, clarityScore, sharpnessScore]);
 
-    const handleBulkVibranceDecreaseMax = useCallback(() => adjustVibranceBulk(-100), [adjustVibranceBulk]);
-    const handleBulkVibranceDecrease = useCallback(() => adjustVibranceBulk(-1), [adjustVibranceBulk]);
-    const handleBulkVibranceIncrease = useCallback(() => adjustVibranceBulk(1), [adjustVibranceBulk]);
-    const handleBulkVibranceIncreaseMax = useCallback(() => adjustVibranceBulk(100), [adjustVibranceBulk]);
+    const createAbsoluteSetter = (key: keyof AdjustmentState, setter: React.Dispatch<React.SetStateAction<number>>) => (value: number) => {
+        setter(value); // Update UI slider
+        
+        if(isBulkEditing) {
+            setAdjustmentsMap(prevMap => {
+                const newMap = new Map(prevMap);
+                selectedImageIds.forEach(id => {
+                    const currentState = newMap.get(id) || initialAdjustments;
+                    newMap.set(id, { ...currentState, [key]: value });
+                });
+                return newMap;
+            });
+        }
+    };
+    
+    const createRelativeAdjuster = (key: keyof AdjustmentState, uiSetter: React.Dispatch<React.SetStateAction<number>>, amount: number) => () => {
+        uiSetter(prev => clamp(prev + amount));
+        if (isBulkEditing) {
+            setAdjustmentsMap(prevMap => {
+                const newMap = new Map(prevMap);
+                selectedImageIds.forEach(id => {
+                    const currentState = newMap.get(id) || initialAdjustments;
+                    const currentValue = currentState[key];
+                    const newValue = clamp(currentValue + amount);
+                    newMap.set(id, { ...currentState, [key]: newValue });
+                });
+                return newMap;
+            });
+        }
+    };
 
-    const handleBulkSaturationDecreaseMax = useCallback(() => adjustSaturationBulk(-100), [adjustSaturationBulk]);
-    const handleBulkSaturationDecrease = useCallback(() => adjustSaturationBulk(-1), [adjustSaturationBulk]);
-    const handleBulkSaturationIncrease = useCallback(() => adjustSaturationBulk(1), [adjustSaturationBulk]);
-    const handleBulkSaturationIncreaseMax = useCallback(() => adjustSaturationBulk(100), [adjustSaturationBulk]);
+    const setTempScoreAbs = createAbsoluteSetter('tempScore', setTempScore);
+    const setTintScoreAbs = createAbsoluteSetter('tintScore', setTintScore);
+    const setVibranceScoreAbs = createAbsoluteSetter('vibranceScore', setVibranceScore);
+    const setSaturationScoreAbs = createAbsoluteSetter('saturationScore', setSaturationScore);
+    const setExposureScoreAbs = createAbsoluteSetter('exposureScore', setExposureScore);
+    const setHighlightsScoreAbs = createAbsoluteSetter('highlightsScore', setHighlightsScore);
+    const setShadowsScoreAbs = createAbsoluteSetter('shadowsScore', setShadowsScore);
+    const setWhitesScoreAbs = createAbsoluteSetter('whitesScore', setWhitesScore);
+    const setBlacksScoreAbs = createAbsoluteSetter('blacksScore', setBlacksScore);
+    const setContrastScoreAbs = createAbsoluteSetter('contrastScore', setContrastScore);
+    const setClarityScoreAbs = createAbsoluteSetter('clarityScore', setClarityScore);
+    const setSharpnessScoreAbs = createAbsoluteSetter('sharpnessScore', setSharpnessScore);
 
-    const handleBulkExposureDecreaseMax = useCallback(() => adjustExposureBulk(-100), [adjustExposureBulk]);
-    const handleBulkExposureDecrease = useCallback(() => adjustExposureBulk(-1), [adjustExposureBulk]);
-    const handleBulkExposureIncrease = useCallback(() => adjustExposureBulk(1), [adjustExposureBulk]);
-    const handleBulkExposureIncreaseMax = useCallback(() => adjustExposureBulk(100), [adjustExposureBulk]);
+    // MARK: - Bulk Editor Handlers
+    const handleBulkTempDecreaseMax = createRelativeAdjuster('tempScore', setTempScore, -20);
+    const handleBulkTempDecrease = createRelativeAdjuster('tempScore', setTempScore, -5);
+    const handleBulkTempIncrease = createRelativeAdjuster('tempScore', setTempScore, 5);
+    const handleBulkTempIncreaseMax = createRelativeAdjuster('tempScore', setTempScore, 20);
 
-    const handleBulkContrastDecreaseMax = useCallback(() => adjustContrastBulk(-100), [adjustContrastBulk]);
-    const handleBulkContrastDecrease = useCallback(() => adjustContrastBulk(-1), [adjustContrastBulk]);
-    const handleBulkContrastIncrease = useCallback(() => adjustContrastBulk(1), [adjustContrastBulk]);
-    const handleBulkContrastIncreaseMax = useCallback(() => adjustContrastBulk(100), [adjustContrastBulk]);
+    const handleBulkTintDecreaseMax = createRelativeAdjuster('tintScore', setTintScore, -20);
+    const handleBulkTintDecrease = createRelativeAdjuster('tintScore', setTintScore, -5);
+    const handleBulkTintIncrease = createRelativeAdjuster('tintScore', setTintScore, 5);
+    const handleBulkTintIncreaseMax = createRelativeAdjuster('tintScore', setTintScore, 20);
+    
+    const handleBulkVibranceDecreaseMax = createRelativeAdjuster('vibranceScore', setVibranceScore, -20);
+    const handleBulkVibranceDecrease = createRelativeAdjuster('vibranceScore', setVibranceScore, -5);
+    const handleBulkVibranceIncrease = createRelativeAdjuster('vibranceScore', setVibranceScore, 5);
+    const handleBulkVibranceIncreaseMax = createRelativeAdjuster('vibranceScore', setVibranceScore, 20);
+    
+    const handleBulkSaturationDecreaseMax = createRelativeAdjuster('saturationScore', setSaturationScore, -20);
+    const handleBulkSaturationDecrease = createRelativeAdjuster('saturationScore', setSaturationScore, -5);
+    const handleBulkSaturationIncrease = createRelativeAdjuster('saturationScore', setSaturationScore, 5);
+    const handleBulkSaturationIncreaseMax = createRelativeAdjuster('saturationScore', setSaturationScore, 20);
+    
+    const handleBulkExposureDecreaseMax = createRelativeAdjuster('exposureScore', setExposureScore, -20);
+    const handleBulkExposureDecrease = createRelativeAdjuster('exposureScore', setExposureScore, -5);
+    const handleBulkExposureIncrease = createRelativeAdjuster('exposureScore', setExposureScore, 5);
+    const handleBulkExposureIncreaseMax = createRelativeAdjuster('exposureScore', setExposureScore, 20);
 
-    const handleBulkHighlightsDecreaseMax = useCallback(() => adjustHighlightsBulk(-100), [adjustHighlightsBulk]);
-    const handleBulkHighlightsDecrease = useCallback(() => adjustHighlightsBulk(-1), [adjustHighlightsBulk]);
-    const handleBulkHighlightsIncrease = useCallback(() => adjustHighlightsBulk(1), [adjustHighlightsBulk]);
-    const handleBulkHighlightsIncreaseMax = useCallback(() => adjustHighlightsBulk(100), [adjustHighlightsBulk]);
+    const handleBulkContrastDecreaseMax = createRelativeAdjuster('contrastScore', setContrastScore, -20);
+    const handleBulkContrastDecrease = createRelativeAdjuster('contrastScore', setContrastScore, -5);
+    const handleBulkContrastIncrease = createRelativeAdjuster('contrastScore', setContrastScore, 5);
+    const handleBulkContrastIncreaseMax = createRelativeAdjuster('contrastScore', setContrastScore, 20);
 
-    const handleBulkShadowsDecreaseMax = useCallback(() => adjustShadowsBulk(-100), [adjustShadowsBulk]);
-    const handleBulkShadowsDecrease = useCallback(() => adjustShadowsBulk(-1), [adjustShadowsBulk]);
-    const handleBulkShadowsIncrease = useCallback(() => adjustShadowsBulk(1), [adjustShadowsBulk]);
-    const handleBulkShadowsIncreaseMax = useCallback(() => adjustShadowsBulk(100), [adjustShadowsBulk]);
+    const handleBulkHighlightsDecreaseMax = createRelativeAdjuster('highlightsScore', setHighlightsScore, -20);
+    const handleBulkHighlightsDecrease = createRelativeAdjuster('highlightsScore', setHighlightsScore, -5);
+    const handleBulkHighlightsIncrease = createRelativeAdjuster('highlightsScore', setHighlightsScore, 5);
+    const handleBulkHighlightsIncreaseMax = createRelativeAdjuster('highlightsScore', setHighlightsScore, 20);
+    
+    const handleBulkShadowsDecreaseMax = createRelativeAdjuster('shadowsScore', setShadowsScore, -20);
+    const handleBulkShadowsDecrease = createRelativeAdjuster('shadowsScore', setShadowsScore, -5);
+    const handleBulkShadowsIncrease = createRelativeAdjuster('shadowsScore', setShadowsScore, 5);
+    const handleBulkShadowsIncreaseMax = createRelativeAdjuster('shadowsScore', setShadowsScore, 20);
 
-    const handleBulkWhitesDecreaseMax = useCallback(() => adjustWhitesBulk(-100), [adjustWhitesBulk]);
-    const handleBulkWhitesDecrease = useCallback(() => adjustWhitesBulk(-1), [adjustWhitesBulk]);
-    const handleBulkWhitesIncrease = useCallback(() => adjustWhitesBulk(1), [adjustWhitesBulk]);
-    const handleBulkWhitesIncreaseMax = useCallback(() => adjustWhitesBulk(100), [adjustWhitesBulk]);
-
-    const handleBulkBlacksDecreaseMax = useCallback(() => adjustBlacksBulk(-100), [adjustBlacksBulk]);
-    const handleBulkBlacksDecrease = useCallback(() => adjustBlacksBulk(-1), [adjustBlacksBulk]);
-    const handleBulkBlacksIncrease = useCallback(() => adjustBlacksBulk(1), [adjustBlacksBulk]);
-    const handleBulkBlacksIncreaseMax = useCallback(() => adjustBlacksBulk(100), [adjustBlacksBulk]);
-
-    const handleBulkClarityDecreaseMax = useCallback(() => adjustClarityBulk(-100), [adjustClarityBulk]);
-    const handleBulkClarityDecrease = useCallback(() => adjustClarityBulk(-1), [adjustClarityBulk]);
-    const handleBulkClarityIncrease = useCallback(() => adjustClarityBulk(1), [adjustClarityBulk]);
-    const handleBulkClarityIncreaseMax = useCallback(() => adjustClarityBulk(100), [adjustClarityBulk]);
-
-    const handleBulkSharpnessDecreaseMax = useCallback(() => adjustSharpnessBulk(-100), [adjustSharpnessBulk]);
-    const handleBulkSharpnessDecrease = useCallback(() => adjustSharpnessBulk(-1), [adjustSharpnessBulk]);
-    const handleBulkSharpnessIncrease = useCallback(() => adjustSharpnessBulk(1), [adjustSharpnessBulk]);
-    const handleBulkSharpnessIncreaseMax = useCallback(() => adjustSharpnessBulk(100), [adjustSharpnessBulk]);
+    const handleBulkWhitesDecreaseMax = createRelativeAdjuster('whitesScore', setWhitesScore, -20);
+    const handleBulkWhitesDecrease = createRelativeAdjuster('whitesScore', setWhitesScore, -5);
+    const handleBulkWhitesIncrease = createRelativeAdjuster('whitesScore', setWhitesScore, 5);
+    const handleBulkWhitesIncreaseMax = createRelativeAdjuster('whitesScore', setWhitesScore, 20);
+    
+    const handleBulkBlacksDecreaseMax = createRelativeAdjuster('blacksScore', setBlacksScore, -20);
+    const handleBulkBlacksDecrease = createRelativeAdjuster('blacksScore', setBlacksScore, -5);
+    const handleBulkBlacksIncrease = createRelativeAdjuster('blacksScore', setBlacksScore, 5);
+    const handleBulkBlacksIncreaseMax = createRelativeAdjuster('blacksScore', setBlacksScore, 20);
+    
+    const handleBulkClarityDecreaseMax = createRelativeAdjuster('clarityScore', setClarityScore, -20);
+    const handleBulkClarityDecrease = createRelativeAdjuster('clarityScore', setClarityScore, -5);
+    const handleBulkClarityIncrease = createRelativeAdjuster('clarityScore', setClarityScore, 5);
+    const handleBulkClarityIncreaseMax = createRelativeAdjuster('clarityScore', setClarityScore, 20);
+    
+    const handleBulkSharpnessDecreaseMax = createRelativeAdjuster('sharpnessScore', setSharpnessScore, -20);
+    const handleBulkSharpnessDecrease = createRelativeAdjuster('sharpnessScore', setSharpnessScore, -5);
+    const handleBulkSharpnessIncrease = createRelativeAdjuster('sharpnessScore', setSharpnessScore, 5);
+    const handleBulkSharpnessIncreaseMax = createRelativeAdjuster('sharpnessScore', setSharpnessScore, 20);
 
     const handleScriptReady = useCallback(async () => {
         if (typeof window.Module === 'function' && !editorRef.current) {
@@ -464,6 +591,11 @@ export function useHonchoEditor(controller: Controller) {
     // Header and Dialog Handlers
     const handleHeaderMenuClick = (event: React.MouseEvent<HTMLElement>) => setHeaderMenuAnchorEl(event.currentTarget);
     const handleHeaderMenuClose = () => setHeaderMenuAnchorEl(null);
+
+    const handleAlertClose = () => {
+        setIsConnectionSlow(false);
+    };
+
     const handleOpenCopyDialog = () => {
         const newColorChecks = {
             temperature: tempScore !== 0,
@@ -719,22 +851,25 @@ export function useHonchoEditor(controller: Controller) {
         if (!editorRef.current || !isImageLoaded) return;
         
         console.log("Showing original image...");
-        // Temporarily apply the initial state to the view
+        // 1. Set the flag to true to pause history recording
+        setIsViewingOriginal(true);
+        // 2. Apply the initial state to the view
         applyAdjustmentState(initialAdjustments);
     }, [isImageLoaded, applyAdjustmentState]);
 
-    /**
-     * Restores the currently active edits to the canvas.
-     */
     const handleShowEdited = useCallback(() => {
         if (!editorRef.current || !isImageLoaded) return;
 
         console.log("Restoring edited image...");
-        // Re-apply the latest state from our edit history
         const latestState = history[historyIndex];
         if (latestState) {
+            // 3. Re-apply the latest state from history
             applyAdjustmentState(latestState);
         }
+        
+        // 4. Set the flag back to false AFTER the state has been restored.
+        // A small timeout ensures this runs after the re-render.
+        setTimeout(() => setIsViewingOriginal(false), 0);
     }, [isImageLoaded, history, historyIndex, applyAdjustmentState]);
    
     // MARK: - Zoom Handlers
@@ -791,11 +926,8 @@ export function useHonchoEditor(controller: Controller) {
     // Preset Image List
     useEffect(() => {
         fetchPresets();
-        fetchImageList();
-        if (controller) {
-            controller.syncConfig();
-        }
-    }, [controller, fetchPresets, fetchImageList]);
+        
+    }, [controller, fetchPresets]);
 
     // Image Load
     useEffect(() => {
@@ -823,13 +955,21 @@ export function useHonchoEditor(controller: Controller) {
     useEffect(() => { if (isImageLoaded) { editorRef.current?.setSharpness(sharpnessScore); updateCanvas(); } }, [sharpnessScore, isImageLoaded, updateCanvas]);
 
     useEffect(() => {
-        if (!isImageLoaded) return;
+        // 5. Add a check to ignore state changes while viewing the original
+        if (!isImageLoaded || isViewingOriginal) return;
+
         const newState: AdjustmentState = { tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore };
         if (JSON.stringify(history[historyIndex]) === JSON.stringify(newState)) return;
+        
         const newHistory = history.slice(0, historyIndex + 1);
         setHistory([...newHistory, newState]);
         setHistoryIndex(newHistory.length);
-    }, [tempScore, tintScore, exposureScore, highlightsScore, shadowsScore, whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore, isImageLoaded, history, historyIndex]);
+    }, [
+        tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore,
+        whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore,
+        isImageLoaded, history, historyIndex,
+        isViewingOriginal // <-- Add the flag as a dependency
+    ]);
 
     useEffect(() => {
         if (showCopyAlert) {
@@ -872,6 +1012,7 @@ export function useHonchoEditor(controller: Controller) {
         isImageLoaded,
         isPasteAvailable: copiedAdjustments !== null,
         isOnline,
+        isConnectionSlow,
         showCopyAlert,
         isCopyDialogOpen,
         isPublished,
@@ -912,6 +1053,7 @@ export function useHonchoEditor(controller: Controller) {
         // Functions
         handleScriptReady,
         handleFileChange,
+        handleAlertClose,
         loadImageFromId,
         loadImageFromUrl,
         handleRevert,
@@ -932,8 +1074,8 @@ export function useHonchoEditor(controller: Controller) {
         handleConfirmCopy,
         handleCopyEdit,
         handlePasteEdit,
-        adjustClarityBulk,
-        adjustSharpnessBulk,
+        // adjustClarityBulk,
+        // adjustSharpnessBulk,
 
         // Setters & Handlers
         setActivePanel,
@@ -976,37 +1118,25 @@ export function useHonchoEditor(controller: Controller) {
         handleSelectBulkPreset,
 
         // Adjustment State & Setters
-        tempScore,
-        setTempScore,
-        tintScore,
-        setTintScore,
-        vibranceScore,
-        setVibranceScore,
-        exposureScore,
-        setExposureScore,
-        highlightsScore,
-        setHighlightsScore,
-        shadowsScore,
-        setShadowsScore,
-        whitesScore,
-        setWhitesScore,
-        blacksScore,
-        setBlacksScore,
-        saturationScore,
-        setSaturationScore,
-        contrastScore,
-        setContrastScore,
-        clarityScore,
-        setClarityScore,
-        sharpnessScore,
-        setSharpnessScore,
+        tempScore, setTempScore: setTempScoreAbs,
+        tintScore, setTintScore: setTintScoreAbs,
+        vibranceScore, setVibranceScore: setVibranceScoreAbs,
+        saturationScore, setSaturationScore: setSaturationScoreAbs,
+        exposureScore, setExposureScore: setExposureScoreAbs,
+        highlightsScore, setHighlightsScore: setHighlightsScoreAbs,
+        shadowsScore, setShadowsScore: setShadowsScoreAbs,
+        whitesScore, setWhitesScore: setWhitesScoreAbs,
+        blacksScore, setBlacksScore: setBlacksScoreAbs,
+        contrastScore, setContrastScore: setContrastScoreAbs,
+        clarityScore, setClarityScore: setClarityScoreAbs,
+        sharpnessScore, setSharpnessScore: setSharpnessScoreAbs,
 
         // Bulk Adjustment Handlers
         // Note: These handlers are for image list
-        imageList, 
+        imageList,
+        adjustmentsMap,
         selectedImageIds,
         handleToggleImageSelection,
-
         // Note: These handlers are for bulk adjustments
         // Adjustment Colors
         handleBulkTempDecreaseMax,

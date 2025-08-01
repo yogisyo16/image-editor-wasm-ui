@@ -4,6 +4,7 @@ const MOCK_IMAGES: ImageItem[] = Array.from({ length: 20 }, (_, i) => ({
     id: `img_${i + 1}`,
     name: `Image ${i + 1}.jpg`,
     url: `https://picsum.photos/id/${i + 10}/200/200`,
+    file: new File([], `Image ${i + 1}.jpg`),
 }));
 
 export const apiController: Controller = {
