@@ -69,7 +69,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography
                             component="label"
                             htmlFor="temperature-input"
-                            sx={{...typography.bodyMedium}}>Temperature</Typography>
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Temperature</Typography>
                         <TextField
                             hiddenLabel
                             id="temperature-input"
@@ -139,7 +139,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography
                             component="label"
                             htmlFor="tint-input"
-                            sx={{...typography.bodyMedium}}>Tint</Typography>
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Tint</Typography>
                         <TextField
                             hiddenLabel
                             id="tint-input"
@@ -208,7 +208,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography 
                             component="label"
                             htmlFor="vibrance-input"
-                            sx={{...typography.bodyMedium}}>Vibrance</Typography>
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Vibrance</Typography>
                         <TextField
                             hiddenLabel
                             id="vibrance-input"
@@ -277,7 +277,7 @@ export default function HAccordionColor(props: Props) {
                         <Typography
                             component="label"
                             htmlFor="saturation-input"
-                            sx={{...typography.bodyMedium}}>Saturation</Typography>
+                            sx={{...typography.bodyMedium, userSelect: 'none' }}>Saturation</Typography>
                         <TextField
                             hiddenLabel
                             id="saturation-input"
