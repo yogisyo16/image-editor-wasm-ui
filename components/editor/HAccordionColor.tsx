@@ -28,7 +28,7 @@ export default function HAccordionColor(props: Props) {
     const tempGradient = `linear-gradient(to right, ${blueScale} 35%, ${yellowScale} 75%)`;
     const tintGradient = `linear-gradient(to right, ${greenScale} 20%, ${purpleScale} 75%)`;
 
-        const spectrumColorsSaturation = ['yellow', 'lime', 'deepskyblue', 'magenta', 'red'];
+    const spectrumColorsSaturation = ['yellow', 'lime', 'deepskyblue', 'magenta', 'red'];
     const greyScaleStart = '#000000'; // Black at -100
     const greyScaleEnd = '#ffffff';   // White at 0 (or a very light grey)
 
