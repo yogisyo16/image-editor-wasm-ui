@@ -118,6 +118,34 @@ export default function HImageEditor() {
         }
     };
 
+    // Shortcut for copy action
+    const handleKeyDown = useCallback((event: KeyboardEvent) => {
+        // Check if the user is in an input field to avoid overriding normal text copying
+        const target = event.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+            return;
+        }
+
+        // Check for Ctrl+C (Windows/Linux) or Cmd+C (Mac)
+        if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+            // Prevent the default browser copy action
+            event.preventDefault();
+            
+            // Open the copy dialog using the handler from your hook
+            editor.handleOpenCopyDialog();
+        }
+    }, [editor.handleOpenCopyDialog]); // Depend on the handler from the hook
+
+    useEffect(() => {
+        // Add the event listener when the component mounts
+        window.addEventListener('keydown', handleKeyDown);
+
+        // IMPORTANT: Remove the event listener when the component unmounts to prevent memory leaks
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
     useEffect(() => {
         if (isDragging) {
             window.addEventListener('mousemove', handleDragMove);

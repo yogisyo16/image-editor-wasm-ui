@@ -41,7 +41,7 @@ export function HAlertCopyBox() {
                 color: colors.surface 
             }}
         >
-            Adjustments copied to clipboard
+            Copied!
         </Alert>
     );
 }

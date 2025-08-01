@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     Button,
     Stack,
     Typography,
     Checkbox,
-    FormControlLabel, FormControl, FormLabel, FormHelperText,
+    Collapse,
+    FormControlLabel,
+    IconButton
 } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useColors from "@/colors";
 import useHonchoTypography from "@/honchoTheme";
 
@@ -32,209 +35,191 @@ export function HDialogCopy(props: Props) {
     const colors = useColors();
     const typography = useHonchoTypography();
 
-    // Later move into main logic state
-    const [checked, setChecked] = React.useState([true, false]);
+    // --- 1. Create Separate State for Each Category ---
+    const [colorChecks, setColorChecks] = useState({
+        temperature: true, tint: true, vibrance: true, saturation: true
+    });
+    const [lightChecks, setLightChecks] = useState({
+        exposure: true, contrast: true, highlights: true, shadows: true, whites: true, blacks: true
+    });
+    const [detailsChecks, setDetailsChecks] = useState({
+        clarity: true, sharpness: true
+    });
 
-    // Checkbox change handlers
-    // Color Adjustments
-    const handleChangeColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, checked[1]]);
+    const [expanded, setExpanded] = useState({
+        color: true,
+        light: true,
+        details: true,
+    });
+
+    // --- 2. Create Handlers for Parent and Child Checkboxes ---
+
+    // Parent handler: checks or unchecks all children in a group
+    const handleParentChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        const isChecked = event.target.checked;
+        setter((prev: any) => {
+            const newState: any = {};
+            Object.keys(prev).forEach(key => { newState[key] = isChecked; });
+            return newState;
+        });
+    };
+    
+    // Child handler: updates a single checkbox in a group
+    const handleChildChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        setter: React.Dispatch<React.SetStateAction<any>>
+    ) => {
+        setter((prev: any) => ({
+            ...prev,
+            [event.target.name]: event.target.checked,
+        }));
     };
 
-    const handleChangeTemperature = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
+    const handleToggleExpand = (section: 'color' | 'light' | 'details') => {
+        setExpanded(prev => ({
+            ...prev,
+            [section]: !prev[section],
+        }));
     };
 
-    const handleChangeTint = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, checked[1]]);
-    };
+    // --- 3. Calculate Derived State for each Parent Checkbox ---
 
-    const handleChangeVibrance = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
+    // Color Category
+    const colorValues = Object.values(colorChecks);
+    const colorCheckedCount = colorValues.filter(Boolean).length;
+    const isColorParentChecked = colorCheckedCount === colorValues.length;
+    const isColorParentIndeterminate = colorCheckedCount > 0 && !isColorParentChecked;
 
-    const handleChangeSaturation = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, checked[1]]);
-    };
+    // Light Category
+    const lightValues = Object.values(lightChecks);
+    const lightCheckedCount = lightValues.filter(Boolean).length;
+    const isLightParentChecked = lightCheckedCount === lightValues.length;
+    const isLightParentIndeterminate = lightCheckedCount > 0 && !isLightParentChecked;
 
-    // Light Adjustments
-    const handleChangeLight = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-    const handleChangeExposure = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-    const handleChangeContrast = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-    const handleChangeHighlights = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-    const handleChangeShadows = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-    const handleChangeWhites = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-    const handleChangeBlacks = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-
-
-    // Details Adjustments
-    const handleChangeDetails = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, event.target.checked]);
-    };
-
-    const handleChangeClarity = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, checked[1]]);
-    };
-
-    const handleChangeSharpness = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
+    // Details Category
+    const detailsValues = Object.values(detailsChecks);
+    const detailsCheckedCount = detailsValues.filter(Boolean).length;
+    const isDetailsParentChecked = detailsCheckedCount === detailsValues.length;
+    const isDetailsParentIndeterminate = detailsCheckedCount > 0 && !isDetailsParentChecked;
 
     const checkboxStyle = {
-        color: colors.onSurface,
+        color: colors.onSurfaceVariant,
         '&.Mui-checked, &.Mui-indeterminate': {
             color: colors.onSurface,
         },
     };
 
-    // Control for childer checkbox
-    const colorChildren = (
-        <>
-            <Stack direction="column" sx={{ ml: 2 }}>
-                <FormControlLabel
-                    label="Temperature"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeTemperature} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Tint"
-                    control={<Checkbox color="default" checked={checked[1]} onChange={handleChangeTint} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Vibrance"
-                    control={<Checkbox color="default" checked={checked[1]} onChange={handleChangeVibrance} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Saturation"
-                    control={<Checkbox color="default" checked={checked[1]} onChange={handleChangeSaturation} sx={checkboxStyle} />}
-                />
-            </Stack>
-        </>
-    );
-
-    const lightChildren = (
-        <>
-            <Stack direction="column" sx={{ ml: 2 }}>
-                <FormControlLabel
-                    label="Exposure"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeExposure} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Contrast"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeContrast} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Highlights"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeHighlights} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Shadows"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeShadows} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Whites"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeWhites} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Blacks"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeBlacks} sx={checkboxStyle} />}
-                />
-            </Stack>
-        </>
-    );
-
-    const detailsChildren = (
-        <>
-            <Stack direction="column" sx={{ ml: 2 }}>
-                <FormControlLabel
-                    label="Vibrance"
-                    control={<Checkbox color="default" checked={checked[0]} onChange={handleChangeClarity} sx={checkboxStyle} />}
-                />
-                <FormControlLabel
-                    label="Saturation"
-                    control={<Checkbox color="default" checked={checked[1]} onChange={handleChangeSharpness} sx={checkboxStyle} />}
-                />
-            </Stack>
-        </>
-    );
-
     return (
-        <>
-            <Stack direction="column">
-                <Stack>
+        <Stack direction="column" spacing={"6px"} sx={{ padding: 0, margin: 0, width: '100%' }}>
+            {/* --- Color Adjustments Section --- */}
+            <Stack>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <FormControlLabel
                         label="Color Adjustments"
                         control={
                             <Checkbox
                                 color="default"
-                                checked={checked[0] && checked[1]}
-                                indeterminate={checked[0] !== checked[1]}
-                                onChange={handleChangeColor}
+                                checked={isColorParentChecked}
+                                indeterminate={isColorParentIndeterminate}
+                                onChange={(e) => handleParentChange(e, setColorChecks)}
                                 sx={checkboxStyle}
                             />
                         }
                     />
-                    {colorChildren}
-                </Stack>
-                <Stack>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between">
-                        <FormControlLabel
-                            label="Light Adjustments"
-                            control={
-                                <Checkbox
-                                    color="default"
-                                    checked={checked[0] && checked[1]}
-                                    indeterminate={checked[0] !== checked[1]}
-                                    onChange={handleChangeLight}
-                                    sx={checkboxStyle}
-                                />
-                            }
-                        />
-
+                    <Stack direction="row" alignItems="center">
                         <Typography sx={{ ...typography.labelMedium, color: colors.onSurface }}>
-                            1/2
+                            {`${colorCheckedCount}/${colorValues.length}`}
                         </Typography>
+                        <IconButton onClick={() => handleToggleExpand('color')} size="small">
+                            <ExpandMoreIcon sx={{ transition: 'transform 0.3s', transform: expanded.color ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                        </IconButton>
                     </Stack>
-                    {lightChildren}
                 </Stack>
-                <Stack>
+                <Collapse in={expanded.color} timeout="auto" unmountOnExit>
+                    <Stack direction="column" sx={{ ml: 2 }}>
+                        <FormControlLabel label="Temperature" control={<Checkbox color="default" name="temperature" checked={colorChecks.temperature} onChange={(e) => handleChildChange(e, setColorChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Tint" control={<Checkbox color="default" name="tint" checked={colorChecks.tint} onChange={(e) => handleChildChange(e, setColorChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Vibrance" control={<Checkbox color="default" name="vibrance" checked={colorChecks.vibrance} onChange={(e) => handleChildChange(e, setColorChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Saturation" control={<Checkbox color="default" name="saturation" checked={colorChecks.saturation} onChange={(e) => handleChildChange(e, setColorChecks)} sx={checkboxStyle} />} />
+                    </Stack>
+                </Collapse>
+            </Stack>
+
+            {/* --- Light Adjustments Section --- */}
+            <Stack>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <FormControlLabel
+                        label="Light Adjustments"
+                        control={
+                            <Checkbox
+                                color="default"
+                                checked={isLightParentChecked}
+                                indeterminate={isLightParentIndeterminate}
+                                onChange={(e) => handleParentChange(e, setLightChecks)}
+                                sx={checkboxStyle}
+                            />
+                        }
+                    />
+                    <Stack direction="row" alignItems="center">
+                        <Typography sx={{ ...typography.labelMedium, color: colors.onSurface }}>
+                            {`${lightCheckedCount}/${lightValues.length}`}
+                        </Typography>
+                        <IconButton onClick={() => handleToggleExpand('light')} size="small">
+                            <ExpandMoreIcon sx={{ transition: 'transform 0.3s', transform: expanded.color ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                        </IconButton>
+                    </Stack>
+                </Stack>
+                <Collapse in={expanded.light} timeout="auto" unmountOnExit>
+                    <Stack direction="column" sx={{ ml: 2 }}>
+                        <FormControlLabel label="Exposure" control={<Checkbox color="default" name="exposure" checked={lightChecks.exposure} onChange={(e) => handleChildChange(e, setLightChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Contrast" control={<Checkbox color="default" name="contrast" checked={lightChecks.contrast} onChange={(e) => handleChildChange(e, setLightChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Highlights" control={<Checkbox color="default" name="highlights" checked={lightChecks.highlights} onChange={(e) => handleChildChange(e, setLightChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Shadows" control={<Checkbox color="default" name="shadows" checked={lightChecks.shadows} onChange={(e) => handleChildChange(e, setLightChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Whites" control={<Checkbox color="default" name="whites" checked={lightChecks.whites} onChange={(e) => handleChildChange(e, setLightChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Blacks" control={<Checkbox color="default" name="blacks" checked={lightChecks.blacks} onChange={(e) => handleChildChange(e, setLightChecks)} sx={checkboxStyle} />} />
+                    </Stack>
+                </Collapse>
+            </Stack>
+
+            {/* --- Details Adjustments Section --- */}
+            <Stack>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                     <FormControlLabel
                         label="Details Adjustments"
                         control={
                             <Checkbox
                                 color="default"
-                                checked={checked[0] && checked[1]}
-                                indeterminate={checked[0] !== checked[1]}
-                                onChange={handleChangeDetails}
+                                checked={isDetailsParentChecked}
+                                indeterminate={isDetailsParentIndeterminate}
+                                onChange={(e) => handleParentChange(e, setDetailsChecks)}
                                 sx={checkboxStyle}
                             />
                         }
                     />
-                    {detailsChildren}
+                    <Stack direction="row" alignItems="center">
+                        <Typography sx={{ ...typography.labelMedium, color: colors.onSurface }}>
+                            {`${detailsCheckedCount}/${detailsValues.length}`}
+                        </Typography>
+                        <IconButton onClick={() => handleToggleExpand('details')} size="small">
+                            <ExpandMoreIcon sx={{ transition: 'transform 0.3s', transform: expanded.color ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                        </IconButton>
+                    </Stack>
                 </Stack>
-                <Button onClick={props.onCopyEdit} sx={{...typography.labelMedium, color: colors.surface, backgroundColor: colors.onSurface}}>
+                <Collapse in={expanded.details} timeout="auto" unmountOnExit>
+                    <Stack direction="column" sx={{ ml: 2 }}>
+                        <FormControlLabel label="Clarity" control={<Checkbox color="default" name="clarity" checked={detailsChecks.clarity} onChange={(e) => handleChildChange(e, setDetailsChecks)} sx={checkboxStyle} />} />
+                        <FormControlLabel label="Sharpness" control={<Checkbox color="default" name="sharpness" checked={detailsChecks.sharpness} onChange={(e) => handleChildChange(e, setDetailsChecks)} sx={checkboxStyle} />} />
+                    </Stack>
+                </Collapse>
+            </Stack>
+            <Stack sx={{ p: '0px', pt: '5px', pb: '5px', m: '0px' }}>
+                <Button onClick={props.onCopyEdit} sx={{...typography.labelMedium, pt: '10px', pb: '10px', color: colors.surface, backgroundColor: colors.onSurface, borderRadius: '100px'}}>
                     Copy
                 </Button>
             </Stack>
-        </>
+        </Stack>
     );
 }
