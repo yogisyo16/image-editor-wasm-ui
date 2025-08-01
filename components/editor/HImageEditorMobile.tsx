@@ -200,11 +200,11 @@ export default function HImageEditorMobile(props: Props) {
                                 sx={{ px: '12px', py: '0px', minWidth: 'auto' }}
                                 icon={<CardMedia component="img" image={props.activePanel === 'colorAdjustment' ? "/v1/svg/color-adjustment-active-mobile.svg" : "/v1/svg/color-adjustment-inactive-mobile.svg"} sx={{ width: "20px", height: "20px" }} />}
                             />
-                            <BottomNavigationAction
+                            {/* <BottomNavigationAction
                                 value="aspectRatio"
                                 sx={{ px: '12px', py: '0px', minWidth: 'auto' }}
                                 icon={<CardMedia component="img" image={props.activePanel === 'aspectRatio' ? "/v1/svg/aspect-ratio-inactive-mobile.svg" : "/v1/svg/aspect-ratio-inactive-mobile.svg"} sx={{ width: "20px", height: "20px" }} />}
-                            />
+                            /> */}
                             <BottomNavigationAction
                                 value="preset"
                                 sx={{ px: '12px', py: '0px', minWidth: 'auto' }}
