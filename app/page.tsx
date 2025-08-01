@@ -1,5 +1,5 @@
 'use client';
-import React from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Box, Stack, CircularProgress, Typography } from "@mui/material";
 import Script from "next/script";
 import useIsMobile from "@/utils/isMobile";
@@ -28,24 +28,95 @@ import { useHonchoEditor } from "@/hooks/editor/useHonchoEditor";
 import { apiController } from "@/lib/api/editorController";
 
 export default function HImageEditor() {
-
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
 
+    // Mobile Draggable Panel State
+    const [panelHeight, setPanelHeight] = useState(165);
+    const [contentHeight, setContentHeight] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartPos = useRef(0);
+    const initialHeight = useRef(0);
+    const panelRef = useRef<HTMLDivElement | null>(null);
+    const contentRef = useRef<HTMLDivElement | null>(null);
+
+     const PANEL_HEIGHT = 80;
+
+     // Mobile Panel Drag Handlers
+    const handleContentHeightChange = useCallback((height: number) => {
+        if (height > 0 && height !== contentHeight) setContentHeight(height);
+    }, [contentHeight]);
+
+    const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+        setIsDragging(true);
+        const startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        dragStartPos.current = startY;
+        initialHeight.current = panelHeight;
+        if (panelRef.current) panelRef.current.style.transition = 'none';
+    }, [panelHeight]);
+
+    const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
+        if (!isDragging) return;
+        const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        const deltaY = dragStartPos.current - currentY;
+        const newHeight = initialHeight.current + deltaY;
+        const dynamicPanelFullHeight = contentHeight + PANEL_HEIGHT;
+        const clampedHeight = Math.max(165, Math.min(newHeight, dynamicPanelFullHeight));
+        setPanelHeight(clampedHeight);
+    }, [isDragging, contentHeight]);
+
+    const handleDragEnd = useCallback(() => {
+        if (!isDragging) return;
+        setIsDragging(false);
+        dragStartPos.current = 0;
+        if (panelRef.current) panelRef.current.style.transition = 'height 0.3s ease-in-out';
+        const dynamicPanelFullHeight = contentHeight + PANEL_HEIGHT;
+        const halfwayPoint = (dynamicPanelFullHeight + 165) / 2;
+        setPanelHeight(panelHeight > halfwayPoint ? dynamicPanelFullHeight : 165);
+    }, [isDragging, panelHeight, contentHeight]);
+    
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (contentRef.current) {
+                // Use scrollHeight to get the full height of the content
+                const height = contentRef.current.scrollHeight;
+                setContentHeight(height);
+            }
+        }, 50); // Small delay for content to render before measuring
+
+        return () => clearTimeout(timeoutId);
+    }, [editor.activeSubPanel, editor.isBulkEditing]);
+
     const handleBack = () => {
-            if ((window as any).webkit?.messageHandlers?.nativeHandler) {
-                (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
-                console.log("Sent 'back' message to iOS native handler.");
-            } 
-            else if ((window as any).Android?.goBack) {
-                console.log("Android environment detected. Calling goBack().");
-                (window as any).Android.goBack();
-            }
-            else {
-                console.log("Standard web browser detected. Navigating back in history.");
-                window.history.back();
-            }
+        if ((window as any).webkit?.messageHandlers?.nativeHandler) {
+            (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
+            console.log("Sent 'back' message to iOS native handler.");
+        } 
+        else if ((window as any).Android?.goBack) {
+            console.log("Android environment detected. Calling goBack().");
+            (window as any).Android.goBack();
+        }
+        else {
+            console.log("Standard web browser detected. Navigating back in history.");
+            window.history.back();
+        }
+    };
+
+    useEffect(() => {
+        if (isDragging) {
+            window.addEventListener('mousemove', handleDragMove);
+            window.addEventListener('mouseup', handleDragEnd);
+            window.addEventListener('touchmove', handleDragMove);
+            window.addEventListener('touchend', handleDragEnd);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleDragMove);
+            window.removeEventListener('mouseup', handleDragEnd);
+            window.removeEventListener('touchmove', handleDragMove);
+            window.removeEventListener('touchend', handleDragEnd);
         };
+    }, [isDragging, handleDragMove, handleDragEnd]);
+
 
     // Dummy/placeholder handlers that remain in the component
     const handleScale = (event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget);
@@ -145,6 +216,10 @@ export default function HImageEditor() {
                         setTempScore={editor.setTempScore}
                         tintScore={editor.tintScore}
                         setTintScore={editor.setTintScore}
+                        vibranceScore={editor.vibranceScore}
+                        setVibranceScore={editor.setVibranceScore}
+                        saturationScore={editor.saturationScore}
+                        setSaturationScore={editor.setSaturationScore}
                         exposureScore={editor.exposureScore}
                         setExposureScore={editor.setExposureScore}
                         HighlightsScore={editor.highlightsScore}
@@ -161,8 +236,6 @@ export default function HImageEditor() {
                         setClarityScore={editor.setClarityScore}
                         sharpnessScore={editor.sharpnessScore}
                         setSharpnessScore={editor.setSharpnessScore}
-                        saturationScore={editor.saturationScore}
-                        setSaturationScore={editor.setSaturationScore}
                         expandedPanels={editor.colorAdjustmentExpandedPanels}
                         onPanelChange={editor.handleColorAccordionChange}
                     />
@@ -301,11 +374,11 @@ export default function HImageEditor() {
                     {isMobile && !editor.isBulkEditing && (
                         <HImageEditorMobile
                             presets={editor.presets}
-                            contentRef={editor.contentRef}
-                            panelRef={editor.panelRef}
-                            panelHeight={editor.panelHeight}
-                            handleDragStart={editor.handleDragStart}
-                            onContentHeightChange={editor.handleContentHeightChange}
+                            contentRef={contentRef}
+                            panelRef={panelRef}
+                            panelHeight={panelHeight}
+                            handleDragStart={handleDragStart}
+                            onContentHeightChange={handleContentHeightChange}
                             activePanel={editor.activePanel}
                             setActivePanel={(panel) => { editor.setActivePanel(panel); editor.setActiveSubPanel(''); }}
                             activeSubPanel={editor.activeSubPanel}
@@ -347,11 +420,11 @@ export default function HImageEditor() {
                     {isMobile && editor.isBulkEditing && (
                         <HImageEditorBulkMobile
                             presets={editor.presets}
-                            contentRef={editor.contentRef}
-                            panelRef={editor.panelRef}
-                            panelHeight={editor.panelHeight}
-                            handleDragStart={editor.handleDragStart}
-                            onContentHeightChange={editor.handleContentHeightChange}
+                            contentRef={contentRef}
+                            panelRef={panelRef}
+                            panelHeight={panelHeight}
+                            handleDragStart={handleDragStart}
+                            onContentHeightChange={handleContentHeightChange}
                             activePanel={editor.activePanel}
                             setActivePanel={(panel) => { editor.setActivePanel(panel); editor.setActiveSubPanel(''); }}
                             activeSubPanel={editor.activeSubPanel}

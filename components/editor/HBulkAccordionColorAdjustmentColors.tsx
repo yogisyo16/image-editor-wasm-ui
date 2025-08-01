@@ -12,6 +12,10 @@ interface Props {
     onTintDecrease: () => void;
     onTintIncrease: () => void;
     onTintIncreaseMax: () => void;
+    onVibranceDecreaseMax: () => void;
+    onVibranceDecrease: () => void;
+    onVibranceIncrease: () => void;
+    onVibranceIncreaseMax: () => void;
     onSaturationDecreaseMax: () => void;
     onSaturationDecrease: () => void;
     onSaturationIncrease: () => void;
@@ -120,6 +124,59 @@ export default function HBulkAccordionColorAdjustmentColors(props: Props) {
                     </IconButton>
                     <IconButton 
                         onClick={props.onTintIncreaseMax}
+                        sx={{
+                            width: "38.5px",
+                            height: "26px",
+                            py: "2px",
+                            mr: "12px",
+                            border: "1px solid white",
+                            borderRadius: "100px",
+                        }}>
+                        <CardMedia component="img" image="/v1/svg/bulk-editor-max-button-right.svg" sx={{ ml: "2px" }}/>
+                    </IconButton>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between" sx={{ pb: "8px", pt: "16px" }}>
+                    <Typography sx={{...typography.bodyMedium}}>Vibrance</Typography>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between" sx={{ p: "0px", m: "0px", pt: "2px", pb: "2px" }}>
+                    <IconButton 
+                        onClick={props.onVibranceDecreaseMax}
+                        sx={{
+                            width: "38.5px",
+                            height: "26px",
+                            py: "2px",
+                            mr: "12px",
+                            border: "1px solid white",
+                            borderRadius: "100px",
+                        }}>
+                        <CardMedia component="img" image="/v1/svg/bulk-editor-max-button.svg" sx={{ mr: "2px" }}/>
+                    </IconButton>
+                    <IconButton 
+                        onClick={props.onVibranceDecrease}
+                        sx={{
+                            width: "38.5px",
+                            height: "26px",
+                            py: "2px",
+                            mr: "12px",
+                            border: "1px solid white",
+                            borderRadius: "100px",
+                        }}>
+                        <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button.svg" sx={{ mr: "3px" }}/>
+                    </IconButton>
+                    <IconButton 
+                        onClick={props.onVibranceIncrease}
+                        sx={{
+                            width: "38.5px",
+                            height: "26px",
+                            py: "2px",
+                            mr: "12px",
+                            border: "1px solid white",
+                            borderRadius: "100px",
+                        }}>
+                        <CardMedia component="img" image="/v1/svg/bulk-editor-increment-button-right.svg" sx={{ml: "3px" }}/>
+                    </IconButton>
+                    <IconButton 
+                        onClick={props.onVibranceIncreaseMax}
                         sx={{
                             width: "38.5px",
                             height: "26px",

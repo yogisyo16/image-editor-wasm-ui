@@ -116,7 +116,7 @@ export default function HImageEditorMobile(props: Props) {
                         className="draggable-panel MuiPaper-transition"
                         sx={{
                             height: `${props.panelHeight}px`,
-                            maxHeight: '60vh',
+                            maxHeight: '80vh',
                             backgroundColor: 'rgba(40, 40, 40, 0.85)',
                             overflow: 'hidden',
                             borderRadius: "0px",
