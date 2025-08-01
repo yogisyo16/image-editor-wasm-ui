@@ -3,7 +3,6 @@ import { Accordion, AccordionDetails , AccordionSummary, CardMedia, Stack, Typog
 import useHonchoTypography from "@/honchoTheme";
 import HAccordionColor from "./HAccordionColor";
 import HAccordionLight from "./HAccordionLight";
-import HAccordionPresence from "./HAccordionPresence";
 import HAccordionDetails from "./HAccordionDetails";
 import useColors from "@/colors";
 

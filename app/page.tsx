@@ -139,6 +139,10 @@ export default function HImageEditor() {
                         onTintDecrease={editor.handleBulkTintDecrease}
                         onTintIncrease={editor.handleBulkTintIncrease}
                         onTintIncreaseMax={editor.handleBulkTintIncreaseMax}
+                        onVibranceDecreaseMax={editor.handleBulkVibranceDecreaseMax}
+                        onVibranceDecrease={editor.handleBulkVibranceDecrease}
+                        onVibranceIncrease={editor.handleBulkVibranceIncrease}
+                        onVibranceIncreaseMax={editor.handleBulkVibranceIncreaseMax}
                         onSaturationDecreaseMax={editor.handleBulkSaturationDecreaseMax}
                         onSaturationDecrease={editor.handleBulkSaturationDecrease}
                         onSaturationIncrease={editor.handleBulkSaturationIncrease}
@@ -389,8 +393,11 @@ export default function HImageEditor() {
                             onTempChange={editor.setTempScore}
                             tintScore={editor.tintScore}
                             onTintChange={editor.setTintScore}
+                            vibranceScore={editor.vibranceScore}
+                            onVibranceChange={editor.setVibranceScore}
                             saturationScore={editor.saturationScore}
                             onSaturationChange={editor.setSaturationScore}
+
                             // Adjustments Light
                             exposureScore={editor.exposureScore}
                             onExposureChange={editor.setExposureScore}
@@ -404,6 +411,7 @@ export default function HImageEditor() {
                             onWhitesChange={editor.setWhitesScore}
                             blackScore={editor.blacksScore}
                             onBlacksChange={editor.setBlacksScore}
+
                             // Adjustments Details
                             clarityScore={editor.clarityScore}
                             onClarityChange={editor.setClarityScore}
@@ -439,6 +447,10 @@ export default function HImageEditor() {
                             onTintDecrease={editor.handleBulkTintDecrease}
                             onTintIncrease={editor.handleBulkTintIncrease}
                             onTintIncreaseMax={editor.handleBulkTintIncreaseMax}
+                            onVibranceDecreaseMax={editor.handleBulkVibranceDecreaseMax}
+                            onVibranceDecrease={editor.handleBulkVibranceDecrease}
+                            onVibranceIncrease={editor.handleBulkVibranceIncrease}
+                            onVibranceIncreaseMax={editor.handleBulkVibranceIncreaseMax}
                             onSaturationDecreaseMax={editor.handleBulkSaturationDecreaseMax}
                             onSaturationDecrease={editor.handleBulkSaturationDecrease}
                             onSaturationIncrease={editor.handleBulkSaturationIncrease}

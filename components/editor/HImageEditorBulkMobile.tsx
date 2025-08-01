@@ -35,6 +35,10 @@ interface Props {
     onTintDecrease: () => void;
     onTintIncrease: () => void;
     onTintIncreaseMax: () => void;
+    onVibranceDecreaseMax: () => void;
+    onVibranceDecrease: () => void;
+    onVibranceIncrease: () => void;
+    onVibranceIncreaseMax: () => void;
     onSaturationDecreaseMax: () => void;
     onSaturationDecrease: () => void;
     onSaturationIncrease: () => void;

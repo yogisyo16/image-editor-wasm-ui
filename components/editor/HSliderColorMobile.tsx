@@ -7,8 +7,10 @@ interface Props {
     tempScore: number;
     tintScore: number;
     saturationScore: number;
+    vibranceScore: number;
     onTempChange: (value: number) => void;
     onTintChange: (value: number) => void;
+    onVibranceChange: (value: number) => void;
     onSaturationChange: (value: number) => void;
 }
 
@@ -38,6 +40,13 @@ export default function HSliderColorMobile(props: Props) {
     // The gradient for the *entire* background of the slider bar
     const fullTrackGradient = `linear-gradient(to right, ${greyScaleStart} 0%, ${greyScaleEnd} 50%, ${colorStops})`;
 
+    const focusedInputStyle = {
+        backgroundColor: "#1C1B1FB2",
+        borderRadius: '5px 5px 0px 0px',
+        borderBottom: 'none',
+        pl: '2px',
+    };
+
     const formatValue = (value: number) => {
             if (value > 0) return `+${value}`;
             return value.toString();
@@ -55,11 +64,11 @@ export default function HSliderColorMobile(props: Props) {
     return(
         <>
             <Stack spacing={0} direction="column" sx={{ width: '100%', paddingX: 1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Temperature</Typography>
                     <TextField
                         hiddenLabel
-                        id="filled-hidden-label-small"
+                        id="temperature-input"
                         value={formatValue(props.tempScore)}
                         variant="filled"
                         onChange={(e) => handleInputChange(e, -100, 100, props.onTempChange)}
@@ -116,7 +125,7 @@ export default function HSliderColorMobile(props: Props) {
                             background: 'transparent',
                             border: 'none',
                         },
-                        '& .MuiSlider-thumb:hover': {
+                        '& .MuiSlider-thumb': {
                             boxShadow: 'none',   
                         }
                     }}
@@ -127,7 +136,7 @@ export default function HSliderColorMobile(props: Props) {
                     max={100}
                     onChange={(_event, newValue) => props.onTempChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Tint</Typography>
                     <TextField
                         hiddenLabel
@@ -188,7 +197,7 @@ export default function HSliderColorMobile(props: Props) {
                             background: 'transparent',
                             border: 'none',
                         },
-                        '& .MuiSlider-thumb:hover': {
+                        '& .MuiSlider-thumb': {
                             boxShadow: 'none',   
                         }
                     }}
@@ -199,7 +208,81 @@ export default function HSliderColorMobile(props: Props) {
                     max={100}
                     onChange={(_event, newValue) => props.onTintChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
+                    <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>
+                        Vibrance
+                    </Typography>
+                    <TextField
+                        hiddenLabel
+                        id="filled-hidden-label-small"
+                        value={formatValue(props.vibranceScore)}
+                        variant="filled"
+                        onChange={(e) => handleInputChange(e, -100, 100, props.onVibranceChange)}
+                        sx={{
+                            width: "40px", 
+                            alignItems: "center", 
+                            textAlign: "right", 
+                            pr: "4px",
+                            display: "flex",
+                            '& .MuiFilledInput-root': {
+                                backgroundColor: 'transparent',
+                                borderRadius: "0px",
+                                border: 'none',
+                                '&:before': {
+                                    borderBottom: 'none',
+                                },
+                                '&:after': {
+                                    borderBottom: 'none',
+                                },
+                                '&:hover:not(.Mui-disabled):before': {
+                                    borderBottom: 'none',
+                                },
+                                '&.Mui-focused:after': {
+                                    borderBottom: 'none',
+                                },
+                            },
+                            '& .MuiFilledInput-input': {
+                                textAlign: 'right',
+                                padding: 0,
+                                pr: '4px',
+                                color: colors.surface,
+                                fontSize: "14px",
+                            },
+                            '& .Mui-focused' : {
+                                '& .MuiFilledInput-input': {
+                                    backgroundColor: "#1C1B1FB2",
+                                    textAlign: 'right',
+                                    borderRadius: '5px 5px 0px 0px',
+                                    borderBottom: 'none',
+                                    pl: '2px',
+                                }
+                            }
+                        }}/>
+                </Stack>
+                <Slider
+                    sx={{
+                        width: "100%",
+                        color: colors.surface,
+                        '& .MuiSlider-rail': {
+                            background: fullTrackGradient,
+                            opacity: 1,
+                        },
+                        '& .MuiSlider-track': {
+                            background: 'transparent',
+                            border: 'none',
+                        },
+                        '& .MuiSlider-thumb': {
+                            boxShadow: 'none',   
+                        }
+                    }}
+                    size="small"
+                    value={props.vibranceScore}
+                    step={1}
+                    min={-100}
+                    max={100}
+                    onChange={(_event, newValue) => props.onVibranceChange(newValue as number)}
+                />
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>
                         Saturation
                     </Typography>
@@ -262,7 +345,7 @@ export default function HSliderColorMobile(props: Props) {
                             background: 'transparent',
                             border: 'none',
                         },
-                        '& .MuiSlider-thumb:hover': {
+                        '& .MuiSlider-thumb': {
                             boxShadow: 'none',   
                         }
                     }}

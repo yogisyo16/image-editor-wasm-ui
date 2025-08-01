@@ -16,6 +16,10 @@ interface Props {
     onTintDecrease: () => void;
     onTintIncrease: () => void;
     onTintIncreaseMax: () => void;
+    onVibranceDecreaseMax: () => void;
+    onVibranceDecrease: () => void;
+    onVibranceIncrease: () => void;
+    onVibranceIncreaseMax: () => void;
     onSaturationDecreaseMax: () => void;
     onSaturationDecrease: () => void;
     onSaturationIncrease: () => void;
@@ -71,6 +75,10 @@ export default function HBulkColorAdjustmentMobile(props: Props) {
                     onTintDecrease={props.onTintDecrease}
                     onTintIncrease={props.onTintIncrease}
                     onTintIncreaseMax={props.onTintIncreaseMax}
+                    onVibranceDecreaseMax={props.onVibranceDecreaseMax}
+                    onVibranceDecrease={props.onVibranceDecrease}
+                    onVibranceIncrease={props.onVibranceIncrease}
+                    onVibranceIncreaseMax={props.onVibranceIncreaseMax}
                     onSaturationDecreaseMax={props.onSaturationDecreaseMax}
                     onSaturationDecrease={props.onSaturationDecrease}
                     onSaturationIncrease={props.onSaturationIncrease}
