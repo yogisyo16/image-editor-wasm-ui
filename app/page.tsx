@@ -136,31 +136,6 @@ export default function HImageEditor() {
         const loadInitialImageFromNative = (imageId: string) => {
             if (typeof imageId === 'string' && imageId) {
                 console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
-                
-                editor.loadImageFromId(imageId);
-            } else {
-                console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
-            }
-        };
-
-        (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
-
-        if ((window as any).Android?.webViewReady) {
-            (window as any).Android.webViewReady();
-        }
-        if ((window as any).webkit?.messageHandlers?.nativeHandler) {
-            (window as any).webkit.messageHandlers.nativeHandler.postMessage({ event: 'webViewReady' });
-        }
-
-        return () => {
-            delete (window as any).loadInitialImageFromNative;
-        };
-    }, [editor.loadImageFromId]);
-
-    useEffect(() => {
-        const loadInitialImageFromNative = (imageId: string) => {
-            if (typeof imageId === 'string' && imageId) {
-                console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
                 editor.loadImageFromId(imageId);
             } else {
                 console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
