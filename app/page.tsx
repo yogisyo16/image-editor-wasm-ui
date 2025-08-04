@@ -44,6 +44,7 @@ export default function HImageEditor() {
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
     const colors = useColors();
+    const [displayedToken, setDisplayedToken] = useState<string | null>(null);
 
     const PEEK_HEIGHT = 20;
     const COLLAPSED_HEIGHT = 165;
@@ -146,6 +147,7 @@ export default function HImageEditor() {
             if (typeof token === 'string' && token) {
                 console.log("[WebView Bridge] Received auth token from native.");
                 apiController.setToken(token);
+                setDisplayedToken(token);
             } else {
                 console.error("[WebView Bridge] Invalid token received from native:", token);
             }
