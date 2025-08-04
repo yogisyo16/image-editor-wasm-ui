@@ -30,7 +30,7 @@ export default function HSliderDetailsMobile(props: Props) {
     return (
         <>
             <Stack spacing={0} direction="column" sx={{ width: '100%', paddingX: 1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Clarity</Typography>
                     <TextField
                         hiddenLabel
@@ -102,7 +102,7 @@ export default function HSliderDetailsMobile(props: Props) {
                     max={100}
                     onChange={(_event, newValue) => props.onClarityChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Sharpness</Typography>
                     <TextField
                         hiddenLabel

@@ -160,6 +160,9 @@ export function useHonchoEditor(controller: Controller) {
     const [imageList, setImageList] = useState<ImageItem[]>([]);
     const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
 
+    // MARK: Framse- (Later use)
+    const [isFrameApplied, setIsFrameApplied] = useState(false);
+
     // State for Copying specific adjustments
     const [colorAdjustments, setColorAdjustments] = useState(true);
     const [lightAdjustments, setLightAdjustments] = useState(true);
@@ -302,6 +305,7 @@ export function useHonchoEditor(controller: Controller) {
         // Always update the UI controls
         setTempScore(state.tempScore);
         setTintScore(state.tintScore);
+        setVibranceScore(state.vibranceScore);
         setExposureScore(state.exposureScore);
         setHighlightsScore(state.highlightsScore);
         setShadowsScore(state.shadowsScore);
@@ -492,6 +496,7 @@ export function useHonchoEditor(controller: Controller) {
                     const newValue = clamp(currentValue + amount);
                     newMap.set(id, { ...currentState, [key]: newValue });
                 });
+                console.log("this is UI Setter: ", uiSetter);
                 return newMap;
             });
         }
@@ -572,18 +577,27 @@ export function useHonchoEditor(controller: Controller) {
     const handleBulkSharpnessIncreaseMax = createRelativeAdjuster('sharpnessScore', setSharpnessScore, 20);
 
     const handleScriptReady = useCallback(async () => {
+        console.log("[Editor] Script tag is ready."); // Log entry
+
         if (typeof window.Module === 'function' && !editorRef.current) {
+            console.log("[Editor] window.Module found. Initializing editor..."); // Log entry
             try {
                 setEditorStatus("Loading WASM module...");
                 const editor = new HonchoEditor();
-                await editor.initialize();
+                await editor.initialize(true);
                 editorRef.current = editor;
                 setIsEditorReady(true);
                 setEditorStatus("Ready! Select an image to start.");
+                console.log("[Editor] Initialization successful."); // Log entry
             } catch (error) {
-                console.error("Editor initialization failed:", error);
-                setEditorStatus("Error: Could not load editor.");
+                console.error("[Editor] CRITICAL: Editor initialization failed:", error); // Critical error log
+                setEditorStatus(`Error: Could not load editor. See device logs.`);
             }
+        } else {
+            console.warn("[Editor] handleScriptReady called but conditions not met.", {
+                isModuleFunction: typeof window.Module === 'function',
+                isEditorAlreadyInitialized: !!editorRef.current
+            });
         }
     }, []);
 
@@ -968,7 +982,7 @@ export function useHonchoEditor(controller: Controller) {
         tempScore, tintScore, vibranceScore, exposureScore, highlightsScore, shadowsScore,
         whitesScore, blacksScore, saturationScore, contrastScore, clarityScore, sharpnessScore,
         isImageLoaded, history, historyIndex,
-        isViewingOriginal // <-- Add the flag as a dependency
+        isViewingOriginal
     ]);
 
     useEffect(() => {

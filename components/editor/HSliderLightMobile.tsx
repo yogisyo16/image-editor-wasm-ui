@@ -40,14 +40,14 @@ export default function HSliderLightMobile (props: Props){
     return (
         <>
             <Stack spacing={0} direction="column" sx={{ width: '100%', paddingX: 1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Exposure</Typography>
                     <TextField
                         hiddenLabel
                         id="filled-hidden-label-small"
                         value={formatValue(props.exposureScore)}
                         variant="filled"
-                        onChange={(e) => handleInputChange(e, -5, 5, props.onExposureChange)}
+                        onChange={(e) => handleInputChange(e, -100, 100, props.onExposureChange)}
                         sx={{
                             width: "40px", 
                             alignItems: "center", 
@@ -112,7 +112,7 @@ export default function HSliderLightMobile (props: Props){
                     max={5}
                     onChange={(_event, newValue) => props.onExposureChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>Contrast</Typography>
                     <TextField
                         hiddenLabel
@@ -184,7 +184,7 @@ export default function HSliderLightMobile (props: Props){
                     max={100}
                     onChange={(_event, newValue) => props.onContrastChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Highlights</Typography>
                     <TextField
                         hiddenLabel
@@ -256,7 +256,7 @@ export default function HSliderLightMobile (props: Props){
                     max={100}
                     onChange={(_event, newValue) => props.onHighlightsChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Shadows</Typography>
                     <TextField
                         hiddenLabel
@@ -328,7 +328,7 @@ export default function HSliderLightMobile (props: Props){
                     max={100}
                     onChange={(_event, newValue) => props.onShadowsChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Whites</Typography>
                     <TextField
                         hiddenLabel
@@ -400,7 +400,7 @@ export default function HSliderLightMobile (props: Props){
                     max={100}
                     onChange={(_event, newValue) => props.onWhitesChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px' }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Blacks</Typography>
                     <TextField
                         hiddenLabel

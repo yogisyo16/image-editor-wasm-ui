@@ -10,7 +10,7 @@ import HHeaderEditor from "@/components/editor/HHeaderEditor";
 import HAccordionColorAdjustment from "@/components/editor/HAccordionColorAdjustment";
 import HAccordionPreset from "@/components/editor/HAccordionPreset";
 import { HBaseDialog, HDialogForPreset } from "@/components/editor/HDialogBox";
-import { HDialogCopy } from "@/components/editor/HDialogCopy";
+import { HDialogCopy, HDialogPreset } from "@/components/editor/HDialogCopy";
 import HImageEditorMobile from "@/components/editor/HImageEditorMobile";
 import HImageEditorDesktop from "@/components/editor/HImageEditorDekstop";
 import HImageEditorBulkDekstop from "@/components/editor/HImageEditorBulkDekstop";
@@ -132,23 +132,75 @@ export default function HImageEditor() {
         }
     };
 
-    // Shortcut for copy action
+    useEffect(() => {
+        const loadInitialImageFromNative = (imageId: string) => {
+            if (typeof imageId === 'string' && imageId) {
+                console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
+                
+                editor.loadImageFromId(imageId);
+            } else {
+                console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
+            }
+        };
+
+        (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
+
+        if ((window as any).Android?.webViewReady) {
+            (window as any).Android.webViewReady();
+        }
+        if ((window as any).webkit?.messageHandlers?.nativeHandler) {
+            (window as any).webkit.messageHandlers.nativeHandler.postMessage({ event: 'webViewReady' });
+        }
+
+        return () => {
+            delete (window as any).loadInitialImageFromNative;
+        };
+    }, [editor.loadImageFromId]);
+
+    useEffect(() => {
+        const loadInitialImageFromNative = (imageId: string) => {
+            if (typeof imageId === 'string' && imageId) {
+                console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
+                editor.loadImageFromId(imageId);
+            } else {
+                console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
+            }
+        };
+
+        // --- ADD THIS NEW FUNCTION ---
+        // Define the function that native will call to set the auth token
+        const setAuthToken = (token: string) => {
+            if (typeof token === 'string' && token) {
+                console.log("[WebView Bridge] Received auth token from native.");
+                apiController.setToken(token);
+            } else {
+                console.error("[WebView Bridge] Invalid token received from native:", token);
+            }
+        };
+
+        // Expose both functions on the window object
+        (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
+        (window as any).setAuthToken = setAuthToken; // Expose the new function
+
+        // Cleanup function
+        return () => {
+            delete (window as any).loadInitialImageFromNative;
+            delete (window as any).setAuthToken; // Clean up the new function
+        };
+    }, [editor.loadImageFromId]);
+
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
-        // Check if the user is in an input field to avoid overriding normal text copying
         const target = event.target as HTMLElement;
         if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
             return;
         }
 
-        // Check for Ctrl+C (Windows/Linux) or Cmd+C (Mac)
         if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-            // Prevent the default browser copy action
             event.preventDefault();
             
-            // Open the copy dialog using the handler from your hook
             editor.handleOpenCopyDialog();
         }
-    }, [editor.handleOpenCopyDialog]); // Depend on the handler from the hook
+    }, [editor.handleOpenCopyDialog]);
 
     useEffect(() => {
         // Add the event listener when the component mounts
@@ -656,7 +708,21 @@ export default function HImageEditor() {
                         modalName="preset"
                         modalOpen={editor.isPresetModalOpen}
                         modalTitle="Create Preset"
-                        modalInformation="Create a preset with the current Light, Colour and Details settings"
+                        modalInformation="Choose settings to include in preset"
+                        action={
+                            <HDialogPreset
+                                colorChecks={editor.copyColorChecks}
+                                lightChecks={editor.copyLightChecks}
+                                detailsChecks={editor.copyDetailsChecks}
+                                setColorChecks={editor.setCopyColorChecks}
+                                setLightChecks={editor.setCopyLightChecks}
+                                setDetailsChecks={editor.setCopyDetailsChecks}
+                                expanded={editor.copyDialogExpanded}
+                                onParentChange={editor.handleCopyParentChange}
+                                onChildChange={editor.handleCopyChildChange}
+                                onToggleExpand={editor.handleToggleCopyDialogExpand}
+                            />
+                        }
                         modalClose={editor.handleClosePresetModal}
                         onConfirm={editor.handleCreatePreset}
                     >
@@ -701,20 +767,6 @@ export default function HImageEditor() {
                     }
                 />
             )}
-            <HDialogForPreset
-                open={editor.isRenameModalOpen}
-                title={"Rename"}
-                description={"Rename a preset with the current Light, Colour and Details settings"}
-                onClose={editor.handleCloseRenameModal}
-                action={
-                    <HTextFieldRename
-                        valueName={editor.newPresetName}
-                        setName={(e) => editor.setNewPresetName(e.target.value)}
-                        onSaveRenamePreset={editor.handleConfirmRename}
-                        onCancel={editor.handleCloseRenameModal}
-                    />
-                }
-            />
         </>
     )
 }

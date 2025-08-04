@@ -9,6 +9,7 @@ interface Props {
     modalTitle: string;
     modalInformation: string;
     children: React.ReactNode;
+    action?: React.ReactNode;
     modalClose: () => void;
     onConfirm: () => void;
 }
@@ -39,12 +40,15 @@ export default function HModalEditorDekstop(props: Props) {
                     <Typography variant="h6" color="initial">
                         {props.modalTitle}
                     </Typography>
-                    <Typography color="initial">
-                        {props.modalInformation}
-                    </Typography>
                     <Box sx={{ mt: 2 }}>
                         {props.children}
                     </Box>
+                    <Typography color="initial">
+                        {props.modalInformation}
+                    </Typography>
+                    <Stack>
+                        {props.action}
+                    </Stack>
                     <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: 'flex-end' }}>
                         <Button sx={{ ...typography.labelMedium, color: colors.onSurface, backgroundColor: colors.surface, }} onClick={props.modalClose}>
                             Cancel

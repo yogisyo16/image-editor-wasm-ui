@@ -195,7 +195,7 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .': {
+                            '& .MuiSlider-thumb': {
                                 boxShadow: 'none',   
                             },
                             '& .MuiSlider-thumb:hover': {
@@ -268,7 +268,7 @@ export default function HAccordionColor(props: Props) {
                                 background: 'transparent',
                                 border: 'none',
                             },
-                            '& .': {
+                            '& .MuiSlider-thumb': {
                                 boxShadow: 'none',   
                             },
                             '& .MuiSlider-thumb:hover': {
