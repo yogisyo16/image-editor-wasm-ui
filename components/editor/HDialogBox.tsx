@@ -17,6 +17,8 @@ interface Props {
     description?: React.ReactNode | ReactElement;
     onClose?: () => void;
     action?: React.ReactNode
+    //Preset only
+    actionAdjust?: React.ReactNode
 }
 
 export function HBaseDialog(props: Props) {
@@ -39,7 +41,7 @@ export function HBaseDialog(props: Props) {
                 },
             }}>
             <DialogContent
-                
+                sx={{ pb: "16px", mb: "0px" }}
             >
                 <Stack direction="column">
                     <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -59,7 +61,9 @@ export function HBaseDialog(props: Props) {
                 </Stack>
             </DialogContent>
             {props.action && (
-                <DialogContent>
+                <DialogContent
+                    sx={{ pt: "0px", mt: "0px" }}
+                >
                     <Stack alignItems="center" width="100%">
                         {props.action}
                     </Stack>
@@ -99,13 +103,16 @@ export function HDialogForPreset(props: Props) {
                         {/* <CloseButton onClick={props.onClose}/> */}
                     </Stack>
                     <Stack direction="column" sx={{ pt: "12px" }}>
-                        <Typography
-                            variant="bodyMedium"
-                            color={colors.onSurface}>
-                            {props.description}
-                        </Typography>
                         <Stack sx={{ pt: "20px", pb: "20px" }}>
                             {props.action}
+                        </Stack>
+                        <Stack>
+                            <Typography
+                                variant="bodyMedium"
+                                color={colors.onSurface}>
+                                {props.description}
+                            </Typography>
+                            {props.actionAdjust}
                         </Stack>
                     </Stack>
                 </Stack>

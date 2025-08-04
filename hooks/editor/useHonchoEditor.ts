@@ -496,6 +496,7 @@ export function useHonchoEditor(controller: Controller) {
                     const newValue = clamp(currentValue + amount);
                     newMap.set(id, { ...currentState, [key]: newValue });
                 });
+                console.log("this is UI Setter: ", uiSetter);
                 return newMap;
             });
         }

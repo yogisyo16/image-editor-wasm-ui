@@ -30,8 +30,15 @@ export function HTextField(props: Props) {
                     p: "7px",
                     borderRadius: "6px",
                     '& .MuiInputLabel-root': {
+                        color: colors.onSurfaceVariant, // A slightly dimmer color for the placeholder
                         pt: '10px',
                         pl: '10px',
+                    },
+                    '& .MuiInput-input': {
+                        color: colors.onSurface,
+                    },
+                    '& .MuiInputLabel-root.Mui-focused': {
+                        color: colors.onSurfaceVariant, // Or a different color if you prefer
                     },
                 }}
             />

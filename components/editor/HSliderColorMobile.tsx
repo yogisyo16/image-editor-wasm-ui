@@ -63,8 +63,8 @@ export default function HSliderColorMobile(props: Props) {
 
     return(
         <>
-            <Stack spacing={0} direction="column" sx={{ width: '100%', paddingX: 1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
+            <Stack spacing={0} direction="column" sx={{ width: '100%', paddingX: 1, m: "0px"}}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Temperature</Typography>
                     <TextField
                         hiddenLabel
@@ -102,15 +102,6 @@ export default function HSliderColorMobile(props: Props) {
                                 color: colors.surface,
                                 fontSize: "14px",
                             },
-                            '& .Mui-focused' : {
-                                '& .MuiFilledInput-input': {
-                                    backgroundColor: "#1C1B1FB2",
-                                    textAlign: 'right',
-                                    borderRadius: '5px 5px 0px 0px',
-                                    borderBottom: 'none',
-                                    pl: '2px',
-                                }
-                            }
                         }}/>
                 </Stack>
                 <Slider
@@ -136,7 +127,7 @@ export default function HSliderColorMobile(props: Props) {
                     max={100}
                     onChange={(_event, newValue) => props.onTempChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{...typography.bodyMedium, color: colors.surface}}>Tint</Typography>
                     <TextField
                         hiddenLabel
@@ -174,15 +165,6 @@ export default function HSliderColorMobile(props: Props) {
                                 color: colors.surface,
                                 fontSize: "14px",
                             },
-                            '& .Mui-focused' : {
-                                '& .MuiFilledInput-input': {
-                                    backgroundColor: "#1C1B1FB2",
-                                    textAlign: 'right',
-                                    borderRadius: '5px 5px 0px 0px',
-                                    borderBottom: 'none',
-                                    pl: '2px',
-                                }
-                            }
                         }}/>
                 </Stack>
                 <Slider
@@ -208,7 +190,7 @@ export default function HSliderColorMobile(props: Props) {
                     max={100}
                     onChange={(_event, newValue) => props.onTintChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>
                         Vibrance
                     </Typography>
@@ -248,15 +230,6 @@ export default function HSliderColorMobile(props: Props) {
                                 color: colors.surface,
                                 fontSize: "14px",
                             },
-                            '& .Mui-focused' : {
-                                '& .MuiFilledInput-input': {
-                                    backgroundColor: "#1C1B1FB2",
-                                    textAlign: 'right',
-                                    borderRadius: '5px 5px 0px 0px',
-                                    borderBottom: 'none',
-                                    pl: '2px',
-                                }
-                            }
                         }}/>
                 </Stack>
                 <Slider
@@ -282,7 +255,7 @@ export default function HSliderColorMobile(props: Props) {
                     max={100}
                     onChange={(_event, newValue) => props.onVibranceChange(newValue as number)}
                 />
-                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ pt: '10px', pb: '0px', '&:focus-within .MuiFilledInput-input': focusedInputStyle }}>
                     <Typography sx={{ ...typography.bodyMedium, color: colors.surface }}>
                         Saturation
                     </Typography>
@@ -322,15 +295,6 @@ export default function HSliderColorMobile(props: Props) {
                                 color: colors.surface,
                                 fontSize: "14px",
                             },
-                            '& .Mui-focused' : {
-                                '& .MuiFilledInput-input': {
-                                    backgroundColor: "#1C1B1FB2",
-                                    textAlign: 'right',
-                                    borderRadius: '5px 5px 0px 0px',
-                                    borderBottom: 'none',
-                                    pl: '2px',
-                                }
-                            }
                         }}/>
                 </Stack>
                 <Slider

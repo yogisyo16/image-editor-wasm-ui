@@ -1,5 +1,7 @@
 import { type Controller, type Preset, type AdjustmentState, type ImageItem } from "@/hooks/editor/useHonchoEditor";
 
+const nativeCallbacks = new Map<string, { resolve: (value: string) => void; reject: (reason?: any) => void }>();
+
 const MOCK_IMAGES: ImageItem[] = Array.from({ length: 20 }, (_, i) => ({
     id: `img_${i + 1}`,
     name: `Image ${i + 1}.jpg`,
@@ -7,22 +9,74 @@ const MOCK_IMAGES: ImageItem[] = Array.from({ length: 20 }, (_, i) => ({
     file: new File([], `Image ${i + 1}.jpg`),
 }));
 
+function handleNativeImageResponse(callbackId: string, base64Data: string | null, error: string | null) {
+    if (nativeCallbacks.has(callbackId)) {
+        const { resolve, reject } = nativeCallbacks.get(callbackId)!;
+        if (error) {
+            console.error(`Native Error for ${callbackId}:`, error);
+            reject(new Error(error));
+        } else if (base64Data) {
+            // Prepend the data URL scheme for direct use in an <img> src
+            const dataUrl = `data:image/jpeg;base64,${base64Data}`;
+            resolve(dataUrl);
+        } else {
+            reject(new Error('Native side returned no data and no error.'));
+        }
+        // Clean up the callback
+        nativeCallbacks.delete(callbackId);
+    }
+}
+
+// Expose the handler function globally so native code can see it
+if (typeof window !== 'undefined') {
+    (window as any).handleNativeImageResponse = handleNativeImageResponse;
+}
+
+// --- END: NATIVE COMMUNICATION BRIDGE ---
+
+
 export const apiController: Controller = {
   /**
-   * Fetches an image from your backend API.
+   * Fetches an image from the native (iOS/Android) side.
    * @param imageID The ID of the image to fetch.
-   * @returns A Promise that resolves to a File object, or null if it fails.
+   * @returns A Promise that resolves to a Base64 Data URL.
    */
   onGetImage: async (imageID: string): Promise<string | null> => {
-    console.log(`[API Controller] Getting URL for image ID: ${imageID}`);
-    // In a real app, this would query your backend for the image's public URL.
-    // For this demo, we'll find it in our mock list.
-    const image = MOCK_IMAGES.find(img => img.id === imageID);
-    if (image) {
-        return Promise.resolve(image.url);
+    console.log(`[JS Bridge] Requesting image with ID: ${imageID}`);
+    
+    // Check for the native interfaces provided by iOS and Android WebViews
+    const iOSBridge = (window as any).webkit?.messageHandlers?.nativeHandler;
+    const androidBridge = (window as any).Android;
+
+    if (!iOSBridge && !androidBridge) {
+        console.warn("[JS Bridge] Native bridge not found. This will only work inside the native app's WebView.");
+        // Fallback for web development (returns a placeholder)
+        return Promise.resolve(`https://picsum.photos/seed/${imageID}/600/800`);
     }
-    console.error(`Image with ID ${imageID} not found in mock list.`);
-    return Promise.resolve(null);
+
+    return new Promise((resolve, reject) => {
+        const callbackId = `cb_${Date.now()}_${Math.random()}`;
+        nativeCallbacks.set(callbackId, { resolve, reject });
+
+        try {
+            if (iOSBridge) {
+                // Send a message to the iOS WKScriptMessageHandler
+                const message = {
+                    action: 'getImage',
+                    imageId: imageID,
+                    callbackId: callbackId
+                };
+                iOSBridge.postMessage(message);
+            } else if (androidBridge) {
+                // Call the function on the Android JavaScript Interface
+                androidBridge.getImageForEditing(imageID, callbackId);
+            }
+        } catch (err) {
+            console.error("[JS Bridge] Error calling native function:", err);
+            nativeCallbacks.delete(callbackId);
+            reject(err);
+        }
+    });
   },
 
   getImageList: async (): Promise<ImageItem[]> => {
