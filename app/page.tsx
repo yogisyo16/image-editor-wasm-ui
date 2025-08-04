@@ -142,8 +142,6 @@ export default function HImageEditor() {
             }
         };
 
-        // --- ADD THIS NEW FUNCTION ---
-        // Define the function that native will call to set the auth token
         const setAuthToken = (token: string) => {
             if (typeof token === 'string' && token) {
                 console.log("[WebView Bridge] Received auth token from native.");
@@ -155,7 +153,10 @@ export default function HImageEditor() {
 
         // Expose both functions on the window object
         (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
-        (window as any).setAuthToken = setAuthToken; // Expose the new function
+        (window as any).setAuthToken = setAuthToken; 
+
+        // testing commit
+        // vercel
 
         // Cleanup function
         return () => {
