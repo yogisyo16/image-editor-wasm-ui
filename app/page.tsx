@@ -157,6 +157,38 @@ export default function HImageEditor() {
         };
     }, [editor.loadImageFromId]);
 
+    useEffect(() => {
+        const loadInitialImageFromNative = (imageId: string) => {
+            if (typeof imageId === 'string' && imageId) {
+                console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
+                editor.loadImageFromId(imageId);
+            } else {
+                console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
+            }
+        };
+
+        // --- ADD THIS NEW FUNCTION ---
+        // Define the function that native will call to set the auth token
+        const setAuthToken = (token: string) => {
+            if (typeof token === 'string' && token) {
+                console.log("[WebView Bridge] Received auth token from native.");
+                apiController.setToken(token);
+            } else {
+                console.error("[WebView Bridge] Invalid token received from native:", token);
+            }
+        };
+
+        // Expose both functions on the window object
+        (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
+        (window as any).setAuthToken = setAuthToken; // Expose the new function
+
+        // Cleanup function
+        return () => {
+            delete (window as any).loadInitialImageFromNative;
+            delete (window as any).setAuthToken; // Clean up the new function
+        };
+    }, [editor.loadImageFromId]);
+
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
         const target = event.target as HTMLElement;
         if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {

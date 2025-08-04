@@ -1,5 +1,7 @@
 import { type Controller, type Preset, type AdjustmentState, type ImageItem } from "@/hooks/editor/useHonchoEditor";
 
+let idToken: string | null = null;
+
 const nativeCallbacks = new Map<string, { resolve: (value: string) => void; reject: (reason?: any) => void }>();
 
 const MOCK_IMAGES: ImageItem[] = Array.from({ length: 20 }, (_, i) => ({
@@ -32,17 +34,26 @@ if (typeof window !== 'undefined') {
     (window as any).handleNativeImageResponse = handleNativeImageResponse;
 }
 
+interface NativeController extends Controller {
+    setToken: (token: string) => void;
+}
+
 // --- END: NATIVE COMMUNICATION BRIDGE ---
 
 
-export const apiController: Controller = {
+export const apiController: NativeController = {
   /**
-   * Fetches an image from the native (iOS/Android) side.
-   * @param imageID The ID of the image to fetch.
-   * @returns A Promise that resolves to a Base64 Data URL.
+   * A new function to allow the native app to set the authentication token.
    */
+  setToken: (token: string) => {
+    console.log("[API Controller] Auth token has been set.");
+    idToken = token;
+  },
+  
   onGetImage: async (imageID: string): Promise<string | null> => {
     console.log(`[JS Bridge] Requesting image with ID: ${imageID}`);
+
+    
     
     // Check for the native interfaces provided by iOS and Android WebViews
     const iOSBridge = (window as any).webkit?.messageHandlers?.nativeHandler;
