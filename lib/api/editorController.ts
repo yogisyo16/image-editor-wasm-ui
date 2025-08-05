@@ -4,12 +4,12 @@ let idToken: string | null = null;
 
 const nativeCallbacks = new Map<string, { resolve: (value: string) => void; reject: (reason?: any) => void }>();
 
-const MOCK_IMAGES: ImageItem[] = Array.from({ length: 20 }, (_, i) => ({
-    id: `img_${i + 1}`,
-    name: `Image ${i + 1}.jpg`,
-    url: `https://picsum.photos/id/${i + 10}/200/200`,
-    file: new File([], `Image ${i + 1}.jpg`),
-}));
+// const MOCK_IMAGES: ImageItem[] = Array.from({ length: 20 }, (_, i) => ({
+//     id: `img_${i + 1}`,
+//     name: `Image ${i + 1}.jpg`,
+//     url: `https://picsum.photos/id/${i + 10}/200/200`,
+//     file: new File([], `Image ${i + 1}.jpg`),
+// }));
 
 function handleNativeImageResponse(callbackId: string, base64Data: string | null, error: string | null) {
     if (nativeCallbacks.has(callbackId)) {
@@ -95,8 +95,8 @@ export const apiController: NativeController = {
     // In a real app, you would fetch from your API:
     // const response = await fetch('/api/images');
     // return await response.json();
-    
-    return Promise.resolve(MOCK_IMAGES);
+    const response = await fetch('/api/images');
+    return await response.json();
   },
 
   syncConfig: async (): Promise<void> => {
