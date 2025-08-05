@@ -40,6 +40,8 @@ interface NativeController extends Controller {
 
 // --- END: NATIVE COMMUNICATION BRIDGE ---
 
+// const baseUrl = 'https://dev.portal.ubersnap.com/gallery/67ee6b55b8e4273707f68978';
+// const finalUrl = `${baseUrl}?preview=${imageID}`;
 
 export const apiController: NativeController = {
   /**
@@ -53,35 +55,42 @@ export const apiController: NativeController = {
   onGetImage: async (imageID: string): Promise<string | null> => {
         console.log(`[JS Bridge] Requesting image with ID: ${imageID}`);
 
-        // Check for the native interfaces provided by iOS and Android WebViews
         const iOSBridge = (window as any).webkit?.messageHandlers?.nativeHandler;
         const androidBridge = (window as any).Android;
 
+        // This block is now updated for a real web API call
         if (!iOSBridge && !androidBridge) {
-            console.warn("[JS Bridge] Native bridge not found. Using development fallback URL.");
-            // Fallback for web development that points to your portal
-            const baseUrl = 'https://dev.portal.ubersnap.com/gallery/67ee6b55b8e4273707f68978';
-            const finalUrl = `${baseUrl}?preview=${imageID}`;
+            console.warn("[JS Bridge] Native bridge not found. Using Web API call.");
+
+            // The issue is that you were fetching the gallery page URL.
+            // For the web version, you must return the DIRECT URL to the IMAGE FILE.
             
-            return Promise.resolve(finalUrl);
+            // By inspecting your gallery page, the actual image URL has this structure.
+            // We can construct it directly.
+            const imageUrl = `https://d2cxumz3vt1s04.cloudfront.net/staging/gallery-photo/67ee6b55b8e4273707f68978/preview/${imageID}.jpeg`;
+
+            console.log(`[Web Fallback] Constructed direct image URL: ${imageUrl}`);
+            
+            // Simply return this URL. The loadImageFromUrl function will then fetch it correctly.
+            return Promise.resolve(imageUrl);
         }
 
+        // The native promise-based communication remains the same
         return new Promise((resolve, reject) => {
             const callbackId = `cb_${Date.now()}_${Math.random()}`;
             nativeCallbacks.set(callbackId, { resolve, reject });
 
             try {
                 if (iOSBridge) {
-                    // Send a message to the iOS WKScriptMessageHandler
                     const message = {
                         action: 'getImage',
                         imageId: imageID,
-                        callbackId: callbackId
+                        callbackId: callbackId,
+                        token: idToken 
                     };
                     iOSBridge.postMessage(message);
                 } else if (androidBridge) {
-                    // Call the function on the Android JavaScript Interface
-                    androidBridge.getImageForEditing(imageID, callbackId);
+                    androidBridge.getImageForEditing(imageID, callbackId, idToken);
                 }
             } catch (err) {
                 console.error("[JS Bridge] Error calling native function:", err);

@@ -59,6 +59,7 @@ function HImageEditorClient() {
     const panelRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
     const [displayedToken, setDisplayedToken] = useState<string | null>(null);
+    const [displayedImageId, setDisplayedImageId] = useState<string | null>(null);
 
     const PANEL_CHROME_HEIGHT = 10;
 
@@ -137,7 +138,7 @@ function HImageEditorClient() {
 
     // ADD this new useEffect to read the query parameters when the page loads
     useEffect(() => {
-        const imageId = searchParams.get('imageId');
+        const imageId = searchParams.get('preview');
         const token = searchParams.get('token');
 
         if (token) {
@@ -148,6 +149,7 @@ function HImageEditorClient() {
 
         if (imageId) {
             console.log(`Received imageId from query params: ${imageId}`);
+            setDisplayedImageId(imageId);
             editor.loadImageFromId(imageId);
         }
     }, [editor.loadImageFromId, searchParams, setDisplayedToken]);
@@ -366,6 +368,13 @@ function HImageEditorClient() {
                     <Box sx={{ p: 1, mx: 2, backgroundColor: 'grey.900', borderRadius: 1, mt: 1 }}>
                         <Typography variant="caption" sx={{ color: 'lime', fontFamily: 'monospace', wordBreak: 'break-all' }}>
                             <strong>Token Received:</strong> {displayedToken}
+                        </Typography>
+                    </Box>
+                )}
+                {displayedImageId && (
+                    <Box sx={{ p: 1, mx: 2, backgroundColor: 'grey.900', borderRadius: 1, mt: 1 }}>
+                        <Typography variant="caption" sx={{ color: 'white', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                            <strong>Image ID:</strong> {displayedImageId}
                         </Typography>
                     </Box>
                 )}
