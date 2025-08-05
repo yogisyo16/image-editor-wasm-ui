@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback, useEffect, useRef, Suspense  } from "react";
+import React, { useState, useMemo, useEffect, useRef, Suspense  } from "react";
 import { Box, Stack, CircularProgress, Typography, Checkbox, Paper } from "@mui/material";
 import useColors from "@/colors";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'; // Magic Wand Icon
@@ -26,9 +26,7 @@ import HModalMobile from "@/components/editor/HModalMobile";
 import HPresetOptionsMenu from "@/components/editor/HPresetOptionMenu";
 import { HAlertInternetBox, HAlertCopyBox, HAlertInternetConnectionBox } from "@/components/editor/HAlertBox";
 // Hooks
-import { useHonchoEditor, AdjustmentState  } from "@/hooks/editor/useHonchoEditor";
-// API Controller
-import { apiController } from "@/lib/api/editorController";
+import { useHonchoEditor, AdjustmentState, Controller  } from "@/hooks/editor/useHonchoEditor";
 
 const initialAdjustments: AdjustmentState = {
     tempScore: 0, tintScore: 0, vibranceScore: 0, exposureScore: 0, highlightsScore: 0, shadowsScore: 0,
@@ -42,154 +40,48 @@ const hasAdjustments = (state: AdjustmentState): boolean => {
 };
 
 function HImageEditorClient() {
-    const editor = useHonchoEditor(apiController);
+
+    const localController = useMemo((): Controller => ({
+        /**
+         * The handleBack logic is now defined directly inside the page component.
+         */
+        handleBack: function (): void {
+            if ((window as any).webkit?.messageHandlers?.nativeHandler) {
+                (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
+                console.log("Sent 'back' message to iOS native handler.");
+            } 
+            else if ((window as any).Android?.goBack) {
+                console.log("Android environment detected. Calling goBack().");
+                (window as any).Android.goBack();
+            }
+            else {
+                console.log("Standard web browser detected. Navigating back in history.");
+                window.history.back();
+            }
+        },
+
+        // --- Provide placeholder implementations for other required methods ---
+        // These are necessary to satisfy the Controller interface contract.
+        onGetImage: async (imageID: string) => {
+            console.log("onGetImage called with:", imageID);
+            // Return a placeholder or the actual web implementation
+            const imageUrl = `https://d2cxumz3vt1s04.cloudfront.net/staging/gallery-photo/67ee6b55b8e4273707f68978/preview/${imageID}.jpeg`;
+            return imageUrl;
+        },
+        getImageList: async () => { return []; },
+        syncConfig: async () => {},
+        getPresets: async () => { return []; },
+        createPreset: async () => { return null; },
+        deletePreset: async () => {},
+        renamePreset: async () => {},
+    }), []);
+
+    const editor = useHonchoEditor(localController);
     const isMobile = useIsMobile();
     const colors = useColors();
-    const searchParams = useSearchParams();
-
-    const PEEK_HEIGHT = 20;
-    const COLLAPSED_HEIGHT = 165;
-
-    // Mobile Draggable Panel State
-    const [panelHeight, setPanelHeight] = useState(165);
-    const [contentHeight, setContentHeight] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
-    const dragStartPos = useRef(0);
-    const initialHeight = useRef(0);
-    const panelRef = useRef<HTMLDivElement | null>(null);
-    const contentRef = useRef<HTMLDivElement | null>(null);
+    
     const [displayedToken, setDisplayedToken] = useState<string | null>(null);
     const [displayedImageId, setDisplayedImageId] = useState<string | null>(null);
-
-    const PANEL_CHROME_HEIGHT = 10;
-
-     // Mobile Panel Drag Handlers
-    const handleContentHeightChange = useCallback((height: number) => {
-        if (height > 0 && height !== contentHeight) setContentHeight(height);
-    }, [contentHeight]);
-
-    const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-        setIsDragging(true);
-        const startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-        dragStartPos.current = startY;
-        initialHeight.current = panelHeight;
-        if (panelRef.current) panelRef.current.style.transition = 'none';
-    }, [panelHeight]);
-
-    const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
-        if (!isDragging) return;
-        const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-        const deltaY = dragStartPos.current - currentY;
-        const newHeight = initialHeight.current + deltaY;
-        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
-        
-        // UPDATED: Allow dragging down to the new PEEK_HEIGHT
-        const clampedHeight = Math.max(PEEK_HEIGHT, Math.min(newHeight, dynamicPanelFullHeight));
-        setPanelHeight(clampedHeight);
-    }, [isDragging, contentHeight]);
-
-    const handleDragEnd = useCallback(() => {
-        if (!isDragging) return;
-        setIsDragging(false);
-        dragStartPos.current = 0;
-        if (panelRef.current) panelRef.current.style.transition = 'height 0.3s ease-in-out';
-        
-        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
-
-        // UPDATED: New logic to snap to one of three points
-        const snapPointLow = (PEEK_HEIGHT + COLLAPSED_HEIGHT) / 2;
-        const snapPointHigh = (COLLAPSED_HEIGHT + dynamicPanelFullHeight) / 2;
-
-        if (panelHeight < snapPointLow) {
-            setPanelHeight(PEEK_HEIGHT); // Snap down to the "peek" state
-        } else if (panelHeight >= snapPointLow && panelHeight < snapPointHigh) {
-            setPanelHeight(COLLAPSED_HEIGHT); // Snap to the default collapsed state
-        } else {
-            setPanelHeight(dynamicPanelFullHeight); // Snap to the fully open state
-        }
-    }, [isDragging, panelHeight, contentHeight]);
-    
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            if (contentRef.current) {
-                // Use scrollHeight to get the full height of the content
-                const height = contentRef.current.scrollHeight;
-                setContentHeight(height);
-            }
-        }, 50); // Small delay for content to render before measuring
-
-        return () => clearTimeout(timeoutId);
-    }, [editor.activeSubPanel, editor.isBulkEditing]);
-
-    const handleBack = () => {
-        if ((window as any).webkit?.messageHandlers?.nativeHandler) {
-            (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
-            console.log("Sent 'back' message to iOS native handler.");
-        } 
-        else if ((window as any).Android?.goBack) {
-            console.log("Android environment detected. Calling goBack().");
-            (window as any).Android.goBack();
-        }
-        else {
-            console.log("Standard web browser detected. Navigating back in history.");
-            window.history.back();
-        }
-    };
-
-    // ADD this new useEffect to read the query parameters when the page loads
-    useEffect(() => {
-        const imageId = searchParams.get('preview');
-        const token = searchParams.get('token');
-
-        if (token) {
-            console.log("Received auth token from query params.");
-            setDisplayedToken(token);
-        }
-
-        if (imageId) {
-            console.log(`Received imageId from query params: ${imageId}`);
-            setDisplayedImageId(imageId);
-            editor.loadImageFromId(imageId);
-        }
-    }, [editor.loadImageFromId, searchParams, setDisplayedToken]);
-
-    const handleKeyDown = useCallback((event: KeyboardEvent) => {
-        const target = event.target as HTMLElement;
-        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-            return;
-        }
-
-        if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
-            event.preventDefault();
-            
-            editor.handleOpenCopyDialog();
-        }
-    }, [editor.handleOpenCopyDialog]);
-
-    useEffect(() => {
-        // Add the event listener when the component mounts
-        window.addEventListener('keydown', handleKeyDown);
-
-        // IMPORTANT: Remove the event listener when the component unmounts to prevent memory leaks
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [handleKeyDown]);
-
-    useEffect(() => {
-        if (isDragging) {
-            window.addEventListener('mousemove', handleDragMove);
-            window.addEventListener('mouseup', handleDragEnd);
-            window.addEventListener('touchmove', handleDragMove);
-            window.addEventListener('touchend', handleDragEnd);
-        }
-        return () => {
-            window.removeEventListener('mousemove', handleDragMove);
-            window.removeEventListener('mouseup', handleDragEnd);
-            window.removeEventListener('touchmove', handleDragMove);
-            window.removeEventListener('touchend', handleDragEnd);
-        };
-    }, [isDragging, handleDragMove, handleDragEnd]);
 
     // Dummy/placeholder handlers that remain in the component
     const handleScale = (event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget);
@@ -379,7 +271,7 @@ function HImageEditorClient() {
                 )}
 
                 <HHeaderEditor
-                    onBack={handleBack}
+                    onBack={editor.handleBack}
                     onUndo={editor.handleUndo}
                     onRedo={editor.handleRedo}
                     onRevert={editor.handleRevert}
@@ -539,11 +431,11 @@ function HImageEditorClient() {
                     {isMobile && !editor.isBulkEditing && (
                         <HImageEditorMobile
                             presets={editor.presets}
-                            contentRef={contentRef}
-                            panelRef={panelRef}
-                            panelHeight={panelHeight}
-                            handleDragStart={handleDragStart}
-                            onContentHeightChange={handleContentHeightChange}
+                            contentRef={editor.contentRef}
+                            panelRef={editor.panelRef}
+                            panelHeight={editor.panelHeight}
+                            handleDragStart={editor.handleDragStart}
+                            onContentHeightChange={editor.handleContentHeightChange}
                             activePanel={editor.activePanel}
                             setActivePanel={(panel) => { editor.setActivePanel(panel); editor.setActiveSubPanel(''); }}
                             activeSubPanel={editor.activeSubPanel}
@@ -589,11 +481,11 @@ function HImageEditorClient() {
                     {isMobile && editor.isBulkEditing && (
                         <HImageEditorBulkMobile
                             presets={editor.presets}
-                            contentRef={contentRef}
-                            panelRef={panelRef}
-                            panelHeight={panelHeight}
-                            handleDragStart={handleDragStart}
-                            onContentHeightChange={handleContentHeightChange}
+                            contentRef={editor.contentRef}
+                            panelRef={editor.panelRef}
+                            panelHeight={editor.panelHeight}
+                            handleDragStart={editor.handleDragStart}
+                            onContentHeightChange={editor.handleContentHeightChange}
                             activePanel={editor.activePanel}
                             setActivePanel={(panel) => { editor.setActivePanel(panel); editor.setActiveSubPanel(''); }}
                             activeSubPanel={editor.activeSubPanel}

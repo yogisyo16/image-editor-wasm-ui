@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { SelectChangeEvent } from "@mui/material";
 import { HonchoEditor } from '@/lib/editor/honcho-editor';
-import { apiController } from "@/lib/api/editorController";
 
 // Augment the global window object for the WASM Module
 declare global {
@@ -29,7 +28,7 @@ export interface Controller {
 
     // syncConfig
     syncConfig(): Promise<void>;
-    onBack():void;
+    handleBack():void;
 
     // Preset
     getPresets(): Promise<Preset[]>;
@@ -172,6 +171,107 @@ export function useHonchoEditor(controller: Controller) {
 
     // for connection native
     const [displayedToken, setDisplayedToken] = useState<string | null>(null);
+
+    // MARK: dragable
+    const PEEK_HEIGHT = 20;
+    const COLLAPSED_HEIGHT = 165;
+    const PANEL_CHROME_HEIGHT = 10;
+    
+    // Mobile Draggable Panel State
+    const [panelHeight, setPanelHeight] = useState(COLLAPSED_HEIGHT);
+    const [contentHeight, setContentHeight] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartPos = useRef(0);
+    const initialHeight = useRef(0);
+    const panelRef = useRef<HTMLDivElement | null>(null);
+    const contentRef = useRef<HTMLDivElement | null>(null);
+
+    // Mobile Panel Drag Handlers
+    const handleContentHeightChange = useCallback((height: number) => {
+        if (height > 0 && height !== contentHeight) setContentHeight(height);
+    }, [contentHeight]);
+
+    const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+        setIsDragging(true);
+        const startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        dragStartPos.current = startY;
+        initialHeight.current = panelHeight;
+        if (panelRef.current) panelRef.current.style.transition = 'none';
+    }, [panelHeight]);
+
+    const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
+        if (!isDragging) return;
+        const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        const deltaY = dragStartPos.current - currentY;
+        const newHeight = initialHeight.current + deltaY;
+        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
+        const clampedHeight = Math.max(PEEK_HEIGHT, Math.min(newHeight, dynamicPanelFullHeight));
+        setPanelHeight(clampedHeight);
+    }, [isDragging, contentHeight]);
+
+    const handleDragEnd = useCallback(() => {
+        if (!isDragging) return;
+        setIsDragging(false);
+        dragStartPos.current = 0;
+        if (panelRef.current) panelRef.current.style.transition = 'height 0.3s ease-in-out';
+        
+        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
+        const snapPointLow = (PEEK_HEIGHT + COLLAPSED_HEIGHT) / 2;
+        const snapPointHigh = (COLLAPSED_HEIGHT + dynamicPanelFullHeight) / 2;
+
+        if (panelHeight < snapPointLow) {
+            setPanelHeight(PEEK_HEIGHT);
+        } else if (panelHeight >= snapPointLow && panelHeight < snapPointHigh) {
+            setPanelHeight(COLLAPSED_HEIGHT);
+        } else {
+            setPanelHeight(dynamicPanelFullHeight);
+        }
+    }, [isDragging, panelHeight, contentHeight]);
+
+    // Keyboard Shortcut Handler
+    const handleKeyDown = useCallback((event: KeyboardEvent) => {
+        const target = event.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+        if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+            event.preventDefault();
+            handleOpenCopyDialog(); // Assumes handleOpenCopyDialog is defined in the hook
+        }
+    }, [/* handleOpenCopyDialog dependency */]);
+
+    // Effect for measuring mobile panel content
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (contentRef.current) {
+                const height = contentRef.current.scrollHeight;
+                setContentHeight(height);
+            }
+        }, 50);
+        return () => clearTimeout(timeoutId);
+    }, [activeSubPanel, isBulkEditing]);
+
+    // Effect for keyboard shortcuts
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
+    // Effect for drag listeners
+    useEffect(() => {
+        if (isDragging) {
+            window.addEventListener('mousemove', handleDragMove);
+            window.addEventListener('mouseup', handleDragEnd);
+            window.addEventListener('touchmove', handleDragMove);
+            window.addEventListener('touchend', handleDragEnd);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleDragMove);
+            window.removeEventListener('mouseup', handleDragEnd);
+            window.removeEventListener('touchmove', handleDragMove);
+            window.removeEventListener('touchend', handleDragEnd);
+        };
+    }, [isDragging, handleDragMove, handleDragEnd]);
 
     useEffect(() => {
         // Cast navigator to our custom type to access the connection property safely
@@ -1046,6 +1146,23 @@ export function useHonchoEditor(controller: Controller) {
         canvasContainerRef,
         fileInputRef,
         displayedToken,
+        handleBack: controller.handleBack,
+        onGetImage: controller.onGetImage,
+        getImageList: controller.getImageList,
+        syncConfig: controller.syncConfig,
+        getPresets: controller.getPresets,
+        createPreset: controller.createPreset,
+        deletePreset: controller.deletePreset,
+        renamePreset: controller.renamePreset,
+
+        // Refs for mobile panel
+        panelRef,
+        contentRef,
+        // State for mobile panel
+        panelHeight,
+        // Handlers for mobile panel
+        handleDragStart,
+        handleContentHeightChange,
 
         // Status & State
         editorStatus,

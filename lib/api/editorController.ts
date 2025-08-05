@@ -34,10 +34,6 @@ if (typeof window !== 'undefined') {
     (window as any).handleNativeImageResponse = handleNativeImageResponse;
 }
 
-interface NativeController extends Controller {
-    setToken: (token: string) => void;
-}
-
 // --- END: NATIVE COMMUNICATION BRIDGE ---
 
 // const baseUrl = 'https://dev.portal.ubersnap.com/gallery/67ee6b55b8e4273707f68978';
@@ -147,7 +143,7 @@ export const apiController: Controller = {
         // });
         return Promise.resolve();
     },
-    onBack: function (): void {
+    handleBack: function (): void {
         if ((window as any).webkit?.messageHandlers?.nativeHandler) {
             (window as any).webkit.messageHandlers.nativeHandler.postMessage("back");
             console.log("Sent 'back' message to iOS native handler.");
