@@ -27,7 +27,7 @@ export default function HHeaderEditor(props: Props) {
 
     return (
     <>
-        <Stack direction="row" justifyContent="space-between" width="100%" sx={{ pr: !isMobile ? "35px" : "6px" }}> 
+        <Stack direction="row" justifyContent="space-between" width="100%" sx={{ pr: !isMobile ? "24px" : "6px" }}> 
             <Stack direction="row" justifyContent="flex-start" sx={{ pl: !isMobile ? "0px" : "14px" }}>
                 <IconButton aria-label="back" onClick={props.onBack} 
                 sx={{ 
