@@ -143,7 +143,6 @@ function HImageEditorClient() {
 
         if (token) {
             console.log("Received auth token from query params.");
-            apiController.setToken(token);
             setDisplayedToken(token);
         }
 

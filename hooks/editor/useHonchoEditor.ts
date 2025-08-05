@@ -29,6 +29,7 @@ export interface Controller {
 
     // syncConfig
     syncConfig(): Promise<void>;
+    onBack():void;
 
     // Preset
     getPresets(): Promise<Preset[]>;
@@ -281,21 +282,8 @@ export function useHonchoEditor(controller: Controller) {
             }
         };
 
-        // Define the function that the native app will call to set the auth token
-        const setAuthToken = (token: string) => {
-            if (typeof token === 'string' && token) {
-                console.log("[WebView Bridge] Received auth token from native.");
-                apiController.setToken(token);
-                // Use the state setter from within the hook
-                setDisplayedToken(token);
-            } else {
-                console.error("[WebView Bridge] Invalid token received from native:", token);
-            }
-        };
-
         // Expose both functions on the window object for native code to access
         (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
-        (window as any).setAuthToken = setAuthToken;
 
         // Cleanup function to remove the global handlers when the component unmounts
         return () => {
