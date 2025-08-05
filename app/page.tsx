@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef, Suspense  } from "react";
 import { Box, Stack, CircularProgress, Typography, Checkbox, Paper } from "@mui/material";
 import useColors from "@/colors";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'; // Magic Wand Icon
@@ -41,7 +41,7 @@ const hasAdjustments = (state: AdjustmentState): boolean => {
     return Object.values(state).some(value => value !== 0);
 };
 
-export default function HImageEditor() {
+function HImageEditorClient() {
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
     const colors = useColors();
@@ -140,20 +140,17 @@ export default function HImageEditor() {
         const imageId = searchParams.get('imageId');
         const token = searchParams.get('token');
 
-        // If a token is found in the URL, set it
         if (token) {
-            console.log("https://www.c-sharpcorner.com/UploadFile/c63ec5/use-params-keyword-in-C-Sharp/ Received auth token from query params.");
+            console.log("Received auth token from query params.");
             apiController.setToken(token);
             setDisplayedToken(token);
         }
 
-        // If an imageId is found in the URL, load it
         if (imageId) {
-            console.log(`https://www.c-sharpcorner.com/UploadFile/c63ec5/use-params-keyword-in-C-Sharp/ Received imageId from query params: ${imageId}`);
+            console.log(`Received imageId from query params: ${imageId}`);
             editor.loadImageFromId(imageId);
         }
-    // The dependency array ensures this runs when the component mounts and has access to the editor functions
-    }, [editor.loadImageFromId, searchParams]);
+    }, [editor.loadImageFromId, searchParams, setDisplayedToken]);
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
         const target = event.target as HTMLElement;
@@ -193,19 +190,19 @@ export default function HImageEditor() {
         };
     }, [isDragging, handleDragMove, handleDragEnd]);
 
-    const [isMounted, setIsMounted] = useState(false);
+    // const [isMounted, setIsMounted] = useState(false);
 
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
+    // useEffect(() => {
+    //     setIsMounted(true);
+    // }, []);
 
-    if (!isMounted) {
-        return (
-            <Stack sx={{ width: '100%', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'black' }}>
-                <CircularProgress sx={{ color: colors.onSurfaceVariant }} />
-            </Stack>
-        );
-    }
+    // if (!isMounted) {
+    //     return (
+    //         <Stack sx={{ width: '100%', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'black' }}>
+    //             <CircularProgress sx={{ color: colors.onSurfaceVariant }} />
+    //         </Stack>
+    //     );
+    // }
 
 
     // Dummy/placeholder handlers that remain in the component
@@ -380,6 +377,13 @@ export default function HImageEditor() {
                 {!editor.isOnline && <HAlertInternetBox />}
                 {editor.isPresetCreated && !isMobile && <HAlertInternetBox />}
                 {editor.showCopyAlert && <HAlertCopyBox />}
+                {displayedToken && (
+                    <Box sx={{ p: 1, mx: 2, backgroundColor: 'grey.900', borderRadius: 1, mt: 1 }}>
+                        <Typography variant="caption" sx={{ color: 'lime', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                            <strong>Token Received:</strong> {displayedToken}
+                        </Typography>
+                    </Box>
+                )}
 
                 <HHeaderEditor
                     onBack={handleBack}
@@ -735,4 +739,21 @@ export default function HImageEditor() {
             )}
         </>
     )
+}
+
+
+export default function HImageEditorPage() {
+    const colors = useColors();
+
+    const fallbackUI = (
+        <Stack sx={{ width: '100%', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'black' }}>
+            <CircularProgress sx={{ color: colors.onSurfaceVariant }} />
+        </Stack>
+    );
+    
+    return (
+        <Suspense fallback={fallbackUI}>
+            <HImageEditorClient />
+        </Suspense>
+    );
 }
