@@ -45,7 +45,7 @@ export default function HImageEditorDesktop(props: Props) {
                             </Stack>
                             <Stack sx={{
                                 flexShrink: 0,
-                                p: '0px 16px',
+                                p: '0px 20px',
                             }}>
                                 {props.footer}
                             </Stack>

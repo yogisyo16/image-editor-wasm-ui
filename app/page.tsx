@@ -190,21 +190,6 @@ function HImageEditorClient() {
         };
     }, [isDragging, handleDragMove, handleDragEnd]);
 
-    // const [isMounted, setIsMounted] = useState(false);
-
-    // useEffect(() => {
-    //     setIsMounted(true);
-    // }, []);
-
-    // if (!isMounted) {
-    //     return (
-    //         <Stack sx={{ width: '100%', height: '100vh', alignItems: 'center', justifyContent: 'center', background: 'black' }}>
-    //             <CircularProgress sx={{ color: colors.onSurfaceVariant }} />
-    //         </Stack>
-    //     );
-    // }
-
-
     // Dummy/placeholder handlers that remain in the component
     const handleScale = (event: React.MouseEvent<HTMLElement>) => editor.setAnchorMenuZoom(event.currentTarget);
     const handleBeforeAfter = () => console.log("Before/After toggled!");
