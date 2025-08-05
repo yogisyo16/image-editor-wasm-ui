@@ -24,7 +24,7 @@ import {HTextField, HTextFieldRename} from "@/components/editor/HTextField";
 import HWatermarkView from "@/components/editor/HWatermarkView";
 import HModalMobile from "@/components/editor/HModalMobile";
 import HPresetOptionsMenu from "@/components/editor/HPresetOptionMenu";
-import { HAlertInternetBox, HAlertCopyBox, HAlertInternetConnectionBox } from "@/components/editor/HAlertBox";
+import { HAlertInternetBox, HAlertCopyBox, HAlertInternetConnectionBox, HAlertPresetSave } from "@/components/editor/HAlertBox";
 // Hooks
 import { useHonchoEditor, AdjustmentState, Controller  } from "@/hooks/editor/useHonchoEditor";
 
@@ -253,7 +253,7 @@ function HImageEditorClient() {
             <Stack direction="column" justifyContent="center" sx={{ width: '100%', height: isMobile ? '100%' : '100vh', background: 'black', pl: isMobile ? 0 : "24px", pr: isMobile ? 0 : "0px" }}>
                 {editor.isConnectionSlow && <HAlertInternetConnectionBox onClose={editor.handleAlertClose} />}
                 {!editor.isOnline && <HAlertInternetBox />}
-                {editor.isPresetCreated && !isMobile && <HAlertInternetBox />}
+                {editor.isPresetCreated && !isMobile && <HAlertPresetSave />}
                 {editor.showCopyAlert && <HAlertCopyBox />}
                 {displayedToken && (
                     <Box sx={{ p: 1, mx: 2, backgroundColor: 'grey.900', borderRadius: 1, mt: 1 }}>
@@ -298,7 +298,9 @@ function HImageEditorClient() {
                         alignItems: 'center', // This will now work correctly on mobile
                         position: 'relative',
                         p: isMobile ? 2 : 4,
-                        minHeight: 720
+                        height: '100%', 
+                        overflow: 'hidden', // Prevents the whole page from scrolling
+                        minWidth: 0
                      }}>
                         <input type="file" ref={editor.fileInputRef} onChange={editor.handleFileChange} multiple accept="image/*" style={{ display: 'none' }} />
 
@@ -309,14 +311,16 @@ function HImageEditorClient() {
                             </Box>
                         ) : (
                             editor.isBulkEditing ? (
-                                // Responsive Image Grid for Bulk Edit
                                 <Box sx={{
                                     display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-                                    gap: 2,
+                                    gridTemplateColumns: 'repeat(3, 1fr)',
+                                    columnGap: 2,    // Keeps your horizontal gap (e.g., 16px if your theme's spacing unit is 8)
+                                    rowGap: '5px',   // Keeps your vertical gap (e.g., 16px if your theme's spacing unit is 8)
                                     width: '100%',
+                                    maxWidth: '1200px',
+                                    p: 1,
                                     height: '100%',
-                                    p: 1
+                                    overflowY: 'auto',
                                 }}>
                                     {editor.imageList.map(image => {
                                         const imageAdjustments = editor.adjustmentsMap.get(image.id) || initialAdjustments;
