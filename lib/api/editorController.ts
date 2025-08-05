@@ -51,44 +51,45 @@ export const apiController: NativeController = {
   },
   
   onGetImage: async (imageID: string): Promise<string | null> => {
-    console.log(`[JS Bridge] Requesting image with ID: ${imageID}`);
+        console.log(`[JS Bridge] Requesting image with ID: ${imageID}`);
 
-    
-    
-    // Check for the native interfaces provided by iOS and Android WebViews
-    const iOSBridge = (window as any).webkit?.messageHandlers?.nativeHandler;
-    const androidBridge = (window as any).Android;
+        // Check for the native interfaces provided by iOS and Android WebViews
+        const iOSBridge = (window as any).webkit?.messageHandlers?.nativeHandler;
+        const androidBridge = (window as any).Android;
 
-    if (!iOSBridge && !androidBridge) {
-        console.warn("[JS Bridge] Native bridge not found. This will only work inside the native app's WebView.");
-        // Fallback for web development (returns a placeholder)
-        return Promise.resolve(`https://picsum.photos/seed/${imageID}/600/800`);
-    }
-
-    return new Promise((resolve, reject) => {
-        const callbackId = `cb_${Date.now()}_${Math.random()}`;
-        nativeCallbacks.set(callbackId, { resolve, reject });
-
-        try {
-            if (iOSBridge) {
-                // Send a message to the iOS WKScriptMessageHandler
-                const message = {
-                    action: 'getImage',
-                    imageId: imageID,
-                    callbackId: callbackId
-                };
-                iOSBridge.postMessage(message);
-            } else if (androidBridge) {
-                // Call the function on the Android JavaScript Interface
-                androidBridge.getImageForEditing(imageID, callbackId);
-            }
-        } catch (err) {
-            console.error("[JS Bridge] Error calling native function:", err);
-            nativeCallbacks.delete(callbackId);
-            reject(err);
+        if (!iOSBridge && !androidBridge) {
+            console.warn("[JS Bridge] Native bridge not found. Using development fallback URL.");
+            // Fallback for web development that points to your portal
+            const baseUrl = 'https://dev.portal.ubersnap.com/gallery/67ee6b55b8e4273707f68978';
+            const finalUrl = `${baseUrl}?preview=${imageID}`;
+            
+            return Promise.resolve(finalUrl);
         }
-    });
-  },
+
+        return new Promise((resolve, reject) => {
+            const callbackId = `cb_${Date.now()}_${Math.random()}`;
+            nativeCallbacks.set(callbackId, { resolve, reject });
+
+            try {
+                if (iOSBridge) {
+                    // Send a message to the iOS WKScriptMessageHandler
+                    const message = {
+                        action: 'getImage',
+                        imageId: imageID,
+                        callbackId: callbackId
+                    };
+                    iOSBridge.postMessage(message);
+                } else if (androidBridge) {
+                    // Call the function on the Android JavaScript Interface
+                    androidBridge.getImageForEditing(imageID, callbackId);
+                }
+            } catch (err) {
+                console.error("[JS Bridge] Error calling native function:", err);
+                nativeCallbacks.delete(callbackId);
+                reject(err);
+            }
+        });
+    },
 
   getImageList: async (): Promise<ImageItem[]> => {
     console.log("[API Controller] Getting image list for bulk editor...");
