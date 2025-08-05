@@ -357,7 +357,7 @@ function HImageEditorClient() {
                     editor.handleScriptReady();
                 }}
             />
-            <Stack direction="column" justifyContent="center" sx={{ width: '100%', height: isMobile ? '100%' : '100vh', background: 'black', px: isMobile ? 0 : "24px" }}>
+            <Stack direction="column" justifyContent="center" sx={{ width: '100%', height: isMobile ? '100%' : '100vh', background: 'black', pl: isMobile ? 0 : "24px", pr: isMobile ? 0 : "0px" }}>
                 {editor.isConnectionSlow && <HAlertInternetConnectionBox onClose={editor.handleAlertClose} />}
                 {!editor.isOnline && <HAlertInternetBox />}
                 {editor.isPresetCreated && !isMobile && <HAlertInternetBox />}

@@ -71,7 +71,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                     onChange={props.onPanelChange('whiteBalance')}
                     disableGutters
                 >
-                    <AccordionSummary>
+                    <AccordionSummary sx={{ pr: 0 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium }}>Color</Typography>
                             <CardMedia
@@ -81,7 +81,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails sx={{ pr: 0 }}>
                         <HAccordionColor
                             TempScore = {props.tempScore}
                             TintScore = {props.tintScore}
@@ -100,7 +100,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                     onChange={props.onPanelChange('light')}
                     disableGutters
                 >
-                    <AccordionSummary>
+                    <AccordionSummary sx={{ pr: 0 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium }}>Light</Typography>
                             <CardMedia
@@ -110,7 +110,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails sx={{ pr: 0 }}>
                         <HAccordionLight
                             ExposureScore = {props.exposureScore}
                             ContrastScore = {props.contrastScore}
@@ -133,7 +133,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                     onChange={props.onPanelChange('details')}
                     disableGutters
                 >
-                    <AccordionSummary>
+                    <AccordionSummary sx={{ pr: 0 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium }}>Details</Typography>
                             <CardMedia
@@ -143,7 +143,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails sx={{ pr: 0 }}>
                         <HAccordionDetails
                             // ContrastScore = {props.contrastScore}
                             ClarityScore = {props.clarityScore}
