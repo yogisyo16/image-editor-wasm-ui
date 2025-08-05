@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { SelectChangeEvent } from "@mui/material";
 import { HonchoEditor } from '@/lib/editor/honcho-editor';
+import { apiController } from "@/lib/api/editorController";
 
 // Augment the global window object for the WASM Module
 declare global {
@@ -168,6 +169,9 @@ export function useHonchoEditor(controller: Controller) {
     const [lightAdjustments, setLightAdjustments] = useState(true);
     const [detailsAdjustments, setDetailsAdjustments] = useState(true);
 
+    // for connection native
+    const [displayedToken, setDisplayedToken] = useState<string | null>(null);
+
     useEffect(() => {
         // Cast navigator to our custom type to access the connection property safely
         const navigatorWithConnection = navigator as NavigatorWithConnection;
@@ -265,6 +269,40 @@ export function useHonchoEditor(controller: Controller) {
         }
     }, [controller, loadImageFromUrl]);
 
+    useEffect(() => {
+        // Define the function that the native app will call to load an image
+        const loadInitialImageFromNative = (imageId: string) => {
+            if (typeof imageId === 'string' && imageId) {
+                console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
+                // Use the loadImageFromId function directly from the hook's scope
+                loadImageFromId(imageId);
+            } else {
+                console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
+            }
+        };
+
+        // Define the function that the native app will call to set the auth token
+        const setAuthToken = (token: string) => {
+            if (typeof token === 'string' && token) {
+                console.log("[WebView Bridge] Received auth token from native.");
+                apiController.setToken(token);
+                // Use the state setter from within the hook
+                setDisplayedToken(token);
+            } else {
+                console.error("[WebView Bridge] Invalid token received from native:", token);
+            }
+        };
+
+        // Expose both functions on the window object for native code to access
+        (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
+        (window as any).setAuthToken = setAuthToken;
+
+        // Cleanup function to remove the global handlers when the component unmounts
+        return () => {
+            delete (window as any).loadInitialImageFromNative;
+            delete (window as any).setAuthToken;
+        };
+    }, [loadImageFromId]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target?.files;
@@ -1019,6 +1057,7 @@ export function useHonchoEditor(controller: Controller) {
         canvasRef,
         canvasContainerRef,
         fileInputRef,
+        displayedToken,
 
         // Status & State
         editorStatus,

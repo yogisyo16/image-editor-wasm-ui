@@ -4,6 +4,7 @@ import { Box, Stack, CircularProgress, Typography, Checkbox, Paper } from "@mui/
 import useColors from "@/colors";
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh'; // Magic Wand Icon
 import Script from "next/script";
+import { useSearchParams } from 'next/navigation';
 import useIsMobile from "@/utils/isMobile";
 // Components
 import HHeaderEditor from "@/components/editor/HHeaderEditor";
@@ -44,7 +45,7 @@ export default function HImageEditor() {
     const editor = useHonchoEditor(apiController);
     const isMobile = useIsMobile();
     const colors = useColors();
-    const [displayedToken, setDisplayedToken] = useState<string | null>(null);
+    const searchParams = useSearchParams();
 
     const PEEK_HEIGHT = 20;
     const COLLAPSED_HEIGHT = 165;
@@ -57,8 +58,9 @@ export default function HImageEditor() {
     const initialHeight = useRef(0);
     const panelRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
+    const [displayedToken, setDisplayedToken] = useState<string | null>(null);
 
-     const PANEL_CHROME_HEIGHT = 10;
+    const PANEL_CHROME_HEIGHT = 10;
 
      // Mobile Panel Drag Handlers
     const handleContentHeightChange = useCallback((height: number) => {
@@ -133,39 +135,25 @@ export default function HImageEditor() {
         }
     };
 
+    // ADD this new useEffect to read the query parameters when the page loads
     useEffect(() => {
-        const loadInitialImageFromNative = (imageId: string) => {
-            if (typeof imageId === 'string' && imageId) {
-                console.log(`[WebView Bridge] Received command to load imageId: ${imageId}`);
-                editor.loadImageFromId(imageId);
-            } else {
-                console.error(`[WebView Bridge] Invalid imageId received from native:`, imageId);
-            }
-        };
+        const imageId = searchParams.get('imageId');
+        const token = searchParams.get('token');
 
-        const setAuthToken = (token: string) => {
-            if (typeof token === 'string' && token) {
-                console.log("[WebView Bridge] Received auth token from native.");
-                apiController.setToken(token);
-                setDisplayedToken(token);
-            } else {
-                console.error("[WebView Bridge] Invalid token received from native:", token);
-            }
-        };
+        // If a token is found in the URL, set it
+        if (token) {
+            console.log("https://www.c-sharpcorner.com/UploadFile/c63ec5/use-params-keyword-in-C-Sharp/ Received auth token from query params.");
+            apiController.setToken(token);
+            setDisplayedToken(token);
+        }
 
-        // Expose both functions on the window object
-        (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
-        (window as any).setAuthToken = setAuthToken; 
-
-        // testing commit
-        // vercel
-
-        // Cleanup function
-        return () => {
-            delete (window as any).loadInitialImageFromNative;
-            delete (window as any).setAuthToken; // Clean up the new function
-        };
-    }, [editor.loadImageFromId]);
+        // If an imageId is found in the URL, load it
+        if (imageId) {
+            console.log(`https://www.c-sharpcorner.com/UploadFile/c63ec5/use-params-keyword-in-C-Sharp/ Received imageId from query params: ${imageId}`);
+            editor.loadImageFromId(imageId);
+        }
+    // The dependency array ensures this runs when the component mounts and has access to the editor functions
+    }, [editor.loadImageFromId, searchParams]);
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
         const target = event.target as HTMLElement;
