@@ -100,7 +100,7 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     onChange={props.onPanelChange('whiteBalance')}
                     disableGutters
                 >
-                    <AccordionSummary sx={{ pr: "10px" }}>
+                    <AccordionSummary sx={{ pr: 0, pl: 4 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%'}}>
                             <Typography sx={{ ...typography.titleMedium }}>Color</Typography>
                             <CardMedia
@@ -110,7 +110,7 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: 0 }}>
+                    <AccordionDetails sx={{ pl: 4 }}>
                         <HBulkAccordionColorAdjustmentColors
                             onTempDecreaseMax={props.onTempDecreaseMax}
                             onTempDecrease={props.onTempDecrease}
@@ -137,7 +137,7 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     onChange={props.onPanelChange('light')}
                     disableGutters
                 >
-                    <AccordionSummary sx={{ pr: "10px" }}>
+                    <AccordionSummary sx={{ pr: 0, pl: 4 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium }}>Light</Typography>
                             <CardMedia
@@ -147,7 +147,7 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: 0 }}>
+                    <AccordionDetails sx={{ pl: 4 }}>
                         <HBulkAccordionColorAdjustmentLight
                             onExposureDecreaseMax= {props.onExposureDecreaseMax}
                             onExposureDecrease= {props.onExposureDecrease}
@@ -182,7 +182,7 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                     onChange={props.onPanelChange('details')}
                     disableGutters
                 >
-                    <AccordionSummary sx={{ pr: "10px" }}>
+                    <AccordionSummary sx={{ pr: 0, pl: 4 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium }}>Details</Typography>
                             <CardMedia
@@ -192,7 +192,7 @@ export default function HBulkAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: 0 }}>
+                    <AccordionDetails sx={{ pl: 4 }}>
                         <HBulkAccordionColorAdjustmentDetails
                             onClarityDecreaseMax={props.onClarityDecreaseMax}
                             onClarityDecrease={props.onClarityDecrease}

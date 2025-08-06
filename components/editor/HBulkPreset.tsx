@@ -63,7 +63,7 @@ export default function HBulkPreset(props: Props) {
                     onChange={props.onPanelChange('preset')}
                     disableGutters
                 >
-                    <AccordionSummary>
+                    <AccordionSummary sx={{ pr: 0, pl: 4 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium, color: colors.surface }}>Preset</Typography>
                             <CardMedia
@@ -73,7 +73,7 @@ export default function HBulkPreset(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails sx={{ pl: 4 }}>
                         <FormControl fullWidth>
                             <Select
                                 fullWidth

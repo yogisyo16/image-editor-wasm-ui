@@ -44,7 +44,7 @@ export default function HImageEditorBulkDekstop(props: Props) {
                             </Stack>
                             <Stack sx={{
                                 flexShrink: 0,
-                                p: '0px 16px',
+                                p: '0px 40px',
                             }}>
                                 {props.footer}
                             </Stack>
@@ -56,6 +56,7 @@ export default function HImageEditorBulkDekstop(props: Props) {
                                 width: '10px',
                                 flexShrink: 0,
                                 pt: 1,
+                                pl: "10px",
                             }}
                         >
                             <IconButton onClick={() => props.setActivePanel('colorAdjustment')}>
