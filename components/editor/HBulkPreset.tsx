@@ -63,7 +63,7 @@ export default function HBulkPreset(props: Props) {
                     onChange={props.onPanelChange('preset')}
                     disableGutters
                 >
-                    <AccordionSummary sx={{ pr: 0, pl: 4 }}>
+                    <AccordionSummary sx={{ pr: 0 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium, color: colors.surface }}>Preset</Typography>
                             <CardMedia
@@ -73,7 +73,7 @@ export default function HBulkPreset(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pl: 4 }}>
+                    <AccordionDetails sx={{ pr: "4px" }}>
                         <FormControl fullWidth>
                             <Select
                                 fullWidth
@@ -89,9 +89,9 @@ export default function HBulkPreset(props: Props) {
                                     return <Typography sx={{ ...typography.bodyMedium }}>{selectedPresetObject.name}</Typography>;
                                 }}
                                 MenuProps={{
-                                    slotProps: { paper: { sx: { backgroundColor: colors.onBackground, color: colors.surface, border: `1px solid ${colors.onSurfaceVariant1}`, mt: '20px', width: '178px' } } }
+                                    slotProps: { paper: { sx: { backgroundColor: colors.onBackground, color: colors.surface, border: `1px solid ${colors.onSurfaceVariant1}`, mt: '20px', width: '178px', boxShadow: 'none' }}}
                                 }}
-                                sx={{ border: `1px solid ${colors.outlineVariant}`, height: '44px', width: '178px'}}
+                                sx={{ border: `1px solid ${colors.outlineVariant}`, height: '44px', width: '215px', boxShadow: 'none' }}
                             >
                                 {/* Maps over props.presets */}
                                 {props.presets.map((preset) => (

@@ -28,23 +28,25 @@ export default function HImageEditorBulkDekstop(props: Props) {
                     elevation={3}
                     sx={{
                         position: 'inherit',
-                        right: '30px',
+                        right: '40px',
                         top: '55px',
                         width: '320px',
                         height: 'calc(100vh - 70px)',
+                        // pb: '10px',
                         zIndex: 1200,
                         backgroundColor: '#000000',
-                        overflow: 'hidden'
+                        overflow: 'hidden',
+                        // pl: "20px"
                     }}
                 >
-                    <Stack direction="row" sx={{ height: '100%' }}>
+                    <Stack direction="row" sx={{ height: '100%', pl: "0px" }}>
                         <Stack direction="column" sx={{ width: 'calc(100% - 60px)', height: '95%' }}>
                             <Stack sx={{ flexGrow: 1, overflowY: 'auto', px: 2, msOverflowStyle: 'none', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } }}>
                                 {props.children}
                             </Stack>
                             <Stack sx={{
                                 flexShrink: 0,
-                                p: '0px 40px',
+                                p: '0px 25px',
                             }}>
                                 {props.footer}
                             </Stack>
