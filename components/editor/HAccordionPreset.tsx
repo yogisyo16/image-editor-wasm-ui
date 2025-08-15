@@ -150,7 +150,7 @@ export default function HAccordionPreset(props: Props) {
                     </Stack>
                 </AccordionDetails>
                 </Accordion>
-                <Accordion
+                {/* <Accordion
                     sx={accordionStyle}
                     expanded={isPanelExpanded('watermark')}
                     onChange={props.onChange('watermark')}
@@ -213,7 +213,7 @@ export default function HAccordionPreset(props: Props) {
                             </Button>
                         </Stack>
                     </AccordionDetails>
-                </Accordion>
+                </Accordion> */}
             </Box>
         </>
     )
