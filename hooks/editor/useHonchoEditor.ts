@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { SelectChangeEvent } from "@mui/material";
 import { HonchoEditor } from '@/lib/editor/honcho-editor';
-import { apiController } from "@/lib/api/editorController";
 
 // Augment the global window object for the WASM Module
 declare global {
@@ -29,6 +28,7 @@ export interface Controller {
 
     // syncConfig
     syncConfig(): Promise<void>;
+    handleBack():void;
 
     // Preset
     getPresets(): Promise<Preset[]>;
@@ -172,6 +172,107 @@ export function useHonchoEditor(controller: Controller) {
     // for connection native
     const [displayedToken, setDisplayedToken] = useState<string | null>(null);
 
+    // MARK: dragable
+    const PEEK_HEIGHT = 20;
+    const COLLAPSED_HEIGHT = 165;
+    const PANEL_CHROME_HEIGHT = 10;
+    
+    // Mobile Draggable Panel State
+    const [panelHeight, setPanelHeight] = useState(COLLAPSED_HEIGHT);
+    const [contentHeight, setContentHeight] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartPos = useRef(0);
+    const initialHeight = useRef(0);
+    const panelRef = useRef<HTMLDivElement | null>(null);
+    const contentRef = useRef<HTMLDivElement | null>(null);
+
+    // Mobile Panel Drag Handlers
+    const handleContentHeightChange = useCallback((height: number) => {
+        if (height > 0 && height !== contentHeight) setContentHeight(height);
+    }, [contentHeight]);
+
+    const handleDragStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+        setIsDragging(true);
+        const startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        dragStartPos.current = startY;
+        initialHeight.current = panelHeight;
+        if (panelRef.current) panelRef.current.style.transition = 'none';
+    }, [panelHeight]);
+
+    const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
+        if (!isDragging) return;
+        const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+        const deltaY = dragStartPos.current - currentY;
+        const newHeight = initialHeight.current + deltaY;
+        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
+        const clampedHeight = Math.max(PEEK_HEIGHT, Math.min(newHeight, dynamicPanelFullHeight));
+        setPanelHeight(clampedHeight);
+    }, [isDragging, contentHeight]);
+
+    const handleDragEnd = useCallback(() => {
+        if (!isDragging) return;
+        setIsDragging(false);
+        dragStartPos.current = 0;
+        if (panelRef.current) panelRef.current.style.transition = 'height 0.3s ease-in-out';
+        
+        const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
+        const snapPointLow = (PEEK_HEIGHT + COLLAPSED_HEIGHT) / 2;
+        const snapPointHigh = (COLLAPSED_HEIGHT + dynamicPanelFullHeight) / 2;
+
+        if (panelHeight < snapPointLow) {
+            setPanelHeight(PEEK_HEIGHT);
+        } else if (panelHeight >= snapPointLow && panelHeight < snapPointHigh) {
+            setPanelHeight(COLLAPSED_HEIGHT);
+        } else {
+            setPanelHeight(dynamicPanelFullHeight);
+        }
+    }, [isDragging, panelHeight, contentHeight]);
+
+    // Keyboard Shortcut Handler
+    const handleKeyDown = useCallback((event: KeyboardEvent) => {
+        const target = event.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+        if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+            event.preventDefault();
+            handleOpenCopyDialog(); // Assumes handleOpenCopyDialog is defined in the hook
+        }
+    }, [/* handleOpenCopyDialog dependency */]);
+
+    // Effect for measuring mobile panel content
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (contentRef.current) {
+                const height = contentRef.current.scrollHeight;
+                setContentHeight(height);
+            }
+        }, 50);
+        return () => clearTimeout(timeoutId);
+    }, [activeSubPanel, isBulkEditing]);
+
+    // Effect for keyboard shortcuts
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
+    // Effect for drag listeners
+    useEffect(() => {
+        if (isDragging) {
+            window.addEventListener('mousemove', handleDragMove);
+            window.addEventListener('mouseup', handleDragEnd);
+            window.addEventListener('touchmove', handleDragMove);
+            window.addEventListener('touchend', handleDragEnd);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleDragMove);
+            window.removeEventListener('mouseup', handleDragEnd);
+            window.removeEventListener('touchmove', handleDragMove);
+            window.removeEventListener('touchend', handleDragEnd);
+        };
+    }, [isDragging, handleDragMove, handleDragEnd]);
+
     useEffect(() => {
         // Cast navigator to our custom type to access the connection property safely
         const navigatorWithConnection = navigator as NavigatorWithConnection;
@@ -281,21 +382,8 @@ export function useHonchoEditor(controller: Controller) {
             }
         };
 
-        // Define the function that the native app will call to set the auth token
-        const setAuthToken = (token: string) => {
-            if (typeof token === 'string' && token) {
-                console.log("[WebView Bridge] Received auth token from native.");
-                apiController.setToken(token);
-                // Use the state setter from within the hook
-                setDisplayedToken(token);
-            } else {
-                console.error("[WebView Bridge] Invalid token received from native:", token);
-            }
-        };
-
         // Expose both functions on the window object for native code to access
         (window as any).loadInitialImageFromNative = loadInitialImageFromNative;
-        (window as any).setAuthToken = setAuthToken;
 
         // Cleanup function to remove the global handlers when the component unmounts
         return () => {
@@ -385,103 +473,6 @@ export function useHonchoEditor(controller: Controller) {
             setHistoryIndex(nextIndex);
         }
     }, [history, historyIndex, applyAdjustmentState]);
-
-    // MARK: - Bulk Editor Functions For Desktop and Mobile
-    // const adjustTempBulk = useCallback((uiAmount: number) => {
-    //     setTempScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting temperature. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustTintBulk = useCallback((uiAmount: number) => {
-    //     setTintScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting tint. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustVibranceBulk = useCallback((uiAmount: number) => {
-    //     setVibranceScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting vibrance. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustSaturationBulk = useCallback((uiAmount: number) => {
-    //     setSaturationScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting saturation. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustExposureBulk = useCallback((uiAmount: number) => {
-    //     setExposureScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting exposure. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustContrastBulk = useCallback((uiAmount: number) => {
-    //     setContrastScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting contrast. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustHighlightsBulk = useCallback((uiAmount: number) => {
-    //     setHighlightsScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting highlights. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustShadowsBulk = useCallback((uiAmount: number) => {
-    //     setShadowsScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting shadows. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustWhitesBulk = useCallback((uiAmount: number) => {
-    //     setWhitesScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting whites. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustBlacksBulk = useCallback((uiAmount: number) => {
-    //     setBlacksScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting blacks. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustClarityBulk = useCallback((uiAmount: number) => {
-    //     setClarityScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting clarity. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustSharpnessBulk = useCallback((uiAmount: number) => {
-    //     setSharpnessScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting sharpness. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
 
     const handleToggleImageSelection = useCallback((imageId: string) => {
         const newSelectedIds = new Set(selectedImageIds);
@@ -763,6 +754,7 @@ export function useHonchoEditor(controller: Controller) {
     const fetchPresets = useCallback(async () => {
         if (!controller) return;
         try {
+            console.log("Fetching presets...");
             const fetchedPresets = await controller.getPresets();
             setPresets(fetchedPresets);
         } catch (error) {
@@ -830,6 +822,7 @@ export function useHonchoEditor(controller: Controller) {
 
         console.log("Creating preset:", presetName);
         const newPreset = { id: `preset${presets.length + 1}`, name: presetName };
+        console.log("NamePreset and id:", newPreset.id, " name: ", newPreset.name);
         setPresets(prevPresets => [...prevPresets, newPreset]);
 
         setIsPresetCreated(true);
@@ -1058,6 +1051,23 @@ export function useHonchoEditor(controller: Controller) {
         canvasContainerRef,
         fileInputRef,
         displayedToken,
+        handleBack: controller.handleBack,
+        onGetImage: controller.onGetImage,
+        getImageList: controller.getImageList,
+        syncConfig: controller.syncConfig,
+        getPresets: controller.getPresets,
+        createPreset: controller.createPreset,
+        deletePreset: controller.deletePreset,
+        renamePreset: controller.renamePreset,
+
+        // Refs for mobile panel
+        panelRef,
+        contentRef,
+        // State for mobile panel
+        panelHeight,
+        // Handlers for mobile panel
+        handleDragStart,
+        handleContentHeightChange,
 
         // Status & State
         editorStatus,

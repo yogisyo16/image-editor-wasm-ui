@@ -62,7 +62,7 @@ export default function HAccordionPreset(props: Props) {
                     onChange={props.onChange('preset')}
                     disableGutters
                 >
-                    <AccordionSummary>
+                    <AccordionSummary sx={{ pr: 0 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium, color: colors.surface }}>Preset</Typography>
                             <CardMedia
@@ -72,7 +72,7 @@ export default function HAccordionPreset(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: '10px' }}>
+                    <AccordionDetails sx={{ pr: "4px" }}>
                         <Stack direction="column" gap="8px" sx={{pt: '0px', pb: '0px', mx: '0px', width: '100%'}}>
                             {props.presets.map((preset) => (
                                 <Stack key={preset.id} direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
@@ -156,7 +156,7 @@ export default function HAccordionPreset(props: Props) {
                     onChange={props.onChange('watermark')}
                     disableGutters
                 >
-                    <AccordionSummary>
+                    <AccordionSummary sx={{ pr: 0 }}>
                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ width: '100%' }}>
                             <Typography sx={{ ...typography.titleMedium, color: colors.surface }}>Watermark</Typography>
                             <CardMedia

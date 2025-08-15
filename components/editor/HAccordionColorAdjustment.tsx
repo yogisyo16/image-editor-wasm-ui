@@ -81,7 +81,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: 0 }}>
+                    <AccordionDetails sx={{ pr: "4px" }}>
                         <HAccordionColor
                             TempScore = {props.tempScore}
                             TintScore = {props.tintScore}
@@ -110,7 +110,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: 0 }}>
+                    <AccordionDetails sx={{ pr: "4px" }}>
                         <HAccordionLight
                             ExposureScore = {props.exposureScore}
                             ContrastScore = {props.contrastScore}
@@ -143,7 +143,7 @@ export default function HAccordionColorAdjustment(props: Props) {
                             />
                         </Stack>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ pr: 0 }}>
+                    <AccordionDetails sx={{ pr: "4px" }}>
                         <HAccordionDetails
                             // ContrastScore = {props.contrastScore}
                             ClarityScore = {props.clarityScore}
