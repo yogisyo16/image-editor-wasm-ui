@@ -7,8 +7,6 @@ interface Props {
     anchorEl: null | HTMLElement;
     isOpen: boolean;
     onClose: () => void;
-    isPresetSelected: boolean;
-    onRemove: () => void;
     onRename: () => void;
     onDelete: () => void;
 }
@@ -38,7 +36,7 @@ export default function HPresetOptionsMenu(props: Props) {
                 },
             }}
         >
-            {props.isPresetSelected && (
+            {/* {props.isPresetSelected && (
                 <MenuItem onClick={props.onRemove}>
                     <Stack direction="row" spacing="10px">
                         <CardMedia
@@ -49,7 +47,7 @@ export default function HPresetOptionsMenu(props: Props) {
                         <ListItemText sx={{ ...typography.bodyMedium }}>Remove Preset</ListItemText>
                     </Stack>
                 </MenuItem>
-            )}
+            )} */}
             <MenuItem onClick={props.onRename}>
                 <Stack direction="row" spacing="10px">
                     <CardMedia

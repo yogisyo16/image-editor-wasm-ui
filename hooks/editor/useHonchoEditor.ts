@@ -474,103 +474,6 @@ export function useHonchoEditor(controller: Controller) {
         }
     }, [history, historyIndex, applyAdjustmentState]);
 
-    // MARK: - Bulk Editor Functions For Desktop and Mobile
-    // const adjustTempBulk = useCallback((uiAmount: number) => {
-    //     setTempScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting temperature. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustTintBulk = useCallback((uiAmount: number) => {
-    //     setTintScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting tint. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustVibranceBulk = useCallback((uiAmount: number) => {
-    //     setVibranceScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting vibrance. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustSaturationBulk = useCallback((uiAmount: number) => {
-    //     setSaturationScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting saturation. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustExposureBulk = useCallback((uiAmount: number) => {
-    //     setExposureScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting exposure. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustContrastBulk = useCallback((uiAmount: number) => {
-    //     setContrastScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting contrast. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustHighlightsBulk = useCallback((uiAmount: number) => {
-    //     setHighlightsScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting highlights. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustShadowsBulk = useCallback((uiAmount: number) => {
-    //     setShadowsScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting shadows. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustWhitesBulk = useCallback((uiAmount: number) => {
-    //     setWhitesScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting whites. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustBlacksBulk = useCallback((uiAmount: number) => {
-    //     setBlacksScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting blacks. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustClarityBulk = useCallback((uiAmount: number) => {
-    //     setClarityScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting clarity. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
-    // const adjustSharpnessBulk = useCallback((uiAmount: number) => {
-    //     setSharpnessScore(prevScore => {
-    //         const newScore = clamp(prevScore + uiAmount);
-    //         console.log("Adjusting sharpness. New score:", newScore);
-    //         return newScore;
-    //     });
-    // }, []);
-
     const handleToggleImageSelection = useCallback((imageId: string) => {
         const newSelectedIds = new Set(selectedImageIds);
         const isCurrentlySelected = newSelectedIds.has(imageId);
@@ -851,6 +754,7 @@ export function useHonchoEditor(controller: Controller) {
     const fetchPresets = useCallback(async () => {
         if (!controller) return;
         try {
+            console.log("Fetching presets...");
             const fetchedPresets = await controller.getPresets();
             setPresets(fetchedPresets);
         } catch (error) {
@@ -918,6 +822,7 @@ export function useHonchoEditor(controller: Controller) {
 
         console.log("Creating preset:", presetName);
         const newPreset = { id: `preset${presets.length + 1}`, name: presetName };
+        console.log("NamePreset and id:", newPreset.id, " name: ", newPreset.name);
         setPresets(prevPresets => [...prevPresets, newPreset]);
 
         setIsPresetCreated(true);

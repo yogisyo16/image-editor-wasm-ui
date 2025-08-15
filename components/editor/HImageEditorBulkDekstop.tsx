@@ -41,12 +41,12 @@ export default function HImageEditorBulkDekstop(props: Props) {
                 >
                     <Stack direction="row" sx={{ height: '100%', pl: "0px" }}>
                         <Stack direction="column" sx={{ width: 'calc(100% - 60px)', height: '95%' }}>
-                            <Stack sx={{ flexGrow: 1, overflowY: 'auto', px: 2, msOverflowStyle: 'none', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } }}>
+                            <Stack sx={{ flexGrow: 1, overflowY: 'auto', px: '2px', msOverflowStyle: 'none', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' } }}>
                                 {props.children}
                             </Stack>
                             <Stack sx={{
                                 flexShrink: 0,
-                                p: '0px 25px',
+                                p: '0px 12px',
                             }}>
                                 {props.footer}
                             </Stack>

@@ -39,6 +39,43 @@ const hasAdjustments = (state: AdjustmentState): boolean => {
     return Object.values(state).some(value => value !== 0);
 };
 
+const mockPresets = [
+    {
+        id: "678506a9b978174d1e9eba19",
+        name: "Preset 202506 - 114",
+        is_default: true,
+        temperature: 70,
+        tint: 20,
+        saturation: 20,
+        vibrance: 10,
+        exposure: 23,
+        contrast: -20,
+        highlights: 50,
+        shadows: 0,
+        whites: 30,
+        blacks: -20,
+        clarity: 0,
+        sharpness: 50,
+    },
+    {
+        id: "679506a9b978174d1e9eba20",
+        name: "Preset 202506 - 115",
+        is_default: true,
+        temperature: 70,
+        tint: 20,
+        saturation: 20,
+        vibrance: 10,
+        exposure: 23,
+        contrast: -20,
+        highlights: 50,
+        shadows: 0,
+        whites: 30,
+        blacks: -20,
+        clarity: 0,
+        sharpness: 50,
+    }
+];
+
 function HImageEditorClient() {
 
     const localController = useMemo((): Controller => ({
@@ -70,7 +107,7 @@ function HImageEditorClient() {
         },
         getImageList: async () => { return []; },
         syncConfig: async () => {},
-        getPresets: async () => { return []; },
+        getPresets: async () => { return mockPresets; },
         createPreset: async () => { return null; },
         deletePreset: async () => {},
         renamePreset: async () => {},
@@ -558,10 +595,8 @@ function HImageEditorClient() {
                         anchorEl={editor.presetMenuAnchorEl}
                         isOpen={Boolean(editor.presetMenuAnchorEl)}
                         onClose={editor.handlePresetMenuClose}
-                        onRemove={editor.handleRemovePreset}
                         onRename={editor.handleOpenRenameModal}
                         onDelete={editor.handleDeletePreset}
-                        isPresetSelected={(editor.isBulkEditing ? editor.selectedBulkPreset : editor.selectedDesktopPreset) === editor.activePresetMenuId}
                     />
                     <HModalEditorDekstop
                         modalName="preset"
