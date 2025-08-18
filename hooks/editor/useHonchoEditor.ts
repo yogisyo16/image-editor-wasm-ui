@@ -202,10 +202,18 @@ export function useHonchoEditor(controller: Controller) {
     const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
         if (!isDragging) return;
         const currentY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-        const deltaY = dragStartPos.current - currentY;
-        const newHeight = initialHeight.current + deltaY;
+        
+        const deltaY = currentY - dragStartPos.current;
+        const newHeight = initialHeight.current - deltaY;
+
         const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
-        const clampedHeight = Math.max(PEEK_HEIGHT, Math.min(newHeight, dynamicPanelFullHeight));
+        console.log(`hight: ${newHeight}, dynamicPanelFullHeight: ${dynamicPanelFullHeight}`);
+        const clampedHeight = Math.max(
+            PEEK_HEIGHT,
+            Math.min(newHeight, dynamicPanelFullHeight)
+        );
+
+        console.log(`clampedHeight: ${clampedHeight}`);
         setPanelHeight(clampedHeight);
     }, [isDragging, contentHeight]);
 
@@ -218,6 +226,7 @@ export function useHonchoEditor(controller: Controller) {
         const dynamicPanelFullHeight = contentHeight + PANEL_CHROME_HEIGHT;
         const snapPointLow = (PEEK_HEIGHT + COLLAPSED_HEIGHT) / 2;
         const snapPointHigh = (COLLAPSED_HEIGHT + dynamicPanelFullHeight) / 2;
+        console.log(`panelHeight: ${panelHeight}, snapPointLow: ${snapPointLow}, snapPointHigh: ${snapPointHigh}`);
 
         if (panelHeight < snapPointLow) {
             setPanelHeight(PEEK_HEIGHT);

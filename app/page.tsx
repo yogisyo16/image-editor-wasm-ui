@@ -27,6 +27,7 @@ import HPresetOptionsMenu from "@/components/editor/HPresetOptionMenu";
 import { HAlertInternetBox, HAlertCopyBox, HAlertInternetConnectionBox, HAlertPresetSave } from "@/components/editor/HAlertBox";
 // Hooks
 import { useHonchoEditor, AdjustmentState, Controller  } from "@/hooks/editor/useHonchoEditor";
+import HPresetDelete from "@/components/editor/HPresetDelete";
 
 const initialAdjustments: AdjustmentState = {
     tempScore: 0, tintScore: 0, vibranceScore: 0, exposureScore: 0, highlightsScore: 0, shadowsScore: 0,
@@ -596,8 +597,15 @@ function HImageEditorClient() {
                         isOpen={Boolean(editor.presetMenuAnchorEl)}
                         onClose={editor.handlePresetMenuClose}
                         onRename={editor.handleOpenRenameModal}
-                        onDelete={editor.handleDeletePreset}
+                        onDelete={editor.handleOpenPresetModal}
                     />
+                    {editor.isPresetModalOpen == true && (
+                        <HPresetDelete
+                            isLoading={editor.isImageLoaded}
+                            onCancel={editor.handleClosePresetModal}
+                            onSubmit={editor.handleDeletePreset}
+                        />
+                    )}
                     <HModalEditorDekstop
                         modalName="preset"
                         modalOpen={editor.isPresetModalOpen}
